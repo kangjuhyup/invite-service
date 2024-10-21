@@ -1,10 +1,7 @@
-# 빌드 스테이지
 FROM node:20-alpine AS builder
 
-# 작업 디렉토리 설정
 WORKDIR /usr/src/app
 
-# 빌드 도구 및 sharp에 필요한 패키지 설치
 RUN apk add --no-cache \
     python3 \
     make \
@@ -22,9 +19,11 @@ RUN yarn build
 
 FROM node:20-alpine AS production
 
-WORKDIR /usr/src/app
+RUN apk add --no-cache \
+    libc6-compat \
+    vips-dev
 
-RUN apk add --no-cache libc6-compat
+WORKDIR /usr/src/app
 
 RUN yarn set version 4.5.0
 
