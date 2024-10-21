@@ -17,6 +17,8 @@ async function bootstrap() {
   .addTag('invite')
   .build();
 
+  app.setGlobalPrefix('api')
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
