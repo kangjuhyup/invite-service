@@ -16,7 +16,11 @@ export class StorageService {
     });
   }
 
-  async generateUploadPresignedUrl(param : {bucket: string, key: string, expires: number }): Promise<string> {
+  async generateUploadPresignedUrl(param: {
+    bucket: string;
+    key: string;
+    expires: number;
+  }): Promise<string> {
     const params = {
       Bucket: param.bucket,
       Key: param.key,
@@ -27,13 +31,17 @@ export class StorageService {
     return await this.s3.getSignedUrlPromise('putObject', params);
   }
 
-  async generateDownloadPresignedUrl(param : {bucket: string, key: string, expires: number }): Promise<string> {
+  async generateDownloadPresignedUrl(param: {
+    bucket: string;
+    key: string;
+    expires: number;
+  }): Promise<string> {
     const params = {
       Bucket: param.bucket,
       Key: param.key,
       Expires: param.expires,
     };
- 
+
     return await this.s3.getSignedUrlPromise('getObject', params);
   }
 }

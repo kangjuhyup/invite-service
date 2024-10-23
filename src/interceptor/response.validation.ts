@@ -1,8 +1,14 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, InternalServerErrorException } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { validate, ValidationError } from 'class-validator';
-import { Observable, from } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { mergeMap } from 'rxjs/operators';
 
 interface HttpResponse<T> {
   result: boolean;
@@ -14,7 +20,9 @@ interface HttpResponse<T> {
 }
 
 @Injectable()
-export class ResponseValidationInterceptor<T extends object> implements NestInterceptor {
+export class ResponseValidationInterceptor<T extends object>
+  implements NestInterceptor
+{
   constructor(private readonly dto: new () => T) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -25,7 +33,10 @@ export class ResponseValidationInterceptor<T extends object> implements NestInte
           const errors = await validate(object);
 
           if (errors.length > 0) {
-            throw new InternalServerErrorException('Invalid response data', this.formatErrors(errors));
+            throw new InternalServerErrorException(
+              'Invalid response data',
+              this.formatErrors(errors),
+            );
           }
         }
 
@@ -36,7 +47,7 @@ export class ResponseValidationInterceptor<T extends object> implements NestInte
 
   private formatErrors(errors: ValidationError[]): string {
     return JSON.stringify(
-      errors.map(err => Object.values(err.constraints).join(', '))
+      errors.map((err) => Object.values(err.constraints).join(', ')),
     );
   }
 }

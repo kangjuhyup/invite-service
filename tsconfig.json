@@ -22,6 +22,7 @@
       "@interceptor/*": ["src/interceptor/*"],
       "@storage/*": ["src/storage/*"],
       "@util/*": ["src/util/*"],
+      "@database/*": ["src/database/*"],
       "@app/*": ["src/*"],
     }
   }

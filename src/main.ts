@@ -5,19 +5,21 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.useGlobalPipes(new ValidationPipe({
-    transform : true,
-    whitelist : true
-  }))
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+    }),
+  );
 
   const config = new DocumentBuilder()
-  .setTitle('초대장 API')
-  .setDescription('초대장 API Docs')
-  .setVersion('0.1')
-  .addTag('invite')
-  .build();
+    .setTitle('초대장 API')
+    .setDescription('초대장 API Docs')
+    .setVersion('0.1')
+    .addTag('invite')
+    .build();
 
-  app.setGlobalPrefix('api')
+  app.setGlobalPrefix('api');
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
