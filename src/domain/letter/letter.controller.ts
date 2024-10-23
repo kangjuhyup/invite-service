@@ -47,12 +47,12 @@ export class LetterController {
             result : true,
             data : {
                 background : {
-                    path : 'https://invite.jhkang.xyz/storage/mock/bg-mock.png',
+                    path : 'https://s3.ap-northeast-1.wasabisys.com/bgr/mock01',
                     width : 800,
                     height : 1600                   
                 },
                 image : [{
-                    path : 'https://invite.jhkang.xyz/storage/mock/img-mock01.png',
+                    path : 'https://s3.ap-northeast-1.wasabisys.com/cpn/mock01',
                     width : 100,
                     height : 80,
                     x : 200,
