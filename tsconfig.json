@@ -16,6 +16,13 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@auth/*": ["src/auth/*"],
+      "@interceptor/*": ["src/interceptor/*"],
+      "@storage/*": ["src/storage/*"],
+      "@util/*": ["src/util/*"],
+      "@app/*": ["src/*"],
+    }
   }
 }

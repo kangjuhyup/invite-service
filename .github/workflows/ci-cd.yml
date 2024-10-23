@@ -38,6 +38,14 @@ jobs:
       run: |
         echo "NODE_ENV=${{ vars.NODE_ENV }}" >> .env
         echo "PORT=${{ vars.PORT }}" >> .env
+        echo "WASABI_ACCESS_KEY=${{ secrets.WASABI_ACCESS_KEY }}" >> .env
+        echo "WASABI_SECRET_KEY=${{ secrets.WASABI_SECRET_KEY }}" >> .env
+        echo "WASABI_REGION=${{ vars.WASABI_REGION }}" >> .env
+        echo "WASABI_ENDPOINT=${{ vars.WASABI_ENDPOINT }}" >> .env
+        echo "THUMB_BUCKET=${{ vars.THUMB_BUCKET }}" >> .env
+        echo "BACKGROUND_BUCKET=${{ vars.BACKGROUND_BUCKET }}" >> .env
+        echo "COMPONENT_BUCKET=${{ vars.COMPONENT_BUCKET }}" >> .env
+        echo "LETTER_BUCKET=${{ vars.LETTER_BUCKET }}" >> .env
     - name: docker create
       run : docker buildx create --use
 
@@ -69,5 +77,5 @@ jobs:
           docker pull ghcr.io/${{ github.repository }}/service:latest
           docker stop invite-api || true
           docker rm invite-api || true
-          docker run -d -p 3003:3003 --network my-network --name invite-api ghcr.io/${{ github.repository }}/service:latest
+          docker run -d -p ${{ vars.PORT }}:${{ vars.PORT }} --network my-network --name invite-api ghcr.io/${{ github.repository }}/service:latest
         EOF

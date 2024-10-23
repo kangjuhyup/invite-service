@@ -6,16 +6,35 @@ import { GetLetterDetailResponse } from "./dto/response/get.detail";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { GetLetterPageRequest } from "./dto/request/get.page";
 import { GetLetterPageResponse } from "./dto/response/get.page";
+import { LetterService } from "./letter.service";
 
 @Controller('letter')
 export class LetterController {
+
+    constructor(
+        private readonly letterService : LetterService
+    ) {}
+
      @Get()
      @ApiOperation({ summary : '초대장 페이지 조회'})
      @ApiOkResponse({ status : 200, description : '성공', type : GetLetterPageResponse})
      @UseInterceptors(new ResponseValidationInterceptor(GetLetterPageResponse))
      async getLetters(
         @Query() dto : GetLetterPageRequest
-     ){}
+     ): Promise<HttpResponse<GetLetterPageResponse>>{
+        return {
+            result : true,
+            data : {
+                totalCount: 1,
+                items: [{
+                    id: 1,
+                    title: "Mock초대장",
+                    category: "WED",
+                    thumbnail : 'https://s3.ap-northeast-1.wasabisys.com/thm/00001'
+                }]
+            }
+        }
+     }
 
      @Get(':id')
      @ApiOperation({ summary: '초대장 상세 정보 조회' })

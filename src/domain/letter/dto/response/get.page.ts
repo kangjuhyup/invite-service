@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { LetterCategory } from "@util/category";
 import { Type } from "class-transformer";
-import { IsArray, IsNotEmpty, IsNumber, IsString, ValidateNested } from "class-validator";
-import { LetterCategory } from "src/domain/util/category";
+import { IsArray, IsIn, IsNotEmpty, IsNumber, IsString, IsUrl, ValidateNested } from "class-validator";
 
 class LetterPageItem {
     @ApiProperty({
@@ -22,11 +22,20 @@ class LetterPageItem {
 
     @ApiProperty({
         description: '카테고리',
-        example: LetterCategory.ANNIVERSARY,
+        example: LetterCategory.ANNIVERSARY, 
         enum:  Object.values(LetterCategory)
     })
     @IsNotEmpty()
+    @IsIn(Object.values(LetterCategory))
     category: LetterCategory;
+
+    @ApiProperty({
+        description: '썸네일 이미지 경로',
+        example : 'https://s3.ap-northeast-1.wasabisys.com/thm/00001',
+    })
+    @IsNotEmpty()
+    @IsUrl() 
+    thumbnail : string
 }
 
 export class GetLetterPageResponse {
