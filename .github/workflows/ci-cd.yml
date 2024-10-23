@@ -77,5 +77,5 @@ jobs:
           docker pull ghcr.io/${{ github.repository }}/service:latest
           docker stop invite-api || true
           docker rm invite-api || true
-          docker run -d -p ${{ vars.PORT }}:${{ vars.PORT }} --network my-network --name invite-api ghcr.io/${{ github.repository }}/service:latest
+          docker run -d -p 3003:3003 --network my-network --name invite-api ghcr.io/${{ github.repository }}/service:latest
         EOF
