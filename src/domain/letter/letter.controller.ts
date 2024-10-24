@@ -1,4 +1,11 @@
-import { Controller, Get, Param, Query, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common';
 import { GetLetterDetailRequest } from './dto/request/get.detail';
 import { HttpResponse } from '../dto/response';
 import { ResponseValidationInterceptor } from 'src/interceptor/response.validation';
@@ -8,6 +15,8 @@ import { GetLetterPageRequest } from './dto/request/get.page';
 import { GetLetterPageResponse } from './dto/response/get.page';
 import { LetterService } from './letter.service';
 import { LetterCategory } from '@util/category';
+import { PrepareResponse } from './dto/response/prepare';
+import { PrepareRequest } from './dto/request/prepare';
 
 @Controller('letter')
 export class LetterController {
@@ -40,43 +49,59 @@ export class LetterController {
     };
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: '초대장 상세 정보 조회' })
-  @ApiOkResponse({
-    status: 200,
-    description: '성공',
-    type: GetLetterDetailResponse,
-  })
-  @UseInterceptors(new ResponseValidationInterceptor(GetLetterDetailResponse))
-  async getLetterDetail(
-    @Param() dto: GetLetterDetailRequest,
-  ): Promise<HttpResponse<GetLetterDetailResponse>> {
+  @Get('prepare-add')
+  @UseInterceptors(new ResponseValidationInterceptor(PrepareResponse))
+  async prepareAddLetter(
+    @Query() dto: PrepareRequest,
+  ): Promise<HttpResponse<PrepareResponse>> {
     return {
       result: true,
-      data: {
-        background: {
-          path: 'https://s3.ap-northeast-1.wasabisys.com/bgr/mock01',
-          width: 800,
-          height: 1600,
-        },
-        image: [
-          {
-            path: 'https://s3.ap-northeast-1.wasabisys.com/cpn/mock01',
-            width: 100,
-            height: 80,
-            x: 200,
-            y: 800,
-          },
-        ],
-        text: [
-          {
-            body: 'MOCK',
-            size: 18,
-            x: 200,
-            y: 600,
-          },
-        ],
-      },
+      data: await this.letterService.prepareAddLetter(dto),
     };
   }
+
+//   @Get(':id')
+//   @ApiOperation({ summary: '초대장 상세 정보 조회' })
+//   @ApiOkResponse({
+//     status: 200,
+//     description: '성공',
+//     type: GetLetterDetailResponse,
+//   })
+//   @UseInterceptors(new ResponseValidationInterceptor(GetLetterDetailResponse))
+//   async getLetterDetail(
+//     @Param() dto: GetLetterDetailRequest,
+//   ): Promise<HttpResponse<GetLetterDetailResponse>> {
+//     return {
+//       result: true,
+//       data: {
+//         background: {
+//           path: 'https://s3.ap-northeast-1.wasabisys.com/bgr/mock01',
+//           width: 800,
+//           height: 1600,
+//         },
+//         image: [
+//           {
+//             path: 'https://s3.ap-northeast-1.wasabisys.com/cpn/mock01',
+//             width: 100,
+//             height: 80,
+//             x: 200,
+//             y: 800,
+//           },
+//         ],
+//         text: [
+//           {
+//             body: 'MOCK',
+//             size: 18,
+//             x: 200,
+//             y: 600,
+//           },
+//         ],
+//       },
+//     };
+//   }
+
+
+
+  @Post()
+  async addLetter() {}
 }

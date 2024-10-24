@@ -20,6 +20,10 @@ export class Enviroments {
 
   @IsNotEmpty()
   @IsString()
+  WASABI_SIGN_KEY: string;
+
+  @IsNotEmpty()
+  @IsString()
   THUMB_BUCKET: string;
 
   @IsNotEmpty()
@@ -36,26 +40,26 @@ export class Enviroments {
 
   @IsNotEmpty()
   @IsString()
-  DB_TYPE : string;
+  DB_TYPE: string;
 
   @IsNotEmpty()
   @IsString()
-  DB_HOST : string;
+  DB_HOST: string;
 
-  @Transform(({value}) => Number(value))
+  @Transform(({ value }) => Number(value))
   @IsNotEmpty()
   @IsNumber()
-  DB_PORT : number;
+  DB_PORT: number;
 
   @IsNotEmpty()
   @IsString()
-  DB_NAME : string;
+  DB_NAME: string;
 
   @IsNotEmpty()
   @IsString()
-  DB_USER : string;
+  DB_USER: string;
 
   @IsNotEmpty()
   @IsString()
-  DB_PWD : string; 
+  DB_PWD: string;
 }

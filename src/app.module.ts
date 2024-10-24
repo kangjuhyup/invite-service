@@ -26,8 +26,7 @@ const modules = [
     },
   }),
   StorageModule,
-  //TODO : 운영환경 데이터베이스 세팅 완료 후 운영환경에서도 모듈 주입
-  process.env.NODE_ENV !== 'production ' && DatabaseModule,
+  DatabaseModule,
 ].filter(Boolean);
 
 @Module({
