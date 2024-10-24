@@ -29,7 +29,6 @@ export class LetterEntity extends DefaultEntity {
   @Column({
     name: UserColumn.userId,
     type: 'char',
-    length: 36,
     nullable: false,
   })
   userId: string;

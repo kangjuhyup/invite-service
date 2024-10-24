@@ -1,35 +1,61 @@
-import { IsString, IsUrl, IsNotEmpty } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsString, IsUrl, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class Enviroments {
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   WASABI_ACCESS_KEY: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   WASABI_SECRET_KEY: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   WASABI_REGION: string;
 
-  @IsUrl()
   @IsNotEmpty()
+  @IsUrl()
   WASABI_ENDPOINT: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   THUMB_BUCKET: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   BACKGROUND_BUCKET: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   COMPONENT_BUCKET: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   LETTER_BUCKET: string;
+
+  @IsNotEmpty()
+  @IsString()
+  DB_TYPE : string;
+
+  @IsNotEmpty()
+  @IsString()
+  DB_HOST : string;
+
+  @Transform(({value}) => Number(value))
+  @IsNotEmpty()
+  @IsNumber()
+  DB_PORT : number;
+
+  @IsNotEmpty()
+  @IsString()
+  DB_NAME : string;
+
+  @IsNotEmpty()
+  @IsString()
+  DB_USER : string;
+
+  @IsNotEmpty()
+  @IsString()
+  DB_PWD : string; 
 }
