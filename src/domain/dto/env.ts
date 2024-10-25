@@ -20,10 +20,6 @@ export class Enviroments {
 
   @IsNotEmpty()
   @IsString()
-  WASABI_SIGN_KEY: string;
-
-  @IsNotEmpty()
-  @IsString()
   THUMB_BUCKET: string;
 
   @IsNotEmpty()
