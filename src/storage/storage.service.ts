@@ -44,4 +44,43 @@ export class StorageService {
 
     return await this.s3.getSignedUrlPromise('getObject', params);
   }
+
+  async getObjectMetadata(param: {
+    bucket: string;
+    key: string;
+  }): Promise<AWS.S3.HeadObjectOutput> {
+    const params = {
+      Bucket: param.bucket,
+      Key: param.key,
+    };
+
+    const metadata = await this.s3
+      .headObject(params)
+      .promise()
+      .catch((err) => {
+        if (err.statusCode == 404) {
+          return undefined;
+        }
+        throw err;
+      });
+    return metadata;
+  }
+
+  async deleteObject(param: { bucket: string; key: string }): Promise<void> {
+    const params = {
+      Bucket: param.bucket,
+      Key: param.key,
+    };
+
+    await this.s3
+      .deleteObject(params)
+      .promise()
+      .catch((err) => {
+        if (err.statusCode === 404) {
+          console.log('Object not found, nothing to delete.');
+          return;
+        }
+        throw err;
+      });
+  }
 }

@@ -29,11 +29,9 @@ const modules = [
   StorageModule,
   DatabaseModule,
   RedisClientModule.forRootAsync({
-    project : 'invite-service',
-    isGlobal : true,
-    imports : [
-      ConfigModule,
-    ],
+    project: 'invite-service',
+    isGlobal: true,
+    imports: [ConfigModule],
     useFactory: (config: ConfigService) => {
       return {
         host: config.get<string>('REDIS_HOST'),
@@ -41,8 +39,8 @@ const modules = [
         password: config.get<string>('REDIS_PWD'),
       };
     },
-    inject : [ConfigService]
-  })
+    inject: [ConfigService],
+  }),
 ].filter(Boolean);
 
 @Module({

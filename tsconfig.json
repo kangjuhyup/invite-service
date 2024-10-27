@@ -23,6 +23,8 @@
       "@storage/*": ["src/storage/*"],
       "@util/*": ["src/util/*"],
       "@database/*": ["src/database/*"],
+      "@redis/*":["src/redis/*"],
+      "@jwt/*":["src/jwt/*"],
       "@app/*": ["src/*"],
     }
   }

@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   IsUrl,
 } from 'class-validator';
 
@@ -16,6 +17,15 @@ export class PrepareResponse {
   @IsNotEmpty()
   @IsUrl()
   thumbnailUrl: string;
+
+  @ApiProperty({
+    description: '초대장 업로드 권한이 열려있는 url',
+    example:
+      'https://s3.ap-northeast-1.wasabisys.com/bucket/file.txt?AWSAccessKeyId=...',
+  })
+  @IsNotEmpty()
+  @IsUrl()
+  letterUrl: string;
 
   @ApiProperty({
     description: '배경 업로드 권한이 열려있는 url',
@@ -33,7 +43,7 @@ export class PrepareResponse {
   })
   @IsOptional()
   @IsArray()
-  @IsUrl({},{each:true})
+  @IsUrl({}, { each: true })
   componentUrls: string[];
 
   @ApiProperty({
@@ -43,4 +53,11 @@ export class PrepareResponse {
   @IsNotEmpty()
   @IsNumber()
   expires: number;
+
+  @ApiProperty({
+    description: '세션키',
+  })
+  @IsNotEmpty()
+  @IsString()
+  sessionKey: string;
 }

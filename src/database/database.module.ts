@@ -4,6 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LetterDataSource } from './datasource/letter.datasource';
 import { Enviroments } from '@app/domain/dto/env';
 import { plainToInstance } from 'class-transformer';
+import { LetterRepository } from './repository/letter';
+
+const repositories = [LetterRepository];
 
 @Global()
 @Module({
@@ -29,5 +32,7 @@ import { plainToInstance } from 'class-transformer';
       inject: [ConfigService],
     }),
   ],
+  providers: [...repositories],
+  exports: [...repositories],
 })
 export class DatabaseModule {}

@@ -1,11 +1,11 @@
-import { IsNotEmpty, IsOptional, IsPhoneNumber, IsString } from "class-validator"
+import { IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
 
 export class SignRequest {
-    @IsNotEmpty()
-    @IsPhoneNumber()
-    phone : string
+  @IsNotEmpty()
+  @IsPhoneNumber()
+  phone: string;
 
-    @IsNotEmpty()
-    @IsString()
-    password : string
+  @IsNotEmpty()
+  @IsString()
+  password: string;
 }
