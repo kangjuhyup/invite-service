@@ -8,7 +8,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { HttpResponse } from '../dto/response';
-import { ResponseValidationInterceptor } from 'src/interceptor/response.validation';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { GetLetterPageRequest } from './dto/request/get.page';
 import { GetLetterPageResponse } from './dto/response/get.page';
@@ -18,6 +17,7 @@ import { PrepareResponse } from './dto/response/prepare';
 import { PrepareRequest } from './dto/request/prepare';
 import { AddLetterRequest } from './dto/request/add.letter';
 import { AddLetterResponse } from './dto/response/add.letter';
+import { ResponseValidationInterceptor } from '@interceptor/response.validation';
 
 @Controller('letter')
 export class LetterController {

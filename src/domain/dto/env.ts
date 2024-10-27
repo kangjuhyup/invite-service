@@ -58,4 +58,12 @@ export class Enviroments {
   @IsNotEmpty()
   @IsString()
   DB_PWD: string;
+
+  @IsNotEmpty()
+  @IsString()
+  JWT_SECRET : string;
+
+  @IsNotEmpty()
+  @IsString()
+  JWT_EXPIRES : string;
 }

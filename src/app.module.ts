@@ -9,10 +9,16 @@ import { validateSync } from 'class-validator';
 import { StorageModule } from '@storage/storage.module';
 import { DatabaseModule } from '@database/database.module';
 import { RedisClientModule } from './redis/redis.module';
+import { AuthModule } from './domain/auth/auth.module';
+import { UserModule } from './domain/user/user.module';
 
-const routers = [LetterModule];
+export const routers = [AuthModule.forRootAsync({
+  imports : [ConfigModule],
+  useFactory : (config:ConfigService) => ({secret : config.get<string>('JWT_SECRET'), expiresIn : config.get<string>('JWT_EXPIRES')}),
+  inject : [ConfigService]
+}),UserModule,LetterModule];
 
-const modules = [
+export const modules = [
   ConfigModule.forRoot({
     isGlobal: true,
     validate: (config) => {

@@ -2,36 +2,51 @@ import { DynamicModule, Module } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { UserStrategy } from './strategy/user.strategy';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
+import { UserStrategy } from '@jwt/strategy/user.strategy';
+import { AuthService } from './auth.service';
+
+interface AuthModuleAsyncOptions {
+    imports?: any[];
+  inject?: any[];
+  useFactory: (...args: any[]) => {secret:string,expiresIn:string};
+  isGlobal?: boolean;
+}
 
 @Module({})
 export class AuthModule {
-  static forRootAsync(options: {
-    secret: string;
-    expiresIn: string;
-  }): DynamicModule {
+  static forRootAsync(options: AuthModuleAsyncOptions): DynamicModule {
     return {
       module: AuthModule,
       imports: [
         UserModule,
         PassportModule,
-        JwtModule.register({
-          secret: options.secret,
-          signOptions: {
-            expiresIn: options.expiresIn,
+        JwtModule.registerAsync({
+            imports: options.imports || [],
+          useFactory: async (...args: any[]) => {
+            const { secret, expiresIn } = options.useFactory(...args);
+            return {
+              secret,
+              signOptions: {
+                expiresIn,
+              },
+            };
           },
+          inject: options.inject,
         }),
       ],
       controllers: [AuthController],
       providers: [
         {
           provide: UserStrategy,
-          useFactory: (user: UserService) =>
-            new UserStrategy(user, options.secret),
-          inject: [UserService],
+          useFactory: (userService: UserService, ...args: any[]) => {
+            const { secret } = options.useFactory(...args);
+            return new UserStrategy(userService, secret);
+          },
+          inject: [UserService, ...(options.inject || [])],
         },
+        AuthService,
       ],
     };
   }

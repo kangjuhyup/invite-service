@@ -5,8 +5,13 @@ import { LetterDataSource } from './datasource/letter.datasource';
 import { Enviroments } from '@app/domain/dto/env';
 import { plainToInstance } from 'class-transformer';
 import { LetterRepository } from './repository/letter';
+import { UserRepository } from './repository/user';
+import { LetterEntity } from './entity/letter';
+import { UserEntity } from './entity/user';
+import { LetterAttachmentEntity } from './entity/letter.attachment';
+import { AttachmentEntity } from './entity/attachment';
 
-const repositories = [LetterRepository];
+const repositories = [LetterRepository,UserRepository];
 
 @Global()
 @Module({
@@ -31,6 +36,12 @@ const repositories = [LetterRepository];
       },
       inject: [ConfigService],
     }),
+    TypeOrmModule.forFeature([
+      UserEntity,
+      LetterEntity,
+      LetterAttachmentEntity,
+      AttachmentEntity
+    ])
   ],
   providers: [...repositories],
   exports: [...repositories],

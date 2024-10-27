@@ -7,7 +7,6 @@ import * as fs from 'fs/promises';
 export class AppService implements OnModuleInit {
   private config: Config;
   async onModuleInit() {
-    console.log('onModuleInit');
     this.config = {
       debug: false,
       progress: (key, current, total) => {

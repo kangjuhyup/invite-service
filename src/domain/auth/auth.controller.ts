@@ -16,7 +16,7 @@ import { Response } from 'express';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('signUp')
+  @Post('signup')
   async signUp(
     @Body() dto: SignRequest,
     @Res({ passthrough: true }) res: Response,
@@ -28,7 +28,7 @@ export class AuthController {
     };
   }
 
-  @Post('signIn')
+  @Post('signin')
   async signIn(
     @Body() dto: SignRequest,
     @Res({ passthrough: true }) res: Response,
@@ -40,7 +40,7 @@ export class AuthController {
     };
   }
 
-  @Post('signOut')
+  @Post('signout')
   @UseGuards(UserGuard)
   async signOut(@Req() req) {
     return {

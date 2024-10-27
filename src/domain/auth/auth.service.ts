@@ -11,7 +11,7 @@ export class AuthService {
 
   async signIn(phone: string, pwd: string) {
     const user = await this.userService.getUser(phone);
-    if (user.pwd !== pwd)
+    if (user.password !== pwd)
       throw new UnauthorizedException('잘못된 비밀번호 입니다.');
     return this._generateAccessToken(user.userId);
   }

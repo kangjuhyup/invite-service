@@ -4671,6 +4671,7 @@ __metadata:
     ts-loader: "npm:^9.4.3"
     ts-node: "npm:^10.9.1"
     tsconfig-paths: "npm:^4.2.0"
+    tsconfig-paths-jest: "npm:^0.0.1"
     typeorm: "npm:^0.3.20"
     typescript: "npm:^5.1.3"
     uuid: "npm:^10.0.0"
@@ -8065,6 +8066,13 @@ __metadata:
     ts-node-transpile-only: dist/bin-transpile.js
     ts-script: dist/bin-script-deprecated.js
   checksum: 10c0/5f29938489f96982a25ba650b64218e83a3357d76f7bede80195c65ab44ad279c8357264639b7abdd5d7e75fc269a83daa0e9c62fd8637a3def67254ecc9ddc2
+  languageName: node
+  linkType: hard
+
+"tsconfig-paths-jest@npm:^0.0.1":
+  version: 0.0.1
+  resolution: "tsconfig-paths-jest@npm:0.0.1"
+  checksum: 10c0/c245974c1a5754fea83596801ac5194b1dac692e653f13a283cd5694b8055ebe2e7067250eeb5797030f0bdf1604e3ae62afa9f0f01d70aedb2fcfcbeee61666
   languageName: node
   linkType: hard
 
