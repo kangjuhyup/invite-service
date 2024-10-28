@@ -28,14 +28,14 @@ export class LetterEntity extends DefaultEntity {
   letterId: number;
   @Column({
     name: UserColumn.userId,
-    type: 'char',
+    type: process.env.NODE_ENV === 'test' ? 'varchar' : 'char',
     nullable: false,
   })
   userId: string;
 
   @Column({
     name: LetterCategoryColumn.letterCategoryCode,
-    type: 'char',
+    type: process.env.NODE_ENV === 'test' ? 'varchar' : 'char',
     length: 5,
     nullable: false,
   })
@@ -59,7 +59,7 @@ export class LetterEntity extends DefaultEntity {
 
   @Column({
     name: LetterColumn.commentYn,
-    type: 'char',
+    type: process.env.NODE_ENV === 'test' ? 'varchar' : 'char',
     length: 1,
     nullable: false,
     default: YN.N,
@@ -68,7 +68,7 @@ export class LetterEntity extends DefaultEntity {
 
   @Column({
     name: LetterColumn.attendYn,
-    type: 'char',
+    type: process.env.NODE_ENV === 'test' ? 'varchar' : 'char',
     length: 1,
     nullable: false,
     default: YN.N,

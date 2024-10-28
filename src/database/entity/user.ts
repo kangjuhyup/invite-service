@@ -8,14 +8,14 @@ export class UserEntity extends DefaultEntity {
   @PrimaryGeneratedColumn('uuid', { name: UserColumn.userId })
   userId: string;
 
-  @Column({name:UserColumn.nickName})
-  nickName : string;
+  @Column({ name: UserColumn.nickName })
+  nickName: string;
 
-  @Column({name:UserColumn.phone})
-  phone : string;
+  @Column({ name: UserColumn.phone })
+  phone: string;
 
-  @Column({name:UserColumn.password})
-  password : string; 
+  @Column({ name: UserColumn.password })
+  password: string;
   @OneToMany(() => LetterEntity, (letter) => letter.user, { nullable: true })
   letter?: LetterEntity[];
 }

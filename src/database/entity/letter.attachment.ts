@@ -13,7 +13,7 @@ export class LetterAttachmentEntity extends DefaultEntity {
 
   @PrimaryColumn({
     name: LetterAttachmentColumn.attachmentCode,
-    type: 'char',
+    type: process.env.NODE_ENV === 'test' ? 'varchar' : 'char',
     length: 5,
   })
   attachmentCode: string;

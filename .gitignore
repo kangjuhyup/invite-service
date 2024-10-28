@@ -8,8 +8,8 @@
 dist
 
 .env
+.env.test
 
-.env.db
 db
 .vscode
 out

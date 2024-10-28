@@ -8,7 +8,7 @@ import { LetterCategoryColumn } from '@database/column/letter.category.column';
 export class LetterCategoryEntity extends DefaultEntity {
   @PrimaryColumn({
     name: LetterCategoryColumn.letterCategoryCode,
-    type: 'char',
+    type: process.env.NODE_ENV === 'test' ? 'varchar' : 'char',
     length: 5,
   })
   letterCategoryCode: LetterCategoryCode;
