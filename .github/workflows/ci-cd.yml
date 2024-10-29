@@ -54,6 +54,8 @@ jobs:
         echo "DB_USER=${{ secrets.DB_USER }}" >> .env
         echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
         echo "JWT_EXPIRES=${{ vars.JWT_EXPIRES }}" >> .env
+        echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
+        echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
     - name: docker create
       run : docker buildx create --use
 
