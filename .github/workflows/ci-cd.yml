@@ -61,9 +61,9 @@ jobs:
     - name: Display .env file content
       run: cat .env
     - name: builder push
-      run: docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/builder:latest --push .
+      run: docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile.builder -t ghcr.io/${{ github.repository }}/builder:latest --push .
     - name: builder push
-      run: docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/release:latest --push .
+      run: docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile.release -t ghcr.io/${{ github.repository }}/release:latest --push .
     - name: docker build & push
       run: docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/service:latest --push .
   
