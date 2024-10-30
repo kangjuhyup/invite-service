@@ -9,22 +9,28 @@ export class AttachmentRepository {
     private readonly attachment: Repository<AttachmentEntity>,
   ) {}
 
-  async selectAttachmentIds({
+  async selectAttachments({
     attachmentPaths,
     entityManager,
   }: Pick<SelectAttachment, 'attachmentPaths' | 'entityManager'>): Promise<
-    number[]
+    AttachmentEntity[]
   > {
     const repo = this._getRepository('attachment', entityManager);
-    return (
-      await repo
-        .createQueryBuilder()
-        .select(['attachmentId'])
-        .where({
-          attachmentPath: In(attachmentPaths),
-        })
-        .getMany()
-    ).map((att) => att.attachmentId);
+    return await repo
+      .createQueryBuilder()
+      .select()
+      .where({
+        attachmentPath: In(attachmentPaths),
+      })
+      .getMany();
+  }
+
+  async insertAttachment({
+    attachment,
+    entityManager,
+  }: Omit<InsertAttachment, 'attachments'>) {
+    const repo = this._getRepository('attachment', entityManager);
+    return await repo.insert(attachment);
   }
 
   async bulkInsertAttachments({

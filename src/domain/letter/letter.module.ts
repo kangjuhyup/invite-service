@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { LetterController } from './letter.controller';
-import { LetterService } from './letter.service';
-import { InsertLetterTrasnaction } from './transaction/insert.letter';
+import { LetterService } from './service/letter.service';
+import { InsertLetterTransaction } from './transaction/insert.letter';
+import { LetterAttachmentService } from './service/letter.attachment.service';
 
-const transactions = [
-  InsertLetterTrasnaction,
-]
+const transactions = [InsertLetterTransaction];
 
 @Module({
   controllers: [LetterController],
-  providers: [LetterService,...transactions],
+  providers: [LetterService, LetterAttachmentService, ...transactions],
 })
 export class LetterModule {}

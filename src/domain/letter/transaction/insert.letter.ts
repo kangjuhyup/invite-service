@@ -1,19 +1,29 @@
+// letterAttachment.service.ts
+
+import { AttachmentEntity } from '@database/entity/attachment';
+import { LetterAttachmentEntity } from '@database/entity/letter.attachment';
 import { AttachmentRepository } from '@database/repository/attachment';
 import { LetterRepository } from '@database/repository/letter';
 import { Attachment } from '@database/repository/param/attachment';
-import { Letter } from '@database/repository/param/letter';
+import { Letter, LetterAttachment } from '@database/repository/param/letter';
 import { BaseTransaction } from '@database/transaction.base';
 import { DataSource, EntityManager } from 'typeorm';
 
+export type AttachmentDetail = Pick<AttachmentEntity, 'attachmentPath'> &
+  Pick<
+    LetterAttachmentEntity,
+    'attachmentCode' | 'angle' | 'width' | 'height' | 'x' | 'y' | 'z'
+  >;
+
 interface Input {
   letter: Letter;
-  thumnailAttachment: Attachment;
-  backgroundAttachment: Attachment;
-  letterAttachment: Attachment;
-  componentAttachments: Array<Attachment>;
+  thumbnailAttachment: AttachmentDetail;
+  backgroundAttachment: AttachmentDetail;
+  letterAttachment: AttachmentDetail;
+  componentAttachments: Array<AttachmentDetail>;
 }
 
-export class InsertLetterTrasnaction extends BaseTransaction<Input, number> {
+export class InsertLetterTransaction extends BaseTransaction<Input, number> {
   constructor(
     private readonly ds: DataSource,
     private readonly letterRepository: LetterRepository,
@@ -25,57 +35,105 @@ export class InsertLetterTrasnaction extends BaseTransaction<Input, number> {
   protected async execute(
     {
       letter,
-      thumnailAttachment,
+      thumbnailAttachment,
       letterAttachment,
       backgroundAttachment,
       componentAttachments,
     }: Input,
     entityManager: EntityManager,
   ): Promise<number> {
+    // 1. 레터 삽입 및 letterId 획득
     const letterId = await this._insertLetter(letter, entityManager);
-    const attachmentIds = await this._insertAttachment(
-      [
-        thumnailAttachment,
-        letterAttachment,
-        backgroundAttachment,
-        ...componentAttachments,
-      ],
+
+    // 2. 첨부 파일 삽입 (병렬 처리)
+    const [
+      thumbnailId,
+      letterAttachmentId,
+      backgroundAttachmentId,
+      ...componentAttachmentIds
+    ] = await Promise.all([
+      this._insertAttachment(thumbnailAttachment, entityManager),
+      this._insertAttachment(letterAttachment, entityManager),
+      this._insertAttachment(backgroundAttachment, entityManager),
+      ...componentAttachments.map((c) =>
+        this._insertAttachment(c, entityManager),
+      ),
+    ]);
+
+    // 3. 모든 첨부 파일 정보를 결합
+    const allAttachments = [
+      { attachmentId: thumbnailId, ...thumbnailAttachment },
+      { attachmentId: letterAttachmentId, ...letterAttachment },
+      { attachmentId: backgroundAttachmentId, ...backgroundAttachment },
+      ...componentAttachmentIds.map((id, index) => ({
+        attachmentId: id,
+        ...componentAttachments[index],
+      })),
+    ];
+
+    // 4. 레터 첨부 파일 관계 삽입
+    await this._insertLetterAttachments(
+      letterId,
+      allAttachments,
       entityManager,
     );
-    await this._insertLetterAttachment(letterId, attachmentIds, entityManager);
+
     return letterId;
   }
 
+  /**
+   * 레터를 삽입하고, 삽입된 레터의 ID를 반환합니다.
+   */
   private async _insertLetter(
-    letter,
+    letter: Letter,
     entityManager: EntityManager,
   ): Promise<number> {
-    return (await this.letterRepository.insertLetter({ letter, entityManager }))
-      .identifiers[0].id;
+    const result = await this.letterRepository.insertLetter({
+      letter,
+      entityManager,
+    });
+    return result.identifiers[0].id;
   }
+
   private async _insertAttachment(
-    attachments,
+    attachmentDetail: AttachmentDetail,
     entityManager: EntityManager,
-  ): Promise<number[]> {
-    await this.attachmentRepository.bulkInsertAttachments({
-      attachments,
+  ): Promise<number> {
+    const attachment: Attachment = {
+      attachmentPath: attachmentDetail.attachmentPath,
+    };
+
+    const result = await this.attachmentRepository.insertAttachment({
+      attachment,
       entityManager,
     });
-    return await this.attachmentRepository.selectAttachmentIds({
-      attachmentPaths: attachments.map((att) => att.attachmentPath),
-      entityManager,
-    });
+
+    return result.identifiers[0].id;
   }
-  private async _insertLetterAttachment(
+
+  private async _insertLetterAttachments(
     letterId: number,
-    attachmentIds: number[],
+    attachments: Array<
+      AttachmentDetail & {
+        attachmentId: number;
+      }
+    >,
     entityManager: EntityManager,
-  ) {
-    return await this.letterRepository.insertLetterAttachment({
-      letterAttachments: attachmentIds.map((a) => ({
-        letterId,
-        attachmentId: a,
-      })),
+  ): Promise<void> {
+    const letterAttachments: LetterAttachment[] = attachments.map((a) => ({
+      letterId,
+      attachmentId: a.attachmentId,
+      attachmentCode: a.attachmentCode,
+      angle: a.angle,
+      width: a.width,
+      height: a.height,
+      x: a.x,
+      y: a.y,
+      z: a.z,
+    }));
+
+    await this.letterRepository.insertLetterAttachment({
+      letterAttachments,
       entityManager,
     });
   }

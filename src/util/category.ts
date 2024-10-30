@@ -21,3 +21,31 @@ export const LetterCategoryCode = {
 
 export type LetterCategoryCode =
   (typeof LetterCategoryCode)[keyof typeof LetterCategoryCode];
+
+const categoryToCodeMap: Record<LetterCategory, LetterCategoryCode> = {
+  [LetterCategory.WEDDING]: LetterCategoryCode.WEDDING,
+  [LetterCategory.BIRTHDAY]: LetterCategoryCode.BIRTHDAY,
+  [LetterCategory.ANNIVERSARY]: LetterCategoryCode.ANNIVERSARY,
+  [LetterCategory.PARTY]: LetterCategoryCode.PARTY,
+  [LetterCategory.GRADUATION]: LetterCategoryCode.GRADUATION,
+  [LetterCategory.CORPORATE]: LetterCategoryCode.CORPORATE,
+};
+
+const codeToCategoryMap: Record<LetterCategoryCode, LetterCategory> = {
+  [LetterCategoryCode.WEDDING]: LetterCategory.WEDDING,
+  [LetterCategoryCode.BIRTHDAY]: LetterCategory.BIRTHDAY,
+  [LetterCategoryCode.ANNIVERSARY]: LetterCategory.ANNIVERSARY,
+  [LetterCategoryCode.PARTY]: LetterCategory.PARTY,
+  [LetterCategoryCode.GRADUATION]: LetterCategory.GRADUATION,
+  [LetterCategoryCode.CORPORATE]: LetterCategory.CORPORATE,
+};
+
+export function getCategoryFromCode(code: LetterCategoryCode): LetterCategory {
+  return codeToCategoryMap[code];
+}
+
+export function getCodeFromCategory(
+  category: LetterCategory,
+): LetterCategoryCode {
+  return categoryToCodeMap[category];
+}

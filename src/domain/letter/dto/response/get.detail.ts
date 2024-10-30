@@ -75,6 +75,22 @@ class Image {
   @IsNotEmpty()
   @IsNumber()
   y: number;
+
+  @ApiProperty({
+    description: '이미지의 Z 레이어',
+    example: 0,
+  })
+  @IsOptional()
+  @IsNumber()
+  z: number;
+
+  @ApiProperty({
+    description: '이미지의 기울기',
+    example: 90,
+  })
+  @IsOptional()
+  @IsNumber()
+  ang: number;
 }
 
 class Text {
@@ -112,6 +128,14 @@ class Text {
 }
 
 export class GetLetterDetailResponse {
+  @IsNotEmpty()
+  @IsString()
+  title: string;
+
+  @IsOptional()
+  @IsString()
+  body?: string;
+
   @ApiProperty({
     description: '배경 이미지 정보',
     type: Background,
@@ -129,7 +153,7 @@ export class GetLetterDetailResponse {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Image)
-  image?: Image[];
+  components?: Image[];
 
   @ApiPropertyOptional({
     description: '텍스트 정보 배열',
