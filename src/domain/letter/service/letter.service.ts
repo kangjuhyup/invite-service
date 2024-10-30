@@ -47,7 +47,7 @@ export class LetterService extends LetterBaseService {
         return {
           id: letter.letterId,
           title: letter.title,
-          category: getCategoryFromCode(letter.letterCategoryCode),
+          category: letter.letterCategoryCode,
           thumbnail: letter.letterAttachment[0]?.attachment.attachmentPath,
         };
       }),

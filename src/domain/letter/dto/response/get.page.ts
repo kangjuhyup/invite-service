@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { LetterCategory } from '@util/category';
+import { LetterCategory, LetterCategoryCode } from '@util/category';
 import { Type } from 'class-transformer';
 import {
   IsArray,
@@ -30,12 +30,12 @@ class LetterPageItem {
 
   @ApiProperty({
     description: '카테고리',
-    example: LetterCategory.ANNIVERSARY,
-    enum: Object.values(LetterCategory),
+    example: LetterCategoryCode.ANNIVERSARY,
+    enum: Object.values(LetterCategoryCode),
   })
   @IsNotEmpty()
-  @IsIn(Object.values(LetterCategory))
-  category: LetterCategory;
+  @IsIn(Object.values(LetterCategoryCode))
+  category: LetterCategoryCode;
 
   @ApiProperty({
     description: '썸네일 이미지 경로',
