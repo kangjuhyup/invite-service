@@ -39,7 +39,7 @@ jobs:
         echo "NODE_ENV=${{ vars.NODE_ENV }}" >> .env
         echo "PORT=${{ vars.PORT }}" >> .env
         echo "WASABI_ACCESS_KEY=${{ secrets.WASABI_ACCESS_KEY }}" >> .env
-        echo "WASABI_SECRET_KEY=${{ secrets.WASABI_SECRET_KEY }}" >> .env
+        echo "WASABI_SIGN_KEY=${{ secrets.WASABI_SIGN_KEY }}" >> .env
         echo "WASABI_REGION=${{ vars.WASABI_REGION }}" >> .env
         echo "WASABI_ENDPOINT=${{ vars.WASABI_ENDPOINT }}" >> .env
         echo "THUMB_BUCKET=${{ vars.THUMB_BUCKET }}" >> .env
@@ -60,10 +60,6 @@ jobs:
 
     - name: Display .env file content
       run: cat .env
-    - name: builder push
-      run: docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile.builder -t ghcr.io/${{ github.repository }}/builder:latest --push .
-    - name: builder push
-      run: docker buildx build --platform linux/amd64,linux/arm64 -f Dockerfile.release -t ghcr.io/${{ github.repository }}/release:latest --push .
     - name: docker build & push
       run: docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/service:latest --push .
   
