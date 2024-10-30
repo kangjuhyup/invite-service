@@ -39,7 +39,7 @@ jobs:
         echo "NODE_ENV=${{ vars.NODE_ENV }}" >> .env
         echo "PORT=${{ vars.PORT }}" >> .env
         echo "WASABI_ACCESS_KEY=${{ secrets.WASABI_ACCESS_KEY }}" >> .env
-        echo "WASABI_SECRET_KEY"=${{ secrets.WASABI_SECRET_KEY }}" >> .env
+        echo "WASABI_SECRET_KEY=${{ secrets.WASABI_SECRET_KEY }}" >> .env
         echo "WASABI_SIGN_KEY=${{ secrets.WASABI_SIGN_KEY }}" >> .env
         echo "WASABI_REGION=${{ vars.WASABI_REGION }}" >> .env
         echo "WASABI_ENDPOINT=${{ vars.WASABI_ENDPOINT }}" >> .env
