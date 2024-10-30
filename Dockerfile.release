@@ -1,0 +1,7 @@
+FROM node:20-bullseye-slim AS production
+RUN apt-get update && apt-get install -y \
+    libvips-dev \
+    libc6-dev
+
+# Yarn 버전 설정
+RUN yarn set version 4.5.0
