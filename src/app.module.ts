@@ -12,11 +12,18 @@ import { RedisClientModule } from './redis/redis.module';
 import { AuthModule } from './domain/auth/auth.module';
 import { UserModule } from './domain/user/user.module';
 
-export const routers = [AuthModule.forRootAsync({
-  imports : [ConfigModule],
-  useFactory : (config:ConfigService) => ({secret : config.get<string>('JWT_SECRET'), expiresIn : config.get<string>('JWT_EXPIRES')}),
-  inject : [ConfigService]
-}),UserModule,LetterModule];
+export const routers = [
+  AuthModule.forRootAsync({
+    imports: [ConfigModule],
+    useFactory: (config: ConfigService) => ({
+      secret: config.get<string>('JWT_SECRET'),
+      expiresIn: config.get<string>('JWT_EXPIRES'),
+    }),
+    inject: [ConfigService],
+  }),
+  UserModule,
+  LetterModule,
+];
 
 export const modules = [
   ConfigModule.forRoot({
@@ -29,6 +36,7 @@ export const modules = [
       if (errors.length > 0) {
         throw new Error(errors.toString());
       }
+      console.log(validatedConfig);
       return validatedConfig;
     },
   }),
