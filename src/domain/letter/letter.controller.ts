@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { HttpResponse } from '../dto/response';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { GetLetterPageRequest } from './dto/request/get.page';
 import { GetLetterPageResponse } from './dto/response/get.page';
 import { LetterService } from './service/letter.service';
@@ -33,6 +33,7 @@ export class LetterController {
     description: '성공',
     type: GetLetterPageResponse,
   })
+  @ApiBearerAuth()
   @Get()
   @UseGuards(UserGuard)
   @UseInterceptors(new ResponseValidationInterceptor(GetLetterPageResponse))
@@ -51,6 +52,7 @@ export class LetterController {
     description:
       '반환된 URL을 통해 업로드할 때 헤더를 첨부해야 한다.\n필수:[x-amx-sessionKey:세션키,x-amx-width:파일의 가로크기,x-amx-height:파일의 세로크기]\n선택(Component 업로드 시):[x-amx-x:파일의 x 좌표,x-amx-y:파일의 y 좌표,x-amx-z:파일의 인덱스,x-amx-angle:파일의 기울기]',
   })
+  @ApiBearerAuth()
   @ApiOkResponse({
     status: 200,
     description: '성공',
@@ -75,6 +77,7 @@ export class LetterController {
     description: '성공',
     type: AddLetterResponse,
   })
+  @ApiBearerAuth()
   @Post()
   @UseGuards(UserGuard)
   @UseInterceptors(new ResponseValidationInterceptor(AddLetterResponse))
