@@ -165,7 +165,7 @@ describe('LetterService', () => {
         3 + 2,
       );
       expect(redisService.set).toHaveBeenCalledWith(
-        'LetterService:add-1',
+        'LetterService:add-mock',
         {
           sessionKey: expect.any(String),
           objectKey: expect.any(String),
@@ -307,7 +307,7 @@ describe('LetterService', () => {
         user,
       );
 
-      expect(redisService.get).toHaveBeenCalledWith('LetterService:add-1');
+      expect(redisService.get).toHaveBeenCalledWith('LetterService:add-mock');
       expect(
         letterAttachmentService.validateSessionAndRetrieveMetadata,
       ).toHaveBeenCalledWith(
@@ -324,7 +324,7 @@ describe('LetterService', () => {
           commentYn: 'Y',
           attendYn: 'N',
         },
-        thumnailAttachment: mockThumbnailDetail,
+        thumbnailAttachment: mockThumbnailDetail,
         backgroundAttachment: mockBackgroundDetail,
         letterAttachment: mockLetterDetail,
         componentAttachments: mockComponentDetails,
@@ -347,7 +347,7 @@ describe('LetterService', () => {
       await expect(service.addLetter(request, user)).rejects.toThrow(
         BadRequestException,
       );
-      expect(redisService.get).toHaveBeenCalledWith('LetterService:add-1');
+      expect(redisService.get).toHaveBeenCalledWith('LetterService:add-mock');
     });
   });
 });
