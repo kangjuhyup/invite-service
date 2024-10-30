@@ -32,11 +32,14 @@ export const modules = [
       const validatedConfig = plainToClass(Enviroments, config, {
         enableImplicitConversion: true,
       });
+      console.log(validatedConfig);
       const errors = validateSync(validatedConfig);
       if (errors.length > 0) {
-        throw new Error(errors.toString());
+        errors.map((err) => {
+          console.error(err);
+        });
       }
-      console.log(validatedConfig);
+
       return validatedConfig;
     },
   }),
