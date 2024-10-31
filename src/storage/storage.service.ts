@@ -1,18 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as AWS from 'aws-sdk';
+import {
+  S3Client,
+  HeadObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 @Injectable()
 export class StorageService {
-  private s3: AWS.S3;
+  private s3Client: S3Client;
 
   constructor(private readonly configService: ConfigService) {
-    this.s3 = new AWS.S3({
-      accessKeyId: this.configService.get<string>('WASABI_ACCESS_KEY'),
-      secretAccessKey: this.configService.get<string>('WASABI_SECRET_KEY'),
+    this.s3Client = new S3Client({
+      credentials: {
+        accessKeyId: this.configService.get<string>('WASABI_ACCESS_KEY'),
+        secretAccessKey: this.configService.get<string>('WASABI_SECRET_KEY'),
+      },
       region: this.configService.get<string>('WASABI_REGION'),
       endpoint: this.configService.get<string>('WASABI_ENDPOINT'),
-      s3ForcePathStyle: true,
+      forcePathStyle: true,
     });
   }
 
@@ -21,14 +30,14 @@ export class StorageService {
     key: string;
     expires: number;
   }): Promise<string> {
-    const params = {
+    const command = new PutObjectCommand({
       Bucket: param.bucket,
       Key: param.key,
-      Expires: param.expires,
       ContentType: 'application/octet-stream',
-    };
-
-    return await this.s3.getSignedUrlPromise('putObject', params);
+    });
+    return await getSignedUrl(this.s3Client, command, {
+      expiresIn: param.expires,
+    });
   }
 
   async generateDownloadPresignedUrl(param: {
@@ -36,51 +45,45 @@ export class StorageService {
     key: string;
     expires: number;
   }): Promise<string> {
-    const params = {
+    const command = new GetObjectCommand({
       Bucket: param.bucket,
       Key: param.key,
-      Expires: param.expires,
-    };
-
-    return await this.s3.getSignedUrlPromise('getObject', params);
+    });
+    return await getSignedUrl(this.s3Client, command, {
+      expiresIn: param.expires,
+    });
   }
 
   async getObjectMetadata(param: {
     bucket: string;
     key: string;
-  }): Promise<AWS.S3.HeadObjectOutput> {
-    const params = {
+  }): Promise<any> {
+    const command = new HeadObjectCommand({
       Bucket: param.bucket,
       Key: param.key,
-    };
-
-    const metadata = await this.s3
-      .headObject(params)
-      .promise()
-      .catch((err) => {
-        if (err.statusCode == 404) {
-          return undefined;
-        }
-        throw err;
-      });
-    return metadata;
+    });
+    try {
+      const metadata = await this.s3Client.send(command);
+      return metadata;
+    } catch (err: any) {
+      if (err.name === 'NotFound') {
+        return undefined;
+      }
+      throw err;
+    }
   }
 
   async deleteObject(param: { bucket: string; key: string }): Promise<void> {
-    const params = {
+    const command = new DeleteObjectCommand({
       Bucket: param.bucket,
       Key: param.key,
-    };
-
-    await this.s3
-      .deleteObject(params)
-      .promise()
-      .catch((err) => {
-        if (err.statusCode === 404) {
-          console.log('Object not found, nothing to delete.');
-          return;
-        }
+    });
+    try {
+      await this.s3Client.send(command);
+    } catch (err: any) {
+      if (err.name !== 'NotFound') {
         throw err;
-      });
+      }
+    }
   }
 }
