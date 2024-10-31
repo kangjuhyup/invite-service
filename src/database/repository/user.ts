@@ -11,6 +11,15 @@ export class UserRepository {
     @InjectRepository(UserEntity) private readonly user: Repository<UserEntity>,
   ) {}
 
+  async selectUserFromId({ userId, entityManager }: Omit<SelectUser, 'phone'>) {
+    const repo = this._getRepository('user', entityManager);
+    return await repo.findOne({
+      where: {
+        userId,
+        useYn: YN.Y,
+      },
+    });
+  }
   async selectUserFromPhone({
     phone,
     entityManager,

@@ -1,6 +1,7 @@
 import {
   ExecutionContext,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -9,6 +10,7 @@ import { Request } from 'express';
 
 @Injectable()
 export class UserGuard extends AuthGuard('jwt') {
+  private logger = new Logger(UserGuard.name);
   constructor(private readonly jwtService: JwtService) {
     super();
   }
@@ -24,13 +26,6 @@ export class UserGuard extends AuthGuard('jwt') {
 
     if (!token) {
       throw new UnauthorizedException('토큰이 없습니다.');
-    }
-
-    try {
-      const payload = await this.jwtService.verifyAsync(token);
-      request.user = payload;
-    } catch (error) {
-      throw new UnauthorizedException('토큰 검증 실패');
     }
 
     return true;

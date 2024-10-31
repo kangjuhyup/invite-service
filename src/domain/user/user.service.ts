@@ -6,8 +6,16 @@ import { randomString } from '@util/random';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async getUser(phone: string): Promise<UserEntity> {
-    const user = await this.userRepository.selectUserFromPhone({ phone });
+  async getUser(param: {
+    phone?: string;
+    userId?: string;
+  }): Promise<UserEntity> {
+    const { phone, userId } = param;
+    const user = phone
+      ? await this.userRepository.selectUserFromPhone({ phone })
+      : userId
+        ? await this.userRepository.selectUserFromId({ userId })
+        : undefined;
     if (!user) throw new UnauthorizedException('존재하지 않는 회원입니다.');
     return user;
   }
@@ -18,6 +26,6 @@ export class UserService {
       creator: UserService.name,
     });
 
-    return await this.getUser(phone);
+    return await this.getUser({ phone });
   }
 }

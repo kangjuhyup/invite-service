@@ -11,11 +11,15 @@ import { SignRequest } from './dto/sign';
 import { AuthService } from './auth.service';
 import { UserGuard } from '@app/jwt/guard/user.guard';
 import { Response } from 'express';
+import { ApiOperation, ApiProperty } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({
+    summary: '회원가입',
+  })
   @Post('signup')
   async signUp(
     @Body() dto: SignRequest,
@@ -28,6 +32,9 @@ export class AuthController {
     };
   }
 
+  @ApiOperation({
+    summary: '로그인',
+  })
   @Post('signin')
   async signIn(
     @Body() dto: SignRequest,
@@ -40,6 +47,9 @@ export class AuthController {
     };
   }
 
+  @ApiOperation({
+    summary: '로그아웃',
+  })
   @Post('signout')
   @UseGuards(UserGuard)
   async signOut(@Req() req) {
@@ -48,6 +58,9 @@ export class AuthController {
     };
   }
 
+  @ApiOperation({
+    summary: '회원탈퇴',
+  })
   @Delete('account')
   @UseGuards(UserGuard)
   async deleteAccount(@Body() dto: SignRequest) {
