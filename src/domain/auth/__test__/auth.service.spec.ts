@@ -55,7 +55,9 @@ describe('AuthService', () => {
 
       const result = await authService.signIn('01012341234', 'password123');
       expect(result).toEqual({ access: mockToken });
-      expect(userService.getUser).toHaveBeenCalledWith('01012341234');
+      expect(userService.getUser).toHaveBeenCalledWith({
+        phone: '01012341234',
+      });
       expect(jwtService.sign).toHaveBeenCalledWith({ id: mockUser.userId });
     });
 

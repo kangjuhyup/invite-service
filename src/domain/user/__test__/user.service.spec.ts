@@ -47,7 +47,7 @@ describe('UserService', () => {
         .spyOn(userRepository, 'selectUserFromPhone')
         .mockResolvedValue(mockUser);
 
-      const result = await userService.getUser('01012341234');
+      const result = await userService.getUser({ phone: '01012341234' });
       expect(result).toEqual(mockUser);
       expect(userRepository.selectUserFromPhone).toHaveBeenCalledWith({
         phone: '01012341234',
@@ -59,9 +59,9 @@ describe('UserService', () => {
         .spyOn(userRepository, 'selectUserFromPhone')
         .mockResolvedValue(undefined);
 
-      await expect(userService.getUser('01012341234')).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(
+        userService.getUser({ phone: '01012341234' }),
+      ).rejects.toThrow(UnauthorizedException);
       expect(userRepository.selectUserFromPhone).toHaveBeenCalledWith({
         phone: '01012341234',
       });

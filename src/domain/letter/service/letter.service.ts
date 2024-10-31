@@ -1,5 +1,5 @@
 import { StorageService } from '@storage/storage.service';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { PrepareRequest } from '../dto/request/prepare';
 import { PrepareResponse } from '../dto/response/prepare';
@@ -13,7 +13,6 @@ import { booleanToYN } from '@util/yn';
 import { GetLetterPageRequest } from '../dto/request/get.page';
 import { GetLetterPageResponse } from '../dto/response/get.page';
 import { LetterRepository } from '@database/repository/letter';
-import { getCategoryFromCode } from '@util/category';
 import { LetterAttachmentCode } from '@util/attachment';
 import { GetLetterDetailRequest } from '../dto/request/get.detail';
 import { GetLetterDetailResponse } from '../dto/response/get.detail';
@@ -22,6 +21,7 @@ import { LetterAttachmentService } from './letter.attachment.service';
 
 @Injectable()
 export class LetterService extends LetterBaseService {
+  private logger = new Logger(LetterService.name);
   constructor(
     private readonly storage: StorageService,
     private readonly redis: RedisClientService,

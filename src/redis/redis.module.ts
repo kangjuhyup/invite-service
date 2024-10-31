@@ -18,7 +18,6 @@ export class RedisClientModule {
     const redisProvider: Provider = {
       provide: REDIS_CLIENT,
       useFactory: async (...args: any[]) => {
-        console.log(...args);
         const redisOptions = await options.useFactory(...args);
         return new Redis(redisOptions); // Redis 인스턴스 생성
       },

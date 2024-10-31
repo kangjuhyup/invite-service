@@ -24,7 +24,7 @@ export class LetterAttachmentService extends LetterBaseService {
     componentCount: number,
   ) {
     const metadata = await this.getMetadata(objectKey, componentCount);
-
+    console.log(JSON.stringify(metadata));
     if (
       metadata.thumbnailMeta['x-amz-session-key'] !== sessionKey ||
       metadata.letterMeta['x-amz-session-key'] !== sessionKey ||
