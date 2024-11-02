@@ -90,6 +90,7 @@ export class LetterRepository {
   }
 
   async insertLetter({ letter, entityManager }: InsertLetter) {
+    console.log('insertLetter');
     const repo = this._getRepository('letter', entityManager);
     return await repo.insert(letter);
   }

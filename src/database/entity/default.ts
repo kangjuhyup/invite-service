@@ -11,13 +11,13 @@ export class DefaultEntity {
   })
   useYn: YN;
 
-  @Column({ name: DefaultColumn.creator, type: 'varchar', length: 20 })
+  @Column({ name: DefaultColumn.creator, type: 'varchar', length: 255 })
   creator: string;
 
   @CreateDateColumn({ name: DefaultColumn.createdAt, type: 'datetime' })
   createdAt: Date;
 
-  @Column({ name: DefaultColumn.updator, type: 'varchar', length: 20 })
+  @Column({ name: DefaultColumn.updator, type: 'varchar', length: 255 })
   updator: string;
 
   @UpdateDateColumn({ name: DefaultColumn.updatedAt, type: 'datetime' })

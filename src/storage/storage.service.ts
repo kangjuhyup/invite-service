@@ -29,11 +29,17 @@ export class StorageService {
     bucket: string;
     key: string;
     expires: number;
+    meta?: any;
   }): Promise<string> {
     const command = new PutObjectCommand({
       Bucket: param.bucket,
       Key: param.key,
       ContentType: 'application/octet-stream',
+      Metadata: {
+        session: param.meta.session,
+        width: '100',
+        height: '100',
+      },
     });
     return await getSignedUrl(this.s3Client, command, {
       expiresIn: param.expires,

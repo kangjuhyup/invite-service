@@ -10,8 +10,9 @@ import { LetterEntity } from './entity/letter';
 import { UserEntity } from './entity/user';
 import { LetterAttachmentEntity } from './entity/letter.attachment';
 import { AttachmentEntity } from './entity/attachment';
+import { AttachmentRepository } from './repository/attachment';
 
-const repositories = [LetterRepository,UserRepository];
+const repositories = [LetterRepository, AttachmentRepository, UserRepository];
 
 @Global()
 @Module({
@@ -40,8 +41,8 @@ const repositories = [LetterRepository,UserRepository];
       UserEntity,
       LetterEntity,
       LetterAttachmentEntity,
-      AttachmentEntity
-    ])
+      AttachmentEntity,
+    ]),
   ],
   providers: [...repositories],
   exports: [...repositories],

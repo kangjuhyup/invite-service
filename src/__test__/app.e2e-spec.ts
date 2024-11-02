@@ -7,6 +7,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import axios from 'axios';
 import { AddLetterRequest } from '@app/domain/letter/dto/request/add.letter';
+import { PrepareRequest } from '@app/domain/letter/dto/request/prepare';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -121,8 +122,33 @@ describe('AppController (e2e)', () => {
       });
       it('[GET] /letter/prepare-add (User O )', () => {
         const componentCount = 5;
+        const query = {
+          thumbnailMeta: JSON.stringify({
+            width: 200,
+            height: 100,
+          }),
+          letterMeta: JSON.stringify({
+            width: 400,
+            height: 800,
+          }),
+          backgroundMeta: JSON.stringify({
+            width: 400,
+            height: 800,
+          }),
+          componentMetas: JSON.stringify(
+            Array.from({ length: componentCount }, (_, index) => ({
+              width: 100,
+              height: 50,
+              x: 100,
+              y: 100,
+              z: index, // Ensure each component has a unique z-index
+              angle: 0,
+            })),
+          ),
+        };
         return request(app.getHttpServer())
-          .get(`/letter/prepare-add?componentCount=${componentCount}`)
+          .get(`/letter/prepare-add`)
+          .query(query)
           .set('Authorization', token)
           .expect(200)
           .expect((res) => {
@@ -148,21 +174,30 @@ describe('AppController (e2e)', () => {
       });
       it('Presigned URL을 사용하여 파일 업로드', async () => {
         const filePath = path.join(__dirname, 'files', 'profile.jpeg');
-
         for (const url of presignedUrls) {
           const fileStream = fs.createReadStream(filePath); // 각 요청마다 새로운 스트림 생성
+          const { size } = fs.statSync(filePath);
+          const headers = {
+            'Content-Type': 'image/jpeg',
+            'Content-Length': size,
+          };
           try {
+            const parsedUrl = new URL(url);
+
+            for (const [key, value] of parsedUrl.searchParams.entries()) {
+              if (key.startsWith('x-amz-meta-')) {
+                headers[key] = value;
+              }
+            }
             const result = await axios.put(url, fileStream, {
-              headers: {
-                'Content-Type': 'image/jpeg',
-                'x-amx-meta-session': sessionKey,
-                // 'x-amx-meta-width': '100',
-                // 'x-amx-meta-height': '100',
-              },
+              headers,
             });
             expect(result.status).toBe(200);
           } catch (error) {
-            console.error(`Failed to upload to ${url}:`, error.message);
+            console.error(
+              `Failed to upload to url : ${url} headers : ${JSON.stringify(headers)} error : `,
+              error.message,
+            );
           }
         }
       });
@@ -180,7 +215,7 @@ describe('AppController (e2e)', () => {
             expect(response.body.data.letterId).toBeDefined();
           })
           .catch((err) => {
-            console.error(`[POST] /letter Error => `, err);
+            console.error(`[POST] /letter Error => `, err.message);
             throw err;
           });
       });

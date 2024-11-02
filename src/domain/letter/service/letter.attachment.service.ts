@@ -24,12 +24,11 @@ export class LetterAttachmentService extends LetterBaseService {
     componentCount: number,
   ) {
     const metadata = await this.getMetadata(objectKey, componentCount);
-    console.log(JSON.stringify(metadata));
     if (
-      metadata.thumbnailMeta['x-amz-session-key'] !== sessionKey ||
-      metadata.letterMeta['x-amz-session-key'] !== sessionKey ||
-      metadata.backgroundMeta['x-amz-session-key'] !== sessionKey ||
-      metadata.componentMetas.some((c) => c['x-amz-session-key'] !== sessionKey)
+      metadata.thumbnailMeta.Metadata.session !== sessionKey ||
+      metadata.letterMeta.Metadata.session !== sessionKey ||
+      metadata.backgroundMeta.Metadata.session !== sessionKey ||
+      metadata.componentMetas.some((c) => c.Metadata.session !== sessionKey)
     ) {
       this.deleteInvalidObjects(metadata, objectKey);
       throw new UnauthorizedException('세션키가 일치하지 않습니다.');
@@ -109,7 +108,8 @@ export class LetterAttachmentService extends LetterBaseService {
     code: LetterAttachmentCode,
     objectKey: string,
   ): AttachmentDetail {
-    if (!meta['x-amx-width'] || !meta['x-amx-height']) {
+    console.log(JSON.stringify(meta));
+    if (!meta.Metadata.width || !meta.Metadata.height) {
       this.storage.deleteObject({
         bucket,
         key: objectKey,
@@ -120,13 +120,14 @@ export class LetterAttachmentService extends LetterBaseService {
     const detail: AttachmentDetail = {
       attachmentPath: `${bucket}/${objectKey}`,
       attachmentCode: code,
-      width: Number(meta['x-amx-width']),
-      height: Number(meta['x-amx-height']),
-      x: Number(meta['x-amx-x']) || 0,
-      y: Number(meta['x-amx-y']) || 0,
-      z: Number(meta['x-amx-z']) || 0,
-      angle: Number(meta['x-amx-angle']) || 0,
+      width: Number(meta.Metadata.width),
+      height: Number(meta.Metadata.height),
+      x: Number(meta.Metadata.x) || 0,
+      y: Number(meta.Metadata.y) || 0,
+      z: Number(meta.Metadata.z) || 0,
+      angle: Number(meta.Metadata.angle) || 0,
     };
+    console.log('createAttachmentDetail 성공');
     return detail;
   }
 }

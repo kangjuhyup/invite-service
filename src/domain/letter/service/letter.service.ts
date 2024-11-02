@@ -87,42 +87,55 @@ export class LetterService extends LetterBaseService {
   }
 
   async prepareAddLetter(
-    { componentCount }: PrepareRequest,
+    {
+      thumbnailMeta,
+      backgroundMeta,
+      letterMeta,
+      componentMetas,
+    }: PrepareRequest,
     user: User,
   ): Promise<PrepareResponse> {
     const uuid = uuidv4();
+    const sessionKey = randomString(5);
     const thumbnailUrl = await this.storage.generateUploadPresignedUrl({
       bucket: this.thumbnailBucket,
       key: uuid,
       expires: this.urlExpires,
+      meta: {
+        session: sessionKey,
+        ...thumbnailMeta,
+      },
     });
     const letterUrl = await this.storage.generateUploadPresignedUrl({
       bucket: this.letterBucket,
       key: uuid,
       expires: this.urlExpires,
+      meta: { session: sessionKey, ...letterMeta },
     });
     const backgroundUrl = await this.storage.generateUploadPresignedUrl({
       bucket: this.backGroundBucket,
       key: uuid,
       expires: this.urlExpires,
+      meta: { session: sessionKey, ...backgroundMeta },
     });
     const componentUrls = [];
-    for (let i = 0; i < componentCount; i++) {
+    componentMetas.forEach(async (componentMeta, i) => {
       componentUrls.push(
         await this.storage.generateUploadPresignedUrl({
           bucket: this.componentBucket,
           key: uuid + '-' + i,
           expires: this.urlExpires,
+          meta: { session: sessionKey, ...componentMeta },
         }),
       );
-    }
-    const sessionKey = randomString(5);
+    });
+
     await this.redis.set(
       this.redis.generateKey(LetterService.name, `add-${user.id}`),
       {
         sessionKey: sessionKey,
         objectKey: uuid,
-        componentCount,
+        componentCount: componentMetas.length,
       },
       70,
     );
@@ -140,6 +153,7 @@ export class LetterService extends LetterBaseService {
     { category, title, body, commentYn, attendYn }: AddLetterRequest,
     user: User,
   ): Promise<AddLetterResponse> {
+    this.logger.debug(`addLetter start`);
     //1. 세션키 획득
     const session = await this.redis.get<{
       sessionKey: string;
@@ -147,6 +161,7 @@ export class LetterService extends LetterBaseService {
       componentCount: number;
     }>(this.redis.generateKey(LetterService.name, `add-${user.id}`));
     if (!session) throw new BadRequestException('필수 요청이 누락되었습니다.');
+    console.log(`세션키 획득 성공`);
     //2. 메타데이터 조회
     const { sessionKey, objectKey, componentCount } = session;
     const { thumbnailMeta, letterMeta, backgroundMeta, componentMetas } =
@@ -155,47 +170,47 @@ export class LetterService extends LetterBaseService {
         objectKey,
         componentCount,
       );
-
+    console.log(`메타데이터 조회 성공`);
     //3. 데이터 저장
+    const letterId = await this.insertLetterTransaction.run({
+      letter: {
+        userId: user.id,
+        letterCategoryCode: category,
+        body,
+        title,
+        commentYn: booleanToYN(commentYn),
+        attendYn: booleanToYN(attendYn),
+      },
+      thumbnailAttachment: this.letterAttachmentService.createAttachmentDetail(
+        thumbnailMeta,
+        this.thumbnailBucket,
+        LetterAttachmentCode.THUMBNAIL,
+        objectKey,
+      ),
+      backgroundAttachment: this.letterAttachmentService.createAttachmentDetail(
+        backgroundMeta,
+        this.backGroundBucket,
+        LetterAttachmentCode.BACKGROUND,
+        objectKey,
+      ),
+      letterAttachment: this.letterAttachmentService.createAttachmentDetail(
+        letterMeta,
+        this.letterBucket,
+        LetterAttachmentCode.LETTER,
+        objectKey,
+      ),
+      componentAttachments: componentMetas.map((component, idx) =>
+        this.letterAttachmentService.createAttachmentDetail(
+          component,
+          this.componentBucket,
+          LetterAttachmentCode.COMPONENT,
+          `${objectKey}-${idx}`,
+        ),
+      ),
+    });
+    console.log(letterId);
     return {
-      letterId: await this.insertLetterTransaction.run({
-        letter: {
-          userId: user.id,
-          letterCategoryCode: category,
-          body,
-          title,
-          commentYn: booleanToYN(commentYn),
-          attendYn: booleanToYN(attendYn),
-        },
-        thumbnailAttachment:
-          this.letterAttachmentService.createAttachmentDetail(
-            thumbnailMeta,
-            this.thumbnailBucket,
-            LetterAttachmentCode.THUMBNAIL,
-            objectKey,
-          ),
-        backgroundAttachment:
-          this.letterAttachmentService.createAttachmentDetail(
-            backgroundMeta,
-            this.backGroundBucket,
-            LetterAttachmentCode.BACKGROUND,
-            objectKey,
-          ),
-        letterAttachment: this.letterAttachmentService.createAttachmentDetail(
-          letterMeta,
-          this.letterBucket,
-          LetterAttachmentCode.LETTER,
-          objectKey,
-        ),
-        componentAttachments: componentMetas.map((component, idx) =>
-          this.letterAttachmentService.createAttachmentDetail(
-            component,
-            this.componentBucket,
-            LetterAttachmentCode.COMPONENT,
-            `${objectKey}-${idx}`,
-          ),
-        ),
-      }),
+      letterId,
     };
   }
 }

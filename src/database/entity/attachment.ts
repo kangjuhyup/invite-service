@@ -1,13 +1,21 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DefaultEntity } from './default';
 import { LetterAttachmentEntity } from './letter.attachment';
+import { AttachmentColumn } from '@database/column/attachment.column';
 
-@Entity()
+@Entity({
+  name: AttachmentColumn.table,
+})
 export class AttachmentEntity extends DefaultEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: AttachmentColumn.attachmentId })
   attachmentId: number;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({
+    name: AttachmentColumn.attachmentPath,
+    type: 'varchar',
+    length: 255,
+    nullable: false,
+  })
   attachmentPath: string;
 
   @OneToMany(

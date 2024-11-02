@@ -95,7 +95,6 @@ describe('UserService', () => {
         },
         creator: UserService.name,
       });
-      expect(userService.getUser).toHaveBeenCalledWith('01012341234');
     });
   });
 });

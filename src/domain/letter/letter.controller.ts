@@ -15,13 +15,14 @@ import { GetLetterPageRequest } from './dto/request/get.page';
 import { GetLetterPageResponse } from './dto/response/get.page';
 import { LetterService } from './service/letter.service';
 import { PrepareResponse } from './dto/response/prepare';
-import { PrepareRequest } from './dto/request/prepare';
+import { MetaDefault, MetaDetail, PrepareRequest } from './dto/request/prepare';
 import { AddLetterRequest } from './dto/request/add.letter';
 import { AddLetterResponse } from './dto/response/add.letter';
 import { ResponseValidationInterceptor } from '@interceptor/response.validation';
 import { UserGuard } from '@jwt/guard/user.guard';
 import { GetLetterDetailRequest } from './dto/request/get.detail';
 import { GetLetterDetailResponse } from './dto/response/get.detail';
+import { ParseJsonPipe } from '@util/pipe/json.parse';
 
 @Controller('letter')
 export class LetterController {
@@ -62,12 +63,18 @@ export class LetterController {
   @UseGuards(UserGuard)
   @UseInterceptors(new ResponseValidationInterceptor(PrepareResponse))
   async prepareAddLetter(
-    @Query() dto: PrepareRequest,
+    @Query('thumbnailMeta', ParseJsonPipe) thumbnailMeta: MetaDefault,
+    @Query('letterMeta', ParseJsonPipe) letterMeta: MetaDefault,
+    @Query('backgroundMeta', ParseJsonPipe) backgroundMeta: MetaDefault,
+    @Query('componentMetas', ParseJsonPipe) componentMetas: MetaDetail[],
     @Request() req,
   ): Promise<HttpResponse<PrepareResponse>> {
     return {
       result: true,
-      data: await this.letterService.prepareAddLetter(dto, req.user),
+      data: await this.letterService.prepareAddLetter(
+        { thumbnailMeta, letterMeta, backgroundMeta, componentMetas },
+        req.user,
+      ),
     };
   }
 

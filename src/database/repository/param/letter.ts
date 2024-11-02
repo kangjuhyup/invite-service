@@ -5,7 +5,14 @@ import { LetterCategoryCode } from '@util/category';
 
 export type Letter = Pick<
   LetterEntity,
-  'userId' | 'letterCategoryCode' | 'title' | 'body' | 'commentYn' | 'attendYn'
+  | 'userId'
+  | 'letterCategoryCode'
+  | 'title'
+  | 'body'
+  | 'commentYn'
+  | 'attendYn'
+  | 'creator'
+  | 'updator'
 >;
 
 export type LetterAttachment = Pick<
@@ -19,6 +26,8 @@ export type LetterAttachment = Pick<
   | 'x'
   | 'y'
   | 'z'
+  | 'creator'
+  | 'updator'
 >;
 
 export class SelectLetter extends DefaultParameter {

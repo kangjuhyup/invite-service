@@ -145,7 +145,30 @@ describe('LetterService', () => {
       const mockPresignedUrl = 'https://example.com/upload';
       const mockSessionKey = 'abcde';
       const user: User = { id: 'mock' } as User;
-      const request: PrepareRequest = { componentCount: 2 };
+      const request: PrepareRequest = {
+        thumbnailMeta: {
+          width: 200,
+          height: 100,
+        },
+        letterMeta: {
+          width: 400,
+          height: 800,
+        },
+        backgroundMeta: {
+          width: 400,
+          height: 800,
+        },
+        componentMetas: [
+          {
+            width: 100,
+            height: 50,
+            x: 100,
+            y: 100,
+            z: 0,
+            angle: 0,
+          },
+        ],
+      };
 
       (
         storageService.generateUploadPresignedUrl as jest.Mock
@@ -162,7 +185,7 @@ describe('LetterService', () => {
       );
 
       expect(storageService.generateUploadPresignedUrl).toHaveBeenCalledTimes(
-        3 + 2,
+        3 + 1,
       );
       expect(redisService.set).toHaveBeenCalledWith(
         'LetterService:add-mock',

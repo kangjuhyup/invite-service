@@ -1,7 +1,10 @@
 import { AttachmentEntity } from '@database/entity/attachment';
 import { DefaultParameter } from './default';
 
-export type Attachment = Pick<AttachmentEntity, 'attachmentPath'>;
+export type Attachment = Pick<
+  AttachmentEntity,
+  'attachmentPath' | 'creator' | 'updator'
+>;
 
 export class SelectAttachment extends DefaultParameter {
   attachmentId: number;

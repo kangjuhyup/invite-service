@@ -18,7 +18,7 @@ export abstract class LetterBaseService {
   public get letterBucket() {
     return this._letterBucket;
   }
-  private readonly _urlExpires = 60;
+  private readonly _urlExpires = 600;
   public get urlExpires() {
     return this._urlExpires;
   }
