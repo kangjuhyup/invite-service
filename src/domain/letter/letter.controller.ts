@@ -51,7 +51,7 @@ export class LetterController {
   @ApiOperation({
     summary: '초대장 업로드 url 조회',
     description:
-      '반환된 URL을 통해 업로드할 때 헤더를 첨부해야 한다.\n필수:[x-amx-sessionKey:세션키,x-amx-width:파일의 가로크기,x-amx-height:파일의 세로크기]\n선택(Component 업로드 시):[x-amx-x:파일의 x 좌표,x-amx-y:파일의 y 좌표,x-amx-z:파일의 인덱스,x-amx-angle:파일의 기울기]',
+      '반환된 URL을 통해 업로드할 때 헤더를 첨부해야 한다.\n필수:[x-amx-session:세션키,x-amx-width:파일의 가로크기,x-amx-height:파일의 세로크기]\n선택(Component 업로드 시):[x-amx-x:파일의 x 좌표,x-amx-y:파일의 y 좌표,x-amx-z:파일의 인덱스,x-amx-angle:파일의 기울기]',
   })
   @ApiBearerAuth()
   @ApiOkResponse({
@@ -111,7 +111,7 @@ export class LetterController {
   ): Promise<HttpResponse<GetLetterDetailResponse>> {
     return {
       result: true,
-      data: await this.letterService.getLetterDetail(dto),
+      data: await this.letterService.getLetterDetail(dto.id),
     };
   }
 }

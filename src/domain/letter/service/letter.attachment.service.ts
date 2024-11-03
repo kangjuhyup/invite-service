@@ -108,7 +108,6 @@ export class LetterAttachmentService extends LetterBaseService {
     code: LetterAttachmentCode,
     objectKey: string,
   ): AttachmentDetail {
-    console.log(JSON.stringify(meta));
     if (!meta.Metadata.width || !meta.Metadata.height) {
       this.storage.deleteObject({
         bucket,
@@ -127,7 +126,6 @@ export class LetterAttachmentService extends LetterBaseService {
       z: Number(meta.Metadata.z) || 0,
       angle: Number(meta.Metadata.angle) || 0,
     };
-    console.log('createAttachmentDetail 성공');
     return detail;
   }
 }

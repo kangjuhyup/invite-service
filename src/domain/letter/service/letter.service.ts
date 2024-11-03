@@ -54,9 +54,7 @@ export class LetterService extends LetterBaseService {
     };
   }
 
-  async getLetterDetail({
-    id,
-  }: GetLetterDetailRequest): Promise<GetLetterDetailResponse> {
+  async getLetterDetail(id: number): Promise<GetLetterDetailResponse> {
     const letter = await this.letterRepository.selectLetterFromId({
       letterId: id,
     });
@@ -161,7 +159,6 @@ export class LetterService extends LetterBaseService {
       componentCount: number;
     }>(this.redis.generateKey(LetterService.name, `add-${user.id}`));
     if (!session) throw new BadRequestException('필수 요청이 누락되었습니다.');
-    console.log(`세션키 획득 성공`);
     //2. 메타데이터 조회
     const { sessionKey, objectKey, componentCount } = session;
     const { thumbnailMeta, letterMeta, backgroundMeta, componentMetas } =
@@ -170,7 +167,6 @@ export class LetterService extends LetterBaseService {
         objectKey,
         componentCount,
       );
-    console.log(`메타데이터 조회 성공`);
     //3. 데이터 저장
     const letterId = await this.insertLetterTransaction.run({
       letter: {
@@ -208,7 +204,6 @@ export class LetterService extends LetterBaseService {
         ),
       ),
     });
-    console.log(letterId);
     return {
       letterId,
     };

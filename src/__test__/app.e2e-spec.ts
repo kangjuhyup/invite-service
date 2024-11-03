@@ -219,6 +219,21 @@ describe('AppController (e2e)', () => {
             throw err;
           });
       });
+      it('[GET] /letter', async () => {
+        const response = await request(app.getHttpServer())
+          .get('/letter')
+          .set('Authorization', token)
+          .expect(200);
+
+        expect(response.body.data.totalCount).toBeDefined();
+        expect(response.body.data.items).toBeDefined();
+        const letterId = response.body.data.items[0].id;
+
+        await request(app.getHttpServer())
+          .get(`/letter/${letterId}`)
+          .set('Authorization', token)
+          .expect(200);
+      });
     });
   });
 });

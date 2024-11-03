@@ -64,7 +64,7 @@ export class LetterRepository {
       'letter',
       entityManager,
     ) as Repository<LetterEntity>;
-    return await repo
+    const qb = repo
       .createQueryBuilder('letter')
       .innerJoinAndSelect(
         'letter.letterAttachment',
@@ -73,24 +73,23 @@ export class LetterRepository {
         { useYn: YN.Y },
       )
       .innerJoinAndSelect(
-        'letter.letterDetail',
-        'letterDetail',
-        `letterDetail.${DefaultColumn.useYn} = :useYn`,
-        { useYn: YN.Y },
-      )
-      .innerJoinAndSelect(
         'letterAttachment.attachment',
         'attachment',
         `attachment.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
-      .innerJoinAndSelect('user', 'letter.user')
-      .where({ letterId, useYn: YN.Y })
-      .getOne();
+      .innerJoinAndSelect(
+        'letter.user',
+        'user',
+        `user.${DefaultColumn.useYn} = :useYn`,
+        { useYn: YN.Y },
+      )
+      .where({ letterId, useYn: YN.Y });
+    console.log(qb.getQueryAndParameters());
+    return await qb.getOne();
   }
 
   async insertLetter({ letter, entityManager }: InsertLetter) {
-    console.log('insertLetter');
     const repo = this._getRepository('letter', entityManager);
     return await repo.insert(letter);
   }

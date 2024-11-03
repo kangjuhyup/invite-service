@@ -42,7 +42,7 @@ class LetterPageItem {
     example: 'https://s3.ap-northeast-1.wasabisys.com/thm/00001',
   })
   @IsNotEmpty()
-  @IsUrl()
+  @IsString()
   thumbnail: string;
 }
 

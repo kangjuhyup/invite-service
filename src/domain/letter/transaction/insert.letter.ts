@@ -45,7 +45,6 @@ export class InsertLetterTransaction extends BaseTransaction<Input, number> {
     }: Input,
     entityManager: EntityManager,
   ): Promise<number> {
-    console.log('Insert Transaction run');
     // 1. 레터 삽입 및 letterId 획득
     const letterId = await this._insertLetter(
       { ...letter, creator: this.creator, updator: this.creator },
@@ -95,8 +94,6 @@ export class InsertLetterTransaction extends BaseTransaction<Input, number> {
     letter: Letter,
     entityManager: EntityManager,
   ): Promise<number> {
-    console.log(`_insertLetter`);
-    console.log(this.letterRepository);
     const result = await this.letterRepository.insertLetter({
       letter,
       entityManager,
@@ -108,7 +105,6 @@ export class InsertLetterTransaction extends BaseTransaction<Input, number> {
     attachmentDetail: AttachmentDetail,
     entityManager: EntityManager,
   ): Promise<number> {
-    console.log(`_insertAttachment`);
     const attachment: Attachment = {
       attachmentPath: attachmentDetail.attachmentPath,
       creator: this.creator,
@@ -131,7 +127,6 @@ export class InsertLetterTransaction extends BaseTransaction<Input, number> {
     >,
     entityManager: EntityManager,
   ): Promise<void> {
-    console.log(`_insertLetterAttachments`);
     const letterAttachments: LetterAttachment[] = attachments.map((a) => ({
       letterId,
       attachmentId: a.attachmentId,

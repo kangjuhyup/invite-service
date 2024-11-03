@@ -31,7 +31,6 @@ export class ResponseValidationInterceptor<T extends object>
         if (response.data) {
           const object = plainToInstance(this.dto, response.data);
           const errors = await validate(object);
-
           if (errors.length > 0) {
             throw new InternalServerErrorException(
               'Invalid response data',
@@ -46,8 +45,9 @@ export class ResponseValidationInterceptor<T extends object>
   }
 
   private formatErrors(errors: ValidationError[]): string {
+    console.error(JSON.stringify(errors));
     return JSON.stringify(
-      errors.map((err) => Object.values(err.constraints).join(', ')),
+      errors.map((err) => Object.values(err.constraints || '').join(', ')),
     );
   }
 }

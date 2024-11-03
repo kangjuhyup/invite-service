@@ -3,9 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
-  IsNumber,
   IsOptional,
-  IsString,
   IsArray,
   ValidateNested,
   IsNumberString,
@@ -64,28 +62,24 @@ export class MetaDetail extends MetaDefault {
 export class PrepareRequest {
   @ApiProperty({ description: 'Thumbnail metadata', type: MetaDefault })
   @IsNotEmpty()
-  @IsString()
   @ValidateNested()
   @Type(() => MetaDefault)
   thumbnailMeta: MetaDefault;
 
   @ApiProperty({ description: 'Letter metadata', type: MetaDefault })
   @IsNotEmpty()
-  @IsString()
   @ValidateNested()
   @Type(() => MetaDefault)
   letterMeta: MetaDefault;
 
   @ApiProperty({ description: 'Background metadata', type: MetaDefault })
   @IsNotEmpty()
-  @IsString()
   @ValidateNested()
   @Type(() => MetaDefault)
   backgroundMeta: MetaDefault;
 
   @ApiProperty({ description: 'Component metadata', type: [MetaDetail] })
   @IsNotEmpty()
-  @IsString()
   @ValidateNested({ each: true })
   @Type(() => MetaDetail)
   @IsArray()
