@@ -85,7 +85,6 @@ export class LetterRepository {
         { useYn: YN.Y },
       )
       .where({ letterId, useYn: YN.Y });
-    console.log(qb.getQueryAndParameters());
     return await qb.getOne();
   }
 

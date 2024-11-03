@@ -1,4 +1,3 @@
-// dto/prepare-request.dto.ts
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -10,12 +9,20 @@ import {
 } from 'class-validator';
 
 export class MetaDefault {
-  @ApiProperty({ description: 'Width of the object', example: 1920 })
+  @ApiProperty({
+    description: 'Width of the object',
+    example: '1920',
+    type: String,
+  })
   @IsNotEmpty()
   @IsNumberString()
   width: string;
 
-  @ApiProperty({ description: 'Height of the object', example: 1080 })
+  @ApiProperty({
+    description: 'Height of the object',
+    example: '1080',
+    type: String,
+  })
   @IsNotEmpty()
   @IsNumberString()
   height: string;
@@ -24,8 +31,9 @@ export class MetaDefault {
 export class MetaDetail extends MetaDefault {
   @ApiProperty({
     description: 'X coordinate of the object',
-    example: 100,
+    example: '100',
     required: false,
+    type: String,
   })
   @IsOptional()
   @IsNumberString()
@@ -33,8 +41,9 @@ export class MetaDetail extends MetaDefault {
 
   @ApiProperty({
     description: 'Y coordinate of the object',
-    example: 150,
+    example: '150',
     required: false,
+    type: String,
   })
   @IsOptional()
   @IsNumberString()
@@ -42,8 +51,9 @@ export class MetaDetail extends MetaDefault {
 
   @ApiProperty({
     description: 'Z coordinate of the object',
-    example: 200,
+    example: '200',
     required: false,
+    type: String,
   })
   @IsOptional()
   @IsNumberString()
@@ -51,8 +61,9 @@ export class MetaDetail extends MetaDefault {
 
   @ApiProperty({
     description: 'Rotation angle of the object',
-    example: 45,
+    example: '45',
     required: false,
+    type: String,
   })
   @IsOptional()
   @IsNumberString()

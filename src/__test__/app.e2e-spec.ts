@@ -114,43 +114,70 @@ describe('AppController (e2e)', () => {
     describe('초대장 업로드', () => {
       const presignedUrls = [];
       let sessionKey;
-      it('[GET] /letter/prepare-add (User X )', () => {
+      it('[POST] /letter/prepare-add (User X )', () => {
         const componentCount = 5;
-        return request(app.getHttpServer())
-          .get(`/letter/prepare-add?componentCount=${componentCount}`)
-          .expect(401);
-      });
-      it('[GET] /letter/prepare-add (User O )', () => {
-        const componentCount = 5;
-        const query = {
-          thumbnailMeta: JSON.stringify({
-            width: 200,
-            height: 100,
-          }),
-          letterMeta: JSON.stringify({
-            width: 400,
-            height: 800,
-          }),
-          backgroundMeta: JSON.stringify({
-            width: 400,
-            height: 800,
-          }),
-          componentMetas: JSON.stringify(
-            Array.from({ length: componentCount }, (_, index) => ({
-              width: 100,
-              height: 50,
-              x: 100,
-              y: 100,
-              z: index, // Ensure each component has a unique z-index
-              angle: 0,
-            })),
+        const body = {
+          thumbnailMeta: {
+            width: '200',
+            height: '100',
+          },
+          letterMeta: {
+            width: '400',
+            height: '800',
+          },
+          backgroundMeta: {
+            width: '400',
+            height: '800',
+          },
+          componentMetas: Array.from(
+            { length: componentCount },
+            (_, index) => ({
+              width: '100',
+              height: '50',
+              x: '100',
+              y: '100',
+              z: `${index}`, // Ensure each component has a unique z-index
+              angle: '0',
+            }),
           ),
         };
         return request(app.getHttpServer())
-          .get(`/letter/prepare-add`)
-          .query(query)
+          .post(`/letter/prepare-add`)
+          .send(body)
+          .expect(401);
+      });
+      it('[POST] /letter/prepare-add (User O )', () => {
+        const componentCount = 5;
+        const body = {
+          thumbnailMeta: {
+            width: '200',
+            height: '100',
+          },
+          letterMeta: {
+            width: '400',
+            height: '800',
+          },
+          backgroundMeta: {
+            width: '400',
+            height: '800',
+          },
+          componentMetas: Array.from(
+            { length: componentCount },
+            (_, index) => ({
+              width: '100',
+              height: '50',
+              x: '100',
+              y: '100',
+              z: `${index}`, // Ensure each component has a unique z-index
+              angle: '0',
+            }),
+          ),
+        };
+        return request(app.getHttpServer())
+          .post(`/letter/prepare-add`)
+          .send(body)
           .set('Authorization', token)
-          .expect(200)
+          .expect(201)
           .expect((res) => {
             expect(res.body.data).toBeDefined();
             expect(res.body.data.thumbnailUrl).toBeDefined();

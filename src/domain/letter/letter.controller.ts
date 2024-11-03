@@ -59,22 +59,16 @@ export class LetterController {
     description: '성공',
     type: PrepareResponse,
   })
-  @Get('prepare-add')
+  @Post('prepare-add')
   @UseGuards(UserGuard)
   @UseInterceptors(new ResponseValidationInterceptor(PrepareResponse))
   async prepareAddLetter(
-    @Query('thumbnailMeta', ParseJsonPipe) thumbnailMeta: MetaDefault,
-    @Query('letterMeta', ParseJsonPipe) letterMeta: MetaDefault,
-    @Query('backgroundMeta', ParseJsonPipe) backgroundMeta: MetaDefault,
-    @Query('componentMetas', ParseJsonPipe) componentMetas: MetaDetail[],
+    @Body() dto: PrepareRequest,
     @Request() req,
   ): Promise<HttpResponse<PrepareResponse>> {
     return {
       result: true,
-      data: await this.letterService.prepareAddLetter(
-        { thumbnailMeta, letterMeta, backgroundMeta, componentMetas },
-        req.user,
-      ),
+      data: await this.letterService.prepareAddLetter(dto, req.user),
     };
   }
 
