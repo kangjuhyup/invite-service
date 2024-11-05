@@ -1,9 +1,9 @@
-import { UserEntity } from 'packages/server/src/database/entity/user';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { InsertUser, SelectUser } from './param/user';
-import { YN } from 'packages/server/src/util/yn';
+import { YN } from '@app/util/yn';
+import { UserEntity } from '../entity/user';
 
 @Injectable()
 export class UserRepository {

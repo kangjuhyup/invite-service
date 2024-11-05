@@ -1,4 +1,4 @@
-import { AttachmentEntity } from 'packages/server/src/database/entity/attachment';
+import { AttachmentEntity } from '@app/database/entity/attachment';
 import { DefaultParameter } from './default';
 
 export type Attachment = Pick<

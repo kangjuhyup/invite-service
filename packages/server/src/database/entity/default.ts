@@ -1,6 +1,6 @@
+import { YN } from '@app/util/yn';
 import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { YN } from 'packages/server/src/util/yn';
-import { DefaultColumn } from 'packages/server/src/database/column/default';
+import { DefaultColumn } from '../column/default';
 
 export class DefaultEntity {
   @Column({

@@ -1,4 +1,4 @@
-import { UserEntity } from 'packages/server/src/database/entity/user';
+import { UserEntity } from '@app/database/entity/user';
 import { DefaultParameter } from './default';
 
 export class SelectUser extends DefaultParameter {

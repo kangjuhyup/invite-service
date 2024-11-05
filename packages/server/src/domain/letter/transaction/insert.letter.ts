@@ -1,15 +1,10 @@
-// letterAttachment.service.ts
-
-import { AttachmentEntity } from 'packages/server/src/database/entity/attachment';
-import { LetterAttachmentEntity } from 'packages/server/src/database/entity/letter.attachment';
-import { AttachmentRepository } from 'packages/server/src/database/repository/attachment';
-import { LetterRepository } from 'packages/server/src/database/repository/letter';
-import { Attachment } from 'packages/server/src/database/repository/param/attachment';
-import {
-  Letter,
-  LetterAttachment,
-} from 'packages/server/src/database/repository/param/letter';
-import { BaseTransaction } from 'packages/server/src/database/transaction.base';
+import { AttachmentEntity } from '@app/database/entity/attachment';
+import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
+import { AttachmentRepository } from '@app/database/repository/attachment';
+import { LetterRepository } from '@app/database/repository/letter';
+import { Attachment } from '@app/database/repository/param/attachment';
+import { Letter, LetterAttachment } from '@app/database/repository/param/letter';
+import { BaseTransaction } from '@app/database/transaction.base';
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 

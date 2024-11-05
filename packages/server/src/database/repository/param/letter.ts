@@ -1,7 +1,7 @@
-import { LetterEntity } from 'packages/server/src/database/entity/letter';
-import { DefaultParameter } from './default';
-import { LetterAttachmentEntity } from 'packages/server/src/database/entity/letter.attachment';
-import { LetterCategoryCode } from 'packages/server/src/util/category';
+import { LetterEntity } from "@app/database/entity/letter";
+import { LetterAttachmentEntity } from "@app/database/entity/letter.attachment";
+import { LetterCategoryCode } from "@app/util/category";
+import { DefaultParameter } from "./default";
 
 export type Letter = Pick<
   LetterEntity,

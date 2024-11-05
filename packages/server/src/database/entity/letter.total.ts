@@ -1,8 +1,8 @@
 import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
 import { DefaultEntity } from './default';
 import { LetterEntity } from './letter';
-import { LetterTotalColumn } from 'packages/server/src/database/column/letter.total.column';
-import { LetterColumn } from 'packages/server/src/database/column/letter.column';
+import { LetterColumn } from '../column/letter.column';
+import { LetterTotalColumn } from '../column/letter.total.column';
 
 @Entity({ name: LetterTotalColumn.table })
 export class LetterTotalEntity extends DefaultEntity {

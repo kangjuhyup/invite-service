@@ -1,14 +1,15 @@
-# 빌드 스테이지
 FROM ghcr.io/kangjuhyup/invite-service/builder:latest AS builder
 
 WORKDIR /usr/src/app
 
-COPY . .
+COPY .yarn/ .yarn/
+COPY .yarnrc.yml .yarnrc.yml
+COPY package.json yarn.lock ./
+COPY packages/server packages/server
 
-RUN yarn install
-RUN yarn build
+RUN yarn workspaces focus server --all
+RUN yarn workspace server build
 
-# 프로덕션 스테이지
 FROM ghcr.io/kangjuhyup/invite-service/release:latest AS production
 
 WORKDIR /usr/src/app
@@ -18,11 +19,12 @@ COPY --from=builder /usr/src/app/.yarnrc.yml .yarnrc.yml
 COPY --from=builder /usr/src/app/package.json /usr/src/app/yarn.lock ./
 COPY --from=builder /usr/src/app/.pnp.cjs .pnp.cjs
 COPY --from=builder /usr/src/app/.pnp.loader.mjs .pnp.loader.mjs
-COPY --from=builder /usr/src/app/.env .env
-COPY --from=builder /usr/src/app/dist ./dist
+COPY --from=builder /usr/src/app/packages/server/dist packages/server/dist
+COPY --from=builder /usr/src/app/packages/server/package.json packages/server/package.json
+COPY --from=builder /usr/src/app/packages/server/.env packages/server/.env
 
-RUN yarn workspaces focus --production
+RUN yarn workspaces focus server --production
 
 EXPOSE 3003
 
-CMD ["yarn", "start:prod"]
+CMD ["yarn", "workspace", "server", "start:prod"]

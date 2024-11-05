@@ -1,5 +1,3 @@
-import { LetterEntity } from 'packages/server/src/database/entity/letter';
-import { LetterAttachmentEntity } from 'packages/server/src/database/entity/letter.attachment';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
@@ -8,10 +6,12 @@ import {
   InsertLetterAttachment,
   SelectLetter,
 } from './param/letter';
-import { YN } from 'packages/server/src/util/yn';
-import { DefaultColumn } from 'packages/server/src/database/column/default';
-import { LetterAttachmentColumn } from 'packages/server/src/database/column/letter.attachment.column';
-import { LetterAttachmentCode } from 'packages/server/src/util/attachment';
+import { LetterAttachmentCode } from '@app/util/attachment';
+import { YN } from '@app/util/yn';
+import { DefaultColumn } from '../column/default';
+import { LetterAttachmentColumn } from '../column/letter.attachment.column';
+import { LetterEntity } from '../entity/letter';
+import { LetterAttachmentEntity } from '../entity/letter.attachment';
 
 @Injectable()
 export class LetterRepository {

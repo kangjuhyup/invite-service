@@ -1,8 +1,5 @@
+import { LetterCategoryCode } from '@app/util/category';
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  LetterCategory,
-  LetterCategoryCode,
-} from 'packages/server/src/util/category';
 import { Type } from 'class-transformer';
 import {
   IsArray,

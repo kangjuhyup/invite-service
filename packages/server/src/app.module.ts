@@ -6,11 +6,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { plainToClass } from 'class-transformer';
 import { Enviroments } from './domain/dto/env';
 import { validateSync } from 'class-validator';
-import { StorageModule } from 'packages/server/src/storage/storage.module';
-import { DatabaseModule } from 'packages/server/src/database/database.module';
 import { RedisClientModule } from './redis/redis.module';
 import { AuthModule } from './domain/auth/auth.module';
 import { UserModule } from './domain/user/user.module';
+import { DatabaseModule } from './database/database.module';
+import { StorageModule } from './storage/storage.module';
 
 export const routers = [
   AuthModule.forRootAsync({

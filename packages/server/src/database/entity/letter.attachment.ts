@@ -2,10 +2,10 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { DefaultEntity } from './default';
 import { LetterEntity } from './letter';
 import { AttachmentEntity } from './attachment';
-import { LetterAttachmentColumn } from 'packages/server/src/database/column/letter.attachment.column';
-import { LetterColumn } from 'packages/server/src/database/column/letter.column';
-import { AttachmentColumn } from 'packages/server/src/database/column/attachment.column';
-import { LetterAttachmentCode } from 'packages/server/src/util/attachment';
+import { LetterAttachmentCode } from '@app/util/attachment';
+import { AttachmentColumn } from '../column/attachment.column';
+import { LetterAttachmentColumn } from '../column/letter.attachment.column';
+import { LetterColumn } from '../column/letter.column';
 
 @Entity({ name: LetterAttachmentColumn.table })
 export class LetterAttachmentEntity extends DefaultEntity {

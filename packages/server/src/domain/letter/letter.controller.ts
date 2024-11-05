@@ -18,11 +18,10 @@ import { PrepareResponse } from './dto/response/prepare';
 import { MetaDefault, MetaDetail, PrepareRequest } from './dto/request/prepare';
 import { AddLetterRequest } from './dto/request/add.letter';
 import { AddLetterResponse } from './dto/response/add.letter';
-import { ResponseValidationInterceptor } from 'packages/server/src/interceptor/response.validation';
-import { UserGuard } from 'packages/server/src/jwt/guard/user.guard';
 import { GetLetterDetailRequest } from './dto/request/get.detail';
 import { GetLetterDetailResponse } from './dto/response/get.detail';
-import { ParseJsonPipe } from 'packages/server/src/util/pipe/json.parse';
+import { ResponseValidationInterceptor } from '@app/interceptor/response.validation';
+import { UserGuard } from '@app/jwt/guard/user.guard';
 
 @Controller('letter')
 export class LetterController {

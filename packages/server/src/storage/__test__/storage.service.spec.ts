@@ -8,7 +8,7 @@ import {
   DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { StorageService } from 'packages/server/src/storage/storage.service';
+import { StorageService } from '../storage.service';
 
 jest.mock('@aws-sdk/client-s3');
 jest.mock('@aws-sdk/s3-request-presigner', () => ({
@@ -17,7 +17,6 @@ jest.mock('@aws-sdk/s3-request-presigner', () => ({
 
 describe('StorageService', () => {
   let service: StorageService;
-  let configService: ConfigService;
   let s3Client: S3Client;
 
   beforeEach(async () => {
@@ -47,7 +46,6 @@ describe('StorageService', () => {
     }).compile();
 
     service = module.get<StorageService>(StorageService);
-    configService = module.get<ConfigService>(ConfigService);
     s3Client = service['s3Client'];
   });
 

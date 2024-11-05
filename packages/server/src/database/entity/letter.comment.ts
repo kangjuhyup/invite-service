@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { LetterEntity } from './letter';
-import { LetterCommentColumn } from 'packages/server/src/database/column/letter.comment.column';
-import { LetterColumn } from 'packages/server/src/database/column/letter.column';
+import { LetterColumn } from '../column/letter.column';
+import { LetterCommentColumn } from '../column/letter.comment.column';
 
 @Entity({ name: LetterCommentColumn.table })
 export class LetterCommentEntity {

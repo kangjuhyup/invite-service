@@ -8,16 +8,16 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { DefaultEntity } from './default';
-import { LetterCategoryCode } from 'packages/server/src/util/category';
-import { YN } from 'packages/server/src/util/yn';
 import { UserEntity } from './user';
 import { LetterCategoryEntity } from './letter.cateogry';
 import { LetterCommentEntity } from './letter.comment';
 import { LetterAttachmentEntity } from './letter.attachment';
 import { LetterTotalEntity } from './letter.total';
-import { LetterColumn } from 'packages/server/src/database/column/letter.column';
-import { UserColumn } from 'packages/server/src/database/column/user.column';
-import { LetterCategoryColumn } from 'packages/server/src/database/column/letter.category.column';
+import { LetterCategoryCode } from '@app/util/category';
+import { YN } from '@app/util/yn';
+import { LetterCategoryColumn } from '../column/letter.category.column';
+import { LetterColumn } from '../column/letter.column';
+import { UserColumn } from '../column/user.column';
 
 @Entity({ name: LetterColumn.table })
 export class LetterEntity extends DefaultEntity {

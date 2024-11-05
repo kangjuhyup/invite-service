@@ -6,10 +6,10 @@ import {
   BadRequestException,
   Logger,
 } from '@nestjs/common';
-import { StorageService } from 'packages/server/src/storage/storage.service';
 import { LetterBaseService } from './letter.base.service';
-import { LetterAttachmentCode } from 'packages/server/src/util/attachment';
 import { AttachmentDetail } from '../transaction/insert.letter';
+import { StorageService } from '@app/storage/storage.service';
+import { LetterAttachmentCode } from '@app/util/attachment';
 
 @Injectable()
 export class LetterAttachmentService extends LetterBaseService {

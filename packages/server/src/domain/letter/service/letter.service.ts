@@ -1,23 +1,23 @@
-import { StorageService } from 'packages/server/src/storage/storage.service';
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { PrepareRequest } from '../dto/request/prepare';
 import { PrepareResponse } from '../dto/response/prepare';
 import { AddLetterRequest } from '../dto/request/add.letter';
 import { AddLetterResponse } from '../dto/response/add.letter';
-import { RedisClientService } from 'packages/server/src/redis/redis.client.service';
-import { User } from 'packages/server/src/jwt/user';
-import { randomString } from 'packages/server/src/util/random';
 import { InsertLetterTransaction } from '../transaction/insert.letter';
-import { booleanToYN } from 'packages/server/src/util/yn';
 import { GetLetterPageRequest } from '../dto/request/get.page';
 import { GetLetterPageResponse } from '../dto/response/get.page';
-import { LetterRepository } from 'packages/server/src/database/repository/letter';
-import { LetterAttachmentCode } from 'packages/server/src/util/attachment';
 import { GetLetterDetailRequest } from '../dto/request/get.detail';
 import { GetLetterDetailResponse } from '../dto/response/get.detail';
 import { LetterBaseService } from './letter.base.service';
 import { LetterAttachmentService } from './letter.attachment.service';
+import { LetterRepository } from '@app/database/repository/letter';
+import { User } from '@app/jwt/user';
+import { RedisClientService } from '@app/redis/redis.client.service';
+import { StorageService } from '@app/storage/storage.service';
+import { LetterAttachmentCode } from '@app/util/attachment';
+import { randomString } from '@app/util/random';
+import { booleanToYN } from '@app/util/yn';
 
 @Injectable()
 export class LetterService extends LetterBaseService {

@@ -1,7 +1,7 @@
-import { AttachmentEntity } from 'packages/server/src/database/entity/attachment';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 import { InsertAttachment, SelectAttachment } from './param/attachment';
+import { AttachmentEntity } from '../entity/attachment';
 
 export class AttachmentRepository {
   constructor(

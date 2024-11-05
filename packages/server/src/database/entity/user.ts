@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { LetterEntity } from './letter';
-import { UserColumn } from 'packages/server/src/database/column/user.column';
 import { DefaultEntity } from './default';
+import { UserColumn } from '../column/user.column';
 
 @Entity({ name: UserColumn.table })
 export class UserEntity extends DefaultEntity {

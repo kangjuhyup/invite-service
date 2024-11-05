@@ -1,7 +1,7 @@
-import { UserEntity } from 'packages/server/src/database/entity/user';
-import { UserRepository } from 'packages/server/src/database/repository/user';
+import { UserEntity } from '@app/database/entity/user';
+import { UserRepository } from '@app/database/repository/user';
+import { randomString } from '@app/util/random';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { randomString } from 'packages/server/src/util/random';
 @Injectable()
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}

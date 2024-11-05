@@ -2,12 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, Logger } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../app.module';
-import { SignRequest } from 'packages/server/src/domain/auth/dto/sign';
 import * as path from 'path';
 import * as fs from 'fs';
 import axios from 'axios';
-import { AddLetterRequest } from 'packages/server/src/domain/letter/dto/request/add.letter';
-import { PrepareRequest } from 'packages/server/src/domain/letter/dto/request/prepare';
+import { SignRequest } from '@app/domain/auth/dto/sign';
+import { AddLetterRequest } from '@app/domain/letter/dto/request/add.letter';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;

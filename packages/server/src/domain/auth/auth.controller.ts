@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { SignRequest } from './dto/sign';
 import { AuthService } from './auth.service';
-import { UserGuard } from 'packages/server/src/jwt/guard/user.guard';
 import { Response } from 'express';
-import { ApiOperation, ApiProperty } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
+import { UserGuard } from '@app/jwt/guard/user.guard';
 
 @Controller('auth')
 export class AuthController {

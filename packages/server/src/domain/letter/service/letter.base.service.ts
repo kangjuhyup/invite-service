@@ -1,4 +1,4 @@
-import { Enviroments } from 'packages/server/src/domain/dto/env';
+import { Enviroments } from '@app/domain/dto/env';
 import { plainToInstance } from 'class-transformer';
 
 export abstract class LetterBaseService {

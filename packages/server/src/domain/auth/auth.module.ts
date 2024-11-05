@@ -4,8 +4,8 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
-import { UserStrategy } from 'packages/server/src/jwt/strategy/user.strategy';
 import { AuthService } from './auth.service';
+import { UserStrategy } from '@app/jwt/strategy/user.strategy';
 
 interface AuthModuleAsyncOptions {
   imports?: any[];

@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DefaultEntity } from './default';
 import { LetterAttachmentEntity } from './letter.attachment';
-import { AttachmentColumn } from 'packages/server/src/database/column/attachment.column';
+import { AttachmentColumn } from '../column/attachment.column';
 
 @Entity({
   name: AttachmentColumn.table,

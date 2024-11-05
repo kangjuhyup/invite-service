@@ -1,5 +1,5 @@
+import { LetterCategoryCode } from '@app/util/category';
 import { ApiProperty } from '@nestjs/swagger';
-import { LetterCategoryCode } from 'packages/server/src/util/category';
 import {
   IsBoolean,
   IsDefined,

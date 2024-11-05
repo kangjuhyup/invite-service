@@ -1,16 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserEntity } from 'packages/server/src/database/entity/user';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { EntityManager } from 'typeorm';
 import { InsertUser } from '../param/user';
 import { UserRepository } from '../user';
-import { LetterEntity } from 'packages/server/src/database/entity/letter';
-import { LetterAttachmentEntity } from 'packages/server/src/database/entity/letter.attachment';
-import { AttachmentEntity } from 'packages/server/src/database/entity/attachment';
-import { LetterCategory } from 'packages/server/src/util/category';
-import { LetterCategoryEntity } from 'packages/server/src/database/entity/letter.cateogry';
-import { LetterCommentEntity } from 'packages/server/src/database/entity/letter.comment';
-import { LetterTotalEntity } from 'packages/server/src/database/entity/letter.total';
+import { AttachmentEntity } from '@app/database/entity/attachment';
+import { LetterEntity } from '@app/database/entity/letter';
+import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
+import { LetterCategoryEntity } from '@app/database/entity/letter.cateogry';
+import { LetterCommentEntity } from '@app/database/entity/letter.comment';
+import { LetterTotalEntity } from '@app/database/entity/letter.total';
+import { UserEntity } from '@app/database/entity/user';
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;

@@ -1,29 +1,31 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
-    "sourceMap": true,
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
-    "paths": {
-      "@auth/*": ["packages/server/src/auth/*"],
-      "@interceptor/*": ["packages/server/src/interceptor/*"],
-      "@storage/*": ["packages/server/src/storage/*"],
-      "@util/*": ["packages/server/src/util/*"],
-      "@database/*": ["packages/server/src/database/*"],
-      "@redis/*":["packages/server/src/redis/*"],
-      "@jwt/*":["packages/server/src/jwt/*"]
-    }
+      "module": "commonjs",
+      "declaration": true,
+      "removeComments": true,
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
+      "allowSyntheticDefaultImports": true,
+      "target": "ES2021",
+      "sourceMap": true,
+      "incremental": true,
+      "skipLibCheck": true,
+      "strictNullChecks": false,
+      "noImplicitAny": false,
+      "strictBindCallApply": false,
+      "forceConsistentCasingInFileNames": false,
+      "noFallthroughCasesInSwitch": false,
+      "baseUrl": "./",
+      "composite": true,
+      "paths": {
+          "@lib/auth/*": ["packages/lib/auth/src/*"],
+          "@lib/database/*": ["packages/lib/database/src/*"],
+          "@lib/exception/*": ["packages/lib/exception/src/*"],
+          "@lib/kafka/*": ["packages/lib/kafka/src/*"],
+          "@lib/logger/*": ["packages/lib/logger/src/*"],
+          "@lib/slack/*": ["packages/lib/slack/src/*"],
+          "@lib/util/*": ["packages/lib/util/src/*"],
+          "@lib/throttler/*": ["packages/lib/throttler/src/*"]
+      }
   }
 }
