@@ -1,4 +1,3 @@
-// src/utils/HttpClient.ts
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 interface HttpClientOptions extends RequestInit {

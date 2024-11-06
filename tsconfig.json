@@ -16,16 +16,6 @@
       "forceConsistentCasingInFileNames": false,
       "noFallthroughCasesInSwitch": false,
       "baseUrl": "./",
-      "composite": true,
-      "paths": {
-          "@lib/auth/*": ["packages/lib/auth/src/*"],
-          "@lib/database/*": ["packages/lib/database/src/*"],
-          "@lib/exception/*": ["packages/lib/exception/src/*"],
-          "@lib/kafka/*": ["packages/lib/kafka/src/*"],
-          "@lib/logger/*": ["packages/lib/logger/src/*"],
-          "@lib/slack/*": ["packages/lib/slack/src/*"],
-          "@lib/util/*": ["packages/lib/util/src/*"],
-          "@lib/throttler/*": ["packages/lib/throttler/src/*"]
-      }
+      "composite": true
   }
 }

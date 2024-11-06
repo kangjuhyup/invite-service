@@ -1,8 +1,8 @@
 import '@mantine/core/styles.css';
 import { MantineProvider } from '@mantine/core';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import HomePage from './HomePage';
-import LetterPage from './LetterPage';
+import HomePage from './pages/home.page';
+import LetterPage from './pages/letter.page';
 
 export default function App() {
   return (
@@ -10,7 +10,7 @@ export default function App() {
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/:letterId" element={<LetterPage />} />
+          <Route path="/:letterId" element={<LetterPage/>} />
         </Routes>
       </Router>
     </MantineProvider>

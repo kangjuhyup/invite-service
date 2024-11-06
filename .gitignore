@@ -13,3 +13,4 @@ dist
 db
 .vscode
 out
+.vite_cache
