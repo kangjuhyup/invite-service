@@ -112,18 +112,17 @@ export class LetterController {
   @Get(':id')
   @ApiOperation({ summary: '공유된 초대장 페이지' })
   @ApiOkResponse({
-    status : 200,
-    description : '성공',
-    type : GetLetterPageResponse
+    status: 200,
+    description: '성공',
+    type: GetLetterPageResponse,
   })
   @UseInterceptors(new ResponseValidationInterceptor(GetLetterResponse))
   async getLetter(
-    @Param() dto : GetLetterDetailRequest
+    @Param() dto: GetLetterDetailRequest,
   ): Promise<HttpResponse<GetLetterResponse>> {
     return {
-      result : true,
-      data : await this.letterService.getLetter(dto.id)
-    }
+      result: true,
+      data: await this.letterService.getLetter(dto.id),
+    };
   }
-  
 }

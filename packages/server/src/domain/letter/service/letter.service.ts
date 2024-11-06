@@ -54,19 +54,23 @@ export class LetterService extends LetterBaseService {
     };
   }
 
-  async getLetter(id:number) : Promise<GetLetterResponse> {
-    const letter = await this.letterRepository.selectLetterFromId({letterId:id})
-    const lt = letter.letterAttachment.find((la) => la.attachmentCode === LetterAttachmentCode.LETTER);
+  async getLetter(id: number): Promise<GetLetterResponse> {
+    const letter = await this.letterRepository.selectLetterFromId({
+      letterId: id,
+    });
+    const lt = letter.letterAttachment.find(
+      (la) => la.attachmentCode === LetterAttachmentCode.LETTER,
+    );
 
     return {
-      letterId : letter.letterId,
-      letter : {
-        path : lt.attachment.attachmentPath,
-        width : lt.width,
-        height : lt.height
+      letterId: letter.letterId,
+      letter: {
+        path: lt.attachment.attachmentPath,
+        width: lt.width,
+        height: lt.height,
       },
-      comments : []
-    }
+      comments: [],
+    };
   }
 
   async getLetterDetail(id: number): Promise<GetLetterDetailResponse> {

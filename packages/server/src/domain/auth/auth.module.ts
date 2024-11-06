@@ -13,7 +13,7 @@ interface AuthModuleAsyncOptions {
   useFactory: (...args: any[]) => { secret: string; expiresIn: string };
   isGlobal?: boolean;
 }
-
+//TODO : Refresh 토큰 추가
 @Module({})
 export class AuthModule {
   static forRootAsync(options: AuthModuleAsyncOptions): DynamicModule {

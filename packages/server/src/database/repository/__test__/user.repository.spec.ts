@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
 import { InsertUser } from '../param/user';
 import { UserRepository } from '../user';
 import { AttachmentEntity } from '@app/database/entity/attachment';
