@@ -8,14 +8,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SignRequest } from './dto/sign';
-import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { ApiOperation } from '@nestjs/swagger';
 import { UserGuard } from '@app/jwt/guard/user.guard';
+import { AuthFacade } from './auth.facade';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly auth: AuthFacade) {}
 
   @ApiOperation({
     summary: '회원가입',
@@ -25,7 +25,7 @@ export class AuthController {
     @Body() dto: SignRequest,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const data = await this.authService.signUp(dto.phone, dto.password);
+    const data = await this.auth.signUp(dto.phone, dto.password);
     res.setHeader('Authorization', `Bearer ${data.access}`);
     return {
       result: true,
@@ -40,7 +40,7 @@ export class AuthController {
     @Body() dto: SignRequest,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const data = await this.authService.signIn(dto.phone, dto.password);
+    const data = await this.auth.signIn(dto.phone, dto.password);
     res.setHeader('Authorization', `Bearer ${data.access}`);
     return {
       result: true,
