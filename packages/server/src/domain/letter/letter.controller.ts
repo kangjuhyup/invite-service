@@ -15,13 +15,14 @@ import { GetLetterPageRequest } from './dto/request/get.page';
 import { GetLetterPageResponse } from './dto/response/get.page';
 import { LetterService } from './service/letter.service';
 import { PrepareResponse } from './dto/response/prepare';
-import { MetaDefault, MetaDetail, PrepareRequest } from './dto/request/prepare';
+import { PrepareRequest } from './dto/request/prepare';
 import { AddLetterRequest } from './dto/request/add.letter';
 import { AddLetterResponse } from './dto/response/add.letter';
 import { GetLetterDetailRequest } from './dto/request/get.detail';
 import { GetLetterDetailResponse } from './dto/response/get.detail';
 import { ResponseValidationInterceptor } from '@app/interceptor/response.validation';
 import { UserGuard } from '@app/jwt/guard/user.guard';
+import { GetLetterResponse } from './dto/response/get.letter';
 
 @Controller('letter')
 export class LetterController {
@@ -91,10 +92,7 @@ export class LetterController {
     };
   }
 
-  @Get('share/:id')
-  @ApiOperation({ summary: '공유된 초대장 페이지' })
-  // @UseInterceptors(new ResponseValidationInterceptor(ShareLetterResponse))
-  @Get(':id')
+  @Get('detail/:id')
   @ApiOperation({ summary: '초대장 상세 정보 조회' })
   @ApiOkResponse({
     status: 200,
@@ -110,4 +108,22 @@ export class LetterController {
       data: await this.letterService.getLetterDetail(dto.id),
     };
   }
+
+  @Get(':id')
+  @ApiOperation({ summary: '공유된 초대장 페이지' })
+  @ApiOkResponse({
+    status : 200,
+    description : '성공',
+    type : GetLetterPageResponse
+  })
+  @UseInterceptors(new ResponseValidationInterceptor(GetLetterResponse))
+  async getLetter(
+    @Param() dto : GetLetterDetailRequest
+  ): Promise<HttpResponse<GetLetterResponse>> {
+    return {
+      result : true,
+      data : await this.letterService.getLetter(dto.id)
+    }
+  }
+  
 }

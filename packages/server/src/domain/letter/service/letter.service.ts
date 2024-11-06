@@ -7,7 +7,6 @@ import { AddLetterResponse } from '../dto/response/add.letter';
 import { InsertLetterTransaction } from '../transaction/insert.letter';
 import { GetLetterPageRequest } from '../dto/request/get.page';
 import { GetLetterPageResponse } from '../dto/response/get.page';
-import { GetLetterDetailRequest } from '../dto/request/get.detail';
 import { GetLetterDetailResponse } from '../dto/response/get.detail';
 import { LetterBaseService } from './letter.base.service';
 import { LetterAttachmentService } from './letter.attachment.service';
@@ -18,6 +17,7 @@ import { StorageService } from '@app/storage/storage.service';
 import { LetterAttachmentCode } from '@app/util/attachment';
 import { randomString } from '@app/util/random';
 import { booleanToYN } from '@app/util/yn';
+import { GetLetterResponse } from '../dto/response/get.letter';
 
 @Injectable()
 export class LetterService extends LetterBaseService {
@@ -52,6 +52,21 @@ export class LetterService extends LetterBaseService {
         };
       }),
     };
+  }
+
+  async getLetter(id:number) : Promise<GetLetterResponse> {
+    const letter = await this.letterRepository.selectLetterFromId({letterId:id})
+    const lt = letter.letterAttachment.find((la) => la.attachmentCode === LetterAttachmentCode.LETTER);
+
+    return {
+      letterId : letter.letterId,
+      letter : {
+        path : lt.attachment.attachmentPath,
+        width : lt.width,
+        height : lt.height
+      },
+      comments : []
+    }
   }
 
   async getLetterDetail(id: number): Promise<GetLetterDetailResponse> {
