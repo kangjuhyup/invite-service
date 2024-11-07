@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UserRepository } from 'packages/server/src/database/repository/user';
-import { UserEntity } from 'packages/server/src/database/entity/user';
 import { UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user.service';
+import { UserEntity } from '@app/database/entity/user';
+import { UserRepository } from '@app/database/repository/user';
 
 jest.mock('@util/random', () => ({
   randomString: jest.fn(() => 'randomNickName'),

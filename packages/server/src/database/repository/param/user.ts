@@ -7,6 +7,12 @@ export class SelectUser extends DefaultParameter {
 }
 
 export class InsertUser extends DefaultParameter {
-  user: Pick<UserEntity, 'nickName' | 'phone' | 'password'>;
+  user: Pick<UserEntity, 'nickName' | 'phone' | 'password'| 'refreshToken'>;
   creator: string;
+}
+
+export class UpdateUser extends DefaultParameter {
+  userId : string;
+  refreshToken? : string;
+  updator : string;
 }

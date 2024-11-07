@@ -5,7 +5,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './service/auth.service';
-import { UserStrategy } from '@app/jwt/strategy/user.strategy';
+import { UserAccessStrategy } from '@app/jwt/strategy/user.access.strategy';
+import { UserRefreshStrategy } from '@app/jwt/strategy/user.refresh.strategy';
 
 interface AuthModuleAsyncOptions {
   imports?: any[];
@@ -39,10 +40,18 @@ export class AuthModule {
       controllers: [AuthController],
       providers: [
         {
-          provide: UserStrategy,
+          provide: UserAccessStrategy,
           useFactory: (userService: UserService, ...args: any[]) => {
             const { secret } = options.useFactory(...args);
-            return new UserStrategy(userService, secret);
+            return new UserAccessStrategy(userService, secret);
+          },
+          inject: [UserService, ...(options.inject || [])],
+        },
+        {
+          provide : UserRefreshStrategy,
+          useFactory: (userService: UserService, ...args: any[]) => {
+            const { secret } = options.useFactory(...args);
+            return new UserRefreshStrategy(userService, secret);
           },
           inject: [UserService, ...(options.inject || [])],
         },

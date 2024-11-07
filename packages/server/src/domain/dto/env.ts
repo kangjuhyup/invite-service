@@ -85,4 +85,8 @@ export class Enviroments {
   @IsNotEmpty()
   @IsString()
   JWT_EXPIRES: string;
+
+  @IsNotEmpty()
+  @IsString()
+  JWT_REFRESH_EXPIRES: string;
 }

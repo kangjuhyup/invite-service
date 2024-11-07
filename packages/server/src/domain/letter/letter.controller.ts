@@ -21,7 +21,7 @@ import { AddLetterResponse } from './dto/response/add.letter';
 import { GetLetterDetailRequest } from './dto/request/get.detail';
 import { GetLetterDetailResponse } from './dto/response/get.detail';
 import { ResponseValidationInterceptor } from '@app/interceptor/response.validation';
-import { UserGuard } from '@app/jwt/guard/user.guard';
+import { UserGuard } from '@app/jwt/guard/user.access.guard';
 import { GetLetterResponse } from './dto/response/get.letter';
 
 @Controller('letter')

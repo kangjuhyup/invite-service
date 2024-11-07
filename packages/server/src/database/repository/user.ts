@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { InsertUser, SelectUser } from './param/user';
+import { InsertUser, SelectUser, UpdateUser } from './param/user';
 import { YN } from '@app/util/yn';
 import { UserEntity } from '../entity/user';
 
@@ -40,6 +40,18 @@ export class UserRepository {
       creator,
       updator: creator,
     });
+  }
+
+  async updateUser({userId,refreshToken,updator,entityManager} : UpdateUser) {
+    const repo = this._getRepository('user', entityManager);
+    const set = {}
+    if(refreshToken) set['refreshToken'] = refreshToken
+    return await repo.update({
+      ...set,
+      updator
+    }, {
+      userId
+    })
   }
 
   private _getRepository(type: 'user', entityManager?: EntityManager) {

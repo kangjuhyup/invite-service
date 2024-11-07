@@ -10,7 +10,7 @@ import {
 import { SignRequest } from './dto/sign';
 import { Response } from 'express';
 import { ApiOperation } from '@nestjs/swagger';
-import { UserGuard } from '@app/jwt/guard/user.guard';
+import { UserGuard } from '@app/jwt/guard/user.access.guard';
 import { AuthFacade } from './auth.facade';
 
 @Controller('auth')
@@ -26,9 +26,13 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const data = await this.auth.signUp(dto.phone, dto.password);
-    res.setHeader('Authorization', `Bearer ${data.access}`);
+    res.cookie('accessToken',data.access, {
+      httpOnly : true
+    })
+    res.cookie('refreshToken', data.refresh ,{ httpOnly : true})
     return {
       result: true,
+      data
     };
   }
 
@@ -41,10 +45,34 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const data = await this.auth.signIn(dto.phone, dto.password);
-    res.setHeader('Authorization', `Bearer ${data.access}`);
+    res.cookie('accessToken',data.access, {
+      httpOnly : true
+    })
+    res.cookie('refreshToken', data.refresh ,{ httpOnly : true})
     return {
       result: true,
+      data
     };
+  }
+
+  @ApiOperation({
+    summary : '로그인 연장'
+  })
+  @UseGuards()
+  @Post('resign')
+  async resign(
+    @Req() req,
+    @Res({passthrough : true}) res: Response
+  ) {
+    const data = await this.auth.resign(req.refreshToken)
+    res.cookie('accessToken',data.access, {
+      httpOnly : true
+    })
+    res.cookie('refreshToken', data.refresh ,{ httpOnly : true})
+    return {
+      result : true,
+      data
+    }
   }
 
   @ApiOperation({

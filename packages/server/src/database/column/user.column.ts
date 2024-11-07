@@ -4,6 +4,7 @@ export const UserColumn = {
   nickName: 'nc_nm',
   phone: 'mpno',
   password: 'pwd',
+  refreshToken : 'rfh_tk'
 } as const;
 
 export type UserColumn = (typeof UserColumn)[keyof typeof UserColumn];

@@ -192,7 +192,7 @@ describe('LetterService', () => {
         {
           sessionKey: expect.any(String),
           objectKey: expect.any(String),
-          componentCount: 2,
+          componentCount: 1,
         },
         70,
       );

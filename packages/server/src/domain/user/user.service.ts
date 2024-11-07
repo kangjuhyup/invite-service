@@ -20,6 +20,12 @@ export class UserService {
     return user;
   }
 
+  async validateRefresh(userId:string,refreshToken:string) {
+    const user = await this.getUser({userId});
+    if(user.refreshToken !== refreshToken) throw new UnauthorizedException('RefreshToken이 유효하지 않습니다.')
+    return user;
+  }
+
   async saveUser(phone: string, pwd: string) {
     await this.userRepository.insertUser({
       user: { nickName: randomString(), phone, password: pwd },
@@ -27,5 +33,13 @@ export class UserService {
     });
 
     return await this.getUser({ phone });
+  }
+
+  async updateRefresh(userId: string, refreshToken : string) {
+    await this.userRepository.updateUser({
+      userId,
+      refreshToken,
+      updator : UserService.name
+    })
   }
 }

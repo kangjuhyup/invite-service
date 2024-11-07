@@ -9,9 +9,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 
 @Injectable()
-export class UserGuard extends AuthGuard('jwt') {
-  private logger = new Logger(UserGuard.name);
-  constructor(private readonly jwtService: JwtService) {
+export class UserAccessGuard extends AuthGuard('user-access') {
+  constructor() {
     super();
   }
 
