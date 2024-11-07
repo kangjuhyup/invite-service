@@ -10,8 +10,9 @@ import {
 import { SignRequest } from './dto/sign';
 import { Response } from 'express';
 import { ApiOperation } from '@nestjs/swagger';
-import { UserGuard } from '@app/jwt/guard/user.access.guard';
+import { UserAccessGuard } from '@app/jwt/guard/user.access.guard';
 import { AuthFacade } from './auth.facade';
+import { UserRefreshGuard } from '@app/jwt/guard/user.refresh.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -26,13 +27,13 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const data = await this.auth.signUp(dto.phone, dto.password);
-    res.cookie('accessToken',data.access, {
-      httpOnly : true
-    })
-    res.cookie('refreshToken', data.refresh ,{ httpOnly : true})
+    res.cookie('accessToken', data.access, {
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', data.refresh, { httpOnly: true });
     return {
       result: true,
-      data
+      data,
     };
   }
 
@@ -45,41 +46,38 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const data = await this.auth.signIn(dto.phone, dto.password);
-    res.cookie('accessToken',data.access, {
-      httpOnly : true
-    })
-    res.cookie('refreshToken', data.refresh ,{ httpOnly : true})
+    res.cookie('accessToken', data.access, {
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', data.refresh, { httpOnly: true });
     return {
       result: true,
-      data
+      data,
     };
   }
 
   @ApiOperation({
-    summary : '로그인 연장'
+    summary: '로그인 연장',
   })
-  @UseGuards()
+  @UseGuards(UserRefreshGuard)
   @Post('resign')
-  async resign(
-    @Req() req,
-    @Res({passthrough : true}) res: Response
-  ) {
-    const data = await this.auth.resign(req.refreshToken)
-    res.cookie('accessToken',data.access, {
-      httpOnly : true
-    })
-    res.cookie('refreshToken', data.refresh ,{ httpOnly : true})
+  async resign(@Req() req, @Res({ passthrough: true }) res: Response) {
+    const data = await this.auth.resign(req.refreshToken);
+    res.cookie('accessToken', data.access, {
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', data.refresh, { httpOnly: true });
     return {
-      result : true,
-      data
-    }
+      result: true,
+      data,
+    };
   }
 
   @ApiOperation({
     summary: '로그아웃',
   })
   @Post('signout')
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
   async signOut(@Req() req) {
     return {
       result: true,
@@ -90,7 +88,7 @@ export class AuthController {
     summary: '회원탈퇴',
   })
   @Delete('account')
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
   async deleteAccount(@Body() dto: SignRequest) {
     return {
       result: true,

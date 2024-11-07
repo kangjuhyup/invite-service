@@ -216,7 +216,7 @@
 } from '@nestjs/common';
 <span class="cstat-no" title="statement not covered" >import { SignRequest } from './dto/sign';</span>
 <span class="cstat-no" title="statement not covered" >import { AuthService } from './auth.service';</span>
-<span class="cstat-no" title="statement not covered" >import { UserGuard } from '@app/jwt/guard/user.guard';</span>
+<span class="cstat-no" title="statement not covered" >import { UserAccessGuard } from '@app/jwt/guard/user.guard';</span>
 import { Response } from 'express';
 <span class="cstat-no" title="statement not covered" >import { ApiOperation, ApiProperty } from '@nestjs/swagger';</span>
 &nbsp;
@@ -258,7 +258,7 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
     summary: '로그아웃',
   })
   @Post('signout')
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
 <span class="fstat-no" title="function not covered" >  async <span class="cstat-no" title="statement not covered" ></span>signOut(@Req() req) {</span>
 <span class="cstat-no" title="statement not covered" >    return {</span>
       result: true,
@@ -269,7 +269,7 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
     summary: '회원탈퇴',
   })
   @Delete('account')
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
 <span class="fstat-no" title="function not covered" >  async <span class="cstat-no" title="statement not covered" ></span>deleteAccount(@Body() dto: SignRequest) {</span>
 <span class="cstat-no" title="statement not covered" >    return {</span>
       result: true,

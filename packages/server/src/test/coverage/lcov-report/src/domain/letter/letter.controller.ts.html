@@ -304,7 +304,7 @@ import { HttpResponse } from '../dto/response';
 <span class="cstat-no" title="statement not covered" >import { AddLetterRequest } from './dto/request/add.letter';</span>
 <span class="cstat-no" title="statement not covered" >import { AddLetterResponse } from './dto/response/add.letter';</span>
 <span class="cstat-no" title="statement not covered" >import { ResponseValidationInterceptor } from '@interceptor/response.validation';</span>
-<span class="cstat-no" title="statement not covered" >import { UserGuard } from '@jwt/guard/user.guard';</span>
+<span class="cstat-no" title="statement not covered" >import { UserAccessGuard } from '@jwt/guard/user.guard';</span>
 <span class="cstat-no" title="statement not covered" >import { GetLetterDetailRequest } from './dto/request/get.detail';</span>
 <span class="cstat-no" title="statement not covered" >import { GetLetterDetailResponse } from './dto/response/get.detail';</span>
 &nbsp;
@@ -320,7 +320,7 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
   })
   @ApiBearerAuth()
   @Get()
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
   @UseInterceptors(new ResponseValidationInterceptor(GetLetterPageResponse))
 <span class="fstat-no" title="function not covered" >  async <span class="cstat-no" title="statement not covered" ></span>getLetters(</span>
     @Query() dto: GetLetterPageRequest,
@@ -344,7 +344,7 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
     type: PrepareResponse,
   })
   @Get('prepare-add')
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
   @UseInterceptors(new ResponseValidationInterceptor(PrepareResponse))
 <span class="fstat-no" title="function not covered" >  async <span class="cstat-no" title="statement not covered" ></span>prepareAddLetter(</span>
     @Query() dto: PrepareRequest,
@@ -364,7 +364,7 @@ export <span class="cstat-no" title="statement not covered" >class <span class="
   })
   @ApiBearerAuth()
   @Post()
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
   @UseInterceptors(new ResponseValidationInterceptor(AddLetterResponse))
 <span class="fstat-no" title="function not covered" >  async <span class="cstat-no" title="statement not covered" ></span>addLetter(</span>
     @Body() dto: AddLetterRequest,

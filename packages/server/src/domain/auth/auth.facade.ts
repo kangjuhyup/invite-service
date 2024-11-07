@@ -31,9 +31,9 @@ export class AuthFacade {
   }
 
   async resign(refreshToken: string) {
-    return await this.authService.resign(refreshToken)
+    return await this.authService.resign(refreshToken);
   }
- 
+
   async signIn(phone: string, pwd: string) {
     //TODO: 이미 로그인되었을 경우 기존 로그인 세션 제거
     const { userId, access, refresh } = await this.authService.signIn(

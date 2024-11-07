@@ -48,7 +48,7 @@ export class AuthModule {
           inject: [UserService, ...(options.inject || [])],
         },
         {
-          provide : UserRefreshStrategy,
+          provide: UserRefreshStrategy,
           useFactory: (userService: UserService, ...args: any[]) => {
             const { secret } = options.useFactory(...args);
             return new UserRefreshStrategy(userService, secret);

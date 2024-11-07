@@ -21,7 +21,7 @@ import { AddLetterResponse } from './dto/response/add.letter';
 import { GetLetterDetailRequest } from './dto/request/get.detail';
 import { GetLetterDetailResponse } from './dto/response/get.detail';
 import { ResponseValidationInterceptor } from '@app/interceptor/response.validation';
-import { UserGuard } from '@app/jwt/guard/user.access.guard';
+import { UserAccessGuard } from '@app/jwt/guard/user.access.guard';
 import { GetLetterResponse } from './dto/response/get.letter';
 
 @Controller('letter')
@@ -36,7 +36,7 @@ export class LetterController {
   })
   @ApiBearerAuth()
   @Get()
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
   @UseInterceptors(new ResponseValidationInterceptor(GetLetterPageResponse))
   async getLetters(
     @Query() dto: GetLetterPageRequest,
@@ -60,7 +60,7 @@ export class LetterController {
     type: PrepareResponse,
   })
   @Post('prepare-add')
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
   @UseInterceptors(new ResponseValidationInterceptor(PrepareResponse))
   async prepareAddLetter(
     @Body() dto: PrepareRequest,
@@ -80,7 +80,7 @@ export class LetterController {
   })
   @ApiBearerAuth()
   @Post()
-  @UseGuards(UserGuard)
+  @UseGuards(UserAccessGuard)
   @UseInterceptors(new ResponseValidationInterceptor(AddLetterResponse))
   async addLetter(
     @Body() dto: AddLetterRequest,

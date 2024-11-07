@@ -5,7 +5,10 @@ import { UserService } from '@app/domain/user/user.service';
 import { User } from '../user';
 
 @Injectable()
-export class UserAccessStrategy extends PassportStrategy(Strategy,'user-access') {
+export class UserAccessStrategy extends PassportStrategy(
+  Strategy,
+  'user-access',
+) {
   constructor(
     private userService: UserService,
     private secret: string,

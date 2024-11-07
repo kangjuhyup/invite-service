@@ -42,16 +42,24 @@ export class UserRepository {
     });
   }
 
-  async updateUser({userId,refreshToken,updator,entityManager} : UpdateUser) {
+  async updateUser({
+    userId,
+    refreshToken,
+    updator,
+    entityManager,
+  }: UpdateUser) {
     const repo = this._getRepository('user', entityManager);
-    const set = {}
-    if(refreshToken) set['refreshToken'] = refreshToken
-    return await repo.update({
-      ...set,
-      updator
-    }, {
-      userId
-    })
+    const set = {};
+    if (refreshToken) set['refreshToken'] = refreshToken;
+    return await repo.update(
+      {
+        ...set,
+        updator,
+      },
+      {
+        userId,
+      },
+    );
   }
 
   private _getRepository(type: 'user', entityManager?: EntityManager) {

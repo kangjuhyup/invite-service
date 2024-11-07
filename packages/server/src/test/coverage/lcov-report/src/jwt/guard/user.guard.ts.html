@@ -156,8 +156,8 @@
 import { Request } from 'express';
 &nbsp;
 @Injectable()
-export class <span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" >UserGuard<span class="cstat-no" title="statement not covered" > </span>extends AuthGuard('jwt') {</span></span>
-  private <span class="cstat-no" title="statement not covered" >logger = new Logger(UserGuard.name);</span>
+export class <span class="cstat-no" title="statement not covered" ><span class="cstat-no" title="statement not covered" >UserAccessGuard<span class="cstat-no" title="statement not covered" > </span>extends AuthGuard('jwt') {</span></span>
+  private <span class="cstat-no" title="statement not covered" >logger = new Logger(UserAccessGuard.name);</span>
 <span class="fstat-no" title="function not covered" >  constructor(private readonly <span class="cstat-no" title="statement not covered" >j</span>wtService: J</span>wtService) {
 <span class="cstat-no" title="statement not covered" >    super();</span>
   }

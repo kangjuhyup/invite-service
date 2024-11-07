@@ -17,8 +17,8 @@ export class UserEntity extends DefaultEntity {
   @Column({ name: UserColumn.password })
   password: string;
 
-  @Column({name : UserColumn.refreshToken, nullable : true})
-  refreshToken? : string;
+  @Column({ name: UserColumn.refreshToken, nullable: true })
+  refreshToken?: string;
 
   @OneToMany(() => LetterEntity, (letter) => letter.user, { nullable: true })
   letter?: LetterEntity[];
