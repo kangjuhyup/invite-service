@@ -3642,7 +3642,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/passport-jwt@npm:^4":
+"@types/passport-jwt@npm:^4.0.1":
   version: 4.0.1
   resolution: "@types/passport-jwt@npm:4.0.1"
   dependencies:
@@ -11031,7 +11031,7 @@ __metadata:
     "@types/node": "npm:^20.3.1"
     "@types/node-imap": "npm:^0"
     "@types/passport": "npm:^1.0.17"
-    "@types/passport-jwt": "npm:^4"
+    "@types/passport-jwt": "npm:^4.0.1"
     "@types/supertest": "npm:^6.0.0"
     "@types/uuid": "npm:^10"
     "@typescript-eslint/eslint-plugin": "npm:^6.0.0"

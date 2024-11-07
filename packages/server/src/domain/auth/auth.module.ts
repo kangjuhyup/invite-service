@@ -7,6 +7,9 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './service/auth.service';
 import { UserAccessStrategy } from '@app/jwt/strategy/user.access.strategy';
 import { UserRefreshStrategy } from '@app/jwt/strategy/user.refresh.strategy';
+import { AuthFacade } from './auth.facade';
+import { MailService } from './service/mail.service';
+import { SessionService } from './service/session.service';
 
 interface AuthModuleAsyncOptions {
   imports?: any[];
@@ -22,7 +25,7 @@ export class AuthModule {
       module: AuthModule,
       imports: [
         UserModule,
-        PassportModule,
+        PassportModule.register({session:false}),
         JwtModule.registerAsync({
           imports: options.imports || [],
           useFactory: async (...args: any[]) => {
@@ -56,6 +59,9 @@ export class AuthModule {
           inject: [UserService, ...(options.inject || [])],
         },
         AuthService,
+        MailService, 
+        SessionService,
+        AuthFacade,
       ],
     };
   }
