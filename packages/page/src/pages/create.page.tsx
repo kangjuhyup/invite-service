@@ -112,7 +112,7 @@ const CreatePage = () => {
         </Container>
       </AppShell.Main>
       <AppShell.Footer>
-        <Grid style={{ flex: 1 }}>
+        <Grid flex={1}>
           <Grid.Col h={'100%'} span={3} bg={'red'}>
             <DropzoneButton
               onDrop={handleDrop}

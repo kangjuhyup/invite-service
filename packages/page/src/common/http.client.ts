@@ -2,25 +2,48 @@ type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 interface HttpClientOptions extends RequestInit {
   headers?: Record<string, string>;
+  queryParams?: Record<string, string | number>;
 }
 
 class HttpClient {
   private baseUrl: string;
+  private defaultHeaders: Record<string, string>;
+  private defaultOptions: HttpClientOptions;
 
-  constructor(baseUrl: string) {
+  constructor(baseUrl: string, defaultOptions?: HttpClientOptions) {
     this.baseUrl = baseUrl;
+    this.defaultHeaders = {
+      'Content-Type': 'application/json',
+    };
+    this.defaultOptions = defaultOptions || {};
+  }
+
+  #buildQueryParams(params?: Record<string, string | number>): string {
+    if (!params) return '';
+
+    const stringParams: Record<string, string> = Object.entries(params).reduce(
+      (acc, [key, value]) => {
+        acc[key] = String(value);
+        return acc;
+      },
+      {} as Record<string, string>,
+    );
+
+    return `?${new URLSearchParams(stringParams).toString()}`;
   }
 
   private async request<T>(
     endpoint: string,
     method: HttpMethod,
-    options: HttpClientOptions = {}
+    options: HttpClientOptions = {},
   ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
+    const url = `${this.baseUrl}${endpoint}${this.#buildQueryParams(
+      options.queryParams,
+    )}`;
     const token = localStorage.getItem('token');
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      ...this.defaultHeaders,
       ...options.headers,
     };
 
@@ -31,13 +54,14 @@ class HttpClient {
     const response = await fetch(url, {
       method,
       headers,
+      ...this.defaultOptions,
       ...options,
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => ({}));
       console.error(`Error: ${response.status}`, errorData);
-      throw new Error(errorData.message || 'API 요청 실패');
+      throw new Error(errorData.message || `Error: ${response.status}`);
     }
 
     return response.json() as Promise<T>;
@@ -47,12 +71,22 @@ class HttpClient {
     return this.request<T>(endpoint, 'GET', options);
   }
 
-  post<T>(endpoint: string, body: any, options?: HttpClientOptions): Promise<T> {
-    return this.request<T>(endpoint, 'POST', { ...options, body: JSON.stringify(body) });
+  post<T>(
+    endpoint: string,
+    body: any,
+    options?: HttpClientOptions,
+  ): Promise<T> {
+    return this.request<T>(endpoint, 'POST', {
+      ...options,
+      body: JSON.stringify(body),
+    });
   }
 
   put<T>(endpoint: string, body: any, options?: HttpClientOptions): Promise<T> {
-    return this.request<T>(endpoint, 'PUT', { ...options, body: JSON.stringify(body) });
+    return this.request<T>(endpoint, 'PUT', {
+      ...options,
+      body: JSON.stringify(body),
+    });
   }
 
   delete<T>(endpoint: string, options?: HttpClientOptions): Promise<T> {
