@@ -4,7 +4,6 @@ WORKDIR /usr/src/app
 
 COPY .yarn/ .yarn/
 COPY .yarnrc.yml .yarnrc.yml
-COPY .env .env
 COPY package.json yarn.lock ./
 COPY packages/page packages/page
 
