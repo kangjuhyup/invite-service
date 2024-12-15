@@ -92,6 +92,14 @@ describe('AppController (e2e)', () => {
           expect(res.body.message).toBe('존재하지 않는 회원입니다.');
         });
     });
+
+    it('[GET] /auth/google', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/auth/google')
+        .expect(302); // 302: Redirect
+
+      expect(response.headers.location).toContain('accounts.google.com');
+    });
   });
 
   describe('초대장', () => {

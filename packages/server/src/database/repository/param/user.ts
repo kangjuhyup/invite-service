@@ -4,6 +4,7 @@ import { DefaultParameter } from './default';
 export class SelectUser extends DefaultParameter {
   userId: string;
   phone: string;
+  mail?: string;
 }
 
 export class InsertUser extends DefaultParameter {

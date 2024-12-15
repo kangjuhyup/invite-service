@@ -26,6 +26,10 @@ export class MailService implements OnModuleDestroy, OnModuleInit {
       this.openInbox('INBOX')
         .then(() => this.logger.log('INBOX 열기 성공'))
         .catch((err) => this.logger.error(`INBOX 열기 실패: ${err.message}`));
+
+        setInterval(() => {
+          this.imap.noop();
+        }, 300000);
     });
 
     this.imap.once('error', (err) => {
@@ -94,4 +98,5 @@ export class MailService implements OnModuleDestroy, OnModuleInit {
       fetch.once('error', (err) => reject(err));
     });
   }
+  
 }
