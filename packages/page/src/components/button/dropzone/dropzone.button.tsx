@@ -25,36 +25,20 @@ export function DropzoneButton({
         openRef={openRef}
         onDrop={onDrop}
         accept={mimeTypes}
-        bg="red"
       >
         <Group justify="center" gap="xl" style={{ pointerEvents: 'none' }}>
           <Dropzone.Accept>
-            <IconUpload
-              style={{
-                color: 'var(--mantine-color-blue-6)',
-              }}
-              stroke={1.5}
-            />
+            <IconUpload stroke={1.5} />
           </Dropzone.Accept>
           <Dropzone.Reject>
-            <IconX
-              style={{
-                color: 'var(--mantine-color-red-6)',
-              }}
-              stroke={1.5}
-            />
+            <IconX stroke={1.5} />
           </Dropzone.Reject>
           <Dropzone.Idle>
-            <IconPhoto
-              style={{
-                color: 'var(--mantine-color-dimmed)',
-              }}
-              stroke={1.5}
-            />
+            <IconPhoto stroke={1.5} />
           </Dropzone.Idle>
 
           <div>
-            <Text size="xl" inline>
+            <Text size="xs" inline>
               Drag images here or click to select files
             </Text>
           </div>

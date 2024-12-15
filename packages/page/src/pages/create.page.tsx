@@ -1,114 +1,149 @@
-import React, { useState, useRef } from 'react';
-import { Container, useMantineTheme } from '@mantine/core';
+import { useState } from 'react';
+import { AppShell, Button, Container, Grid } from '@mantine/core';
 import { DropzoneButton } from '../components/button/dropzone/dropzone.button';
 import { FileWithPath, MIME_TYPES } from '@mantine/dropzone';
-import MoveResizeImage from '../components/image/move.resize.image';
+import MoveResizeImage from '../components/image/move/move.resize.image';
+import {
+  IconDeviceFloppy,
+  IconPencil,
+  IconSticker,
+  IconTextGrammar,
+} from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
+import MoveResizeText from '../components/text/move/move.resize.text';
 
 const CreatePage = () => {
-  const [file, setFile] = useState<FileWithPath | null>(null); // 선택된 파일 상태 관리
-  const [position, setPosition] = useState({ x: 0, y: 0 }); // 이미지 위치 상태 관리
-  const [size, setSize] = useState({ width: 200, height: 200 }); // 이미지 크기 상태 관리
-  const [dragging, setDragging] = useState(false); // 드래그 상태 관리
-  const [resizing, setResizing] = useState(false); // 크기 조정 상태 관리
-
-  const dragRef = useRef({ x: 0, y: 0 }); // 드래그 시작 지점 저장
-  const sizeRef = useRef({ width: 0, height: 0 }); // 크기 조정 시작 크기 저장
-
-  const handleDrop = (files: FileWithPath[]) => {
-    setFile(files[0]); // 첫 번째 파일만 설정
+  const [files, setFiles] = useState<
+    {
+      file: FileWithPath;
+      size: { width: number; height: number };
+      position: { x: number; y: number };
+    }[]
+  >([]);
+  const [texts, setTexts] = useState<
+    {
+      text: string;
+      position: { x: number; y: number };
+      size: { width: number; height: number };
+    }[]
+  >([]);
+  const [opened, { toggle }] = useDisclosure();
+  const handleDrop = (newFiles: FileWithPath[]) => {
+    const newer = newFiles.map((f) => ({
+      file: f,
+      size: { width: 200, height: 200 },
+      position: { x: 0, y: 0 },
+    }));
+    setFiles((prevFiles) => [...prevFiles, ...newer]); // 이전 상태에 새로운 파일 추가
+  };
+  const handleTextChange = (updatedText: {
+    index: number;
+    text: string;
+    size: { width: number; height: number };
+    position: { x: number; y: number };
+  }) => {
+    console.log('handleTextChange');
+    setTexts((prevTexts) =>
+      prevTexts.map((t, index) =>
+        index === updatedText.index ? { ...t, ...updatedText } : t,
+      ),
+    );
   };
 
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (
-      e.target instanceof HTMLDivElement &&
-      e.target.className === 'resize-handle'
-    ) {
-      setResizing(true); // 크기 조정 시작
-      sizeRef.current = { width: e.clientX, height: e.clientY }; // 크기 조정 시작 위치 기록
-    } else {
-      setDragging(true); // 드래그 시작
-      dragRef.current = { x: e.clientX, y: e.clientY }; // 드래그 시작 위치 기록
-    }
-  };
+  const handleSave = () => {
+    // 이미지 정보와 텍스트 정보를 반환
+    const imageData = files.map((file) => ({
+      fileName: file.file.name,
+      size: file.size,
+      position: file.position,
+    }));
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (dragging) {
-      const deltaX = e.clientX - dragRef.current.x; // 마우스 이동 거리 계산
-      const deltaY = e.clientY - dragRef.current.y;
-      setPosition((prev) => ({
-        x: prev.x + deltaX,
-        y: prev.y + deltaY,
-      }));
-      dragRef.current = { x: e.clientX, y: e.clientY }; // 새로운 드래그 시작 위치 기록
-    } else if (resizing) {
-      const deltaWidth = e.clientX - sizeRef.current.width; // 마우스 이동 거리 계산
-      const deltaHeight = e.clientY - sizeRef.current.height;
-      setSize((prev) => ({
-        width: prev.width + deltaWidth,
-        height: prev.height + deltaHeight,
-      }));
-      sizeRef.current = { width: e.clientX, height: e.clientY }; // 크기 조정 시작 위치 기록
-    }
-  };
+    const textData = texts.map((text) => ({
+      text: text.text,
+      size: text.size,
+      position: text.position,
+    }));
 
-  const handleMouseUp = () => {
-    setDragging(false); // 드래그 종료
-    setResizing(false); // 크기 조정 종료
-  };
-
-  useMantineTheme();
-
-  // MouseMove 이벤트 리스너 등록 및 해제
-  React.useEffect(() => {
-    if (dragging || resizing) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    }
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+    const result = {
+      images: imageData,
+      texts: textData,
     };
-  }, [dragging, resizing]);
+
+    console.log(result);
+    return result;
+  };
 
   return (
-    <Container style={{ width: '100vw', height: '100vh', padding: 0 }}>
-      {/* DropzoneButton: 사용자가 이미지를 드래그 앤 드롭할 수 있도록 설정 */}
-      <DropzoneButton
-        onDrop={handleDrop}
-        mimeTypes={[MIME_TYPES.png, MIME_TYPES.jpeg]} // png 및 jpeg 이미지 파일만 허용
-        width="100%"
-        height="50px"
-      />
-
-      {/* 이미지를 드래그해서 이동하고 크기 조정할 수 있는 Container */}
-      <Container
-        style={{
-          backgroundColor: 'blue',
-          width: '100vw',
-          height: `calc(100vh - 50px)`, // Dropzone 높이 제외
-          overflow: 'hidden', // 이미지가 Container를 초과하지 않도록 설정
-          position: 'relative',
-        }}
-      >
-        {file?.type.startsWith('image/') ? (
-          <MoveResizeImage
-            file={file}
-            x={position.x}
-            y={position.y}
-            width={size.width}
-            height={size.height}
-            onMove={handleMouseDown}
-            onResize={handleMouseDown}
-          />
-        ) : (
-          <></>
-        )}
-      </Container>
-    </Container>
+    <AppShell
+      header={{ height: 60 }}
+      footer={{ height: 50 }}
+      navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      padding="md"
+    >
+      <AppShell.Header>
+        <Button onClick={handleSave}>
+          <IconDeviceFloppy />
+        </Button>
+      </AppShell.Header>
+      <AppShell.Main>
+        <Container
+          style={{
+            backgroundColor: 'blue',
+            flex: 1,
+            overflow: 'hidden', // 이미지가 Container를 초과하지 않도록 설정
+          }}
+        >
+          {files.map((fileInfo, index) => (
+            <MoveResizeImage
+              key={fileInfo.file.name}
+              fileInfo={fileInfo}
+              onUpdate={(data) => {
+                setFiles((prevFiles) =>
+                  prevFiles.map((f, i) =>
+                    i === index ? { ...f, ...data } : f,
+                  ),
+                );
+              }}
+            />
+          ))}
+          {texts.map((text, index) => {
+            return <MoveResizeText index={index} onUpdate={handleTextChange} />;
+          })}
+        </Container>
+      </AppShell.Main>
+      <AppShell.Footer>
+        <Grid style={{ flex: 1 }}>
+          <Grid.Col h={'100%'} span={3} bg={'red'}>
+            <DropzoneButton
+              onDrop={handleDrop}
+              mimeTypes={[MIME_TYPES.png, MIME_TYPES.gif, MIME_TYPES.jpeg]}
+            />
+          </Grid.Col>
+          <Grid.Col h={'100%'} span={3} bg={'blue'}>
+            <Button
+              onClick={() =>
+                setTexts((prevTexts) => [
+                  ...prevTexts,
+                  {
+                    text: 'Text...',
+                    size: { width: 18, height: 18 },
+                    position: { x: 100, y: 100 },
+                  },
+                ])
+              }
+            >
+              <IconTextGrammar />
+            </Button>
+          </Grid.Col>
+          <Grid.Col h={'100%'} span={3} bg={'green'}>
+            <IconSticker />
+          </Grid.Col>
+          <Grid.Col h={'100%'} span={3} bg={'yellow'}>
+            <IconPencil />
+          </Grid.Col>
+        </Grid>
+      </AppShell.Footer>
+    </AppShell>
   );
 };
 
