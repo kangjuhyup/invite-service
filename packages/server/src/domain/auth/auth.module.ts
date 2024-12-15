@@ -10,6 +10,8 @@ import { UserRefreshStrategy } from '@app/jwt/strategy/user.refresh.strategy';
 import { AuthFacade } from './auth.facade';
 import { MailService } from './service/mail.service';
 import { SessionService } from './service/session.service';
+import { AuthGoogleController } from './auth.google.controller';
+import { GoogleStrategy } from '@app/jwt/strategy/google.strategy';
 
 interface AuthModuleAsyncOptions {
   imports?: any[];
@@ -25,7 +27,7 @@ export class AuthModule {
       module: AuthModule,
       imports: [
         UserModule,
-        PassportModule.register({session:false}),
+        PassportModule.register({ session: false }),
         JwtModule.registerAsync({
           imports: options.imports || [],
           useFactory: async (...args: any[]) => {
@@ -40,7 +42,7 @@ export class AuthModule {
           inject: options.inject,
         }),
       ],
-      controllers: [AuthController],
+      controllers: [AuthController, AuthGoogleController],
       providers: [
         {
           provide: UserAccessStrategy,
@@ -58,8 +60,9 @@ export class AuthModule {
           },
           inject: [UserService, ...(options.inject || [])],
         },
+        GoogleStrategy,
         AuthService,
-        MailService, 
+        MailService,
         SessionService,
         AuthFacade,
       ],

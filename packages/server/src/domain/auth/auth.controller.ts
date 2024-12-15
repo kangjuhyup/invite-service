@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
+  Param,
   Post,
   Req,
   Res,
@@ -17,6 +19,16 @@ import { UserRefreshGuard } from '@app/jwt/guard/user.refresh.guard';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly auth: AuthFacade) {}
+
+  @Get('signup/:phone')
+  async prepareSignup(
+    @Param('phone') phone : string
+  ) {
+    return {
+      result : true,
+      data : await this.auth.prepareSignUp(phone)
+    }
+  }
 
   @ApiOperation({
     summary: '회원가입',

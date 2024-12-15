@@ -14,6 +14,9 @@ export class UserEntity extends DefaultEntity {
   @Column({ name: UserColumn.phone })
   phone: string;
 
+  @Column({ name: UserColumn.mail })
+  mail: string;
+
   @Column({ name: UserColumn.password })
   password: string;
 

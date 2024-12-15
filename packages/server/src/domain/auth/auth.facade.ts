@@ -1,15 +1,19 @@
 import {
   ForbiddenException,
   Injectable,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './service/auth.service';
 import { MailService } from './service/mail.service';
 import { SessionService } from './service/session.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthFacade {
+  private logger = new Logger(AuthFacade.name);
   constructor(
+    private readonly userService: UserService,
     private readonly authService: AuthService,
     private readonly mailService: MailService,
     private readonly sessionService: SessionService,
@@ -19,7 +23,7 @@ export class AuthFacade {
     return await this.sessionService.generateSignupSession(phone);
   }
 
-  async signUp(phone: string, pwd: string) {
+  async signUp(phone: string, pwd: string, mail? : string) {
     const session = await this.sessionService.getSignupSession(phone);
     const mails = await this.mailService.getEmails(session);
     if (mails.length === 0)
@@ -45,5 +49,13 @@ export class AuthFacade {
       access,
       refresh,
     };
+  }
+
+  async signUpWithGoogle(mail: string) {
+    const user = await this.userService.getGoogleUser(mail).catch((err) => {
+      if (err instanceof UnauthorizedException) {
+      }
+      throw err;
+    });
   }
 }
