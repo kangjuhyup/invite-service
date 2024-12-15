@@ -8,10 +8,12 @@ import CreatePage from './pages/create.page';
 import LogInPage from './pages/login.page';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
+const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+
 export default function App() {
   return (
     <MantineProvider>
-      <GoogleOAuthProvider clientId="128433882817-f73co38tehgs2tjopi2fqt1jijjkggiv.apps.googleusercontent.com">
+      <GoogleOAuthProvider clientId={googleClientId}>
         <Router>
           <Routes>
             <Route path="/" element={<HomePage />} />

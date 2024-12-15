@@ -94,6 +94,6 @@ class HttpClient {
   }
 }
 
-const apiClient = new HttpClient('http://localhost:3003/api');
+const apiClient = new HttpClient(import.meta.env.VITE_API_URL);
 
 export default apiClient;
