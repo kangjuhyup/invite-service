@@ -22,7 +22,7 @@ COPY --from=builder /usr/src/app/.pnp.loader.mjs .pnp.loader.mjs
 COPY --from=builder /usr/src/app/packages/page/dist packages/page/dist
 COPY --from=builder /usr/src/app/packages/page/server.js packages/page/server.js
 COPY --from=builder /usr/src/app/packages/page/package.json packages/page/package.json
-COPY --from=builder /usr/src/app/.env.production packages/page/.env.production
+COPY --from=builder /usr/src/app/packages/page/.env.production packages/page/.env.production
 
 RUN yarn workspaces focus page --production
 
