@@ -94,6 +94,6 @@ class HttpClient {
   }
 }
 
-const apiClient = new HttpClient('http://localhost:3000/api');
+const apiClient = new HttpClient('http://localhost:3003/api');
 
 export default apiClient;

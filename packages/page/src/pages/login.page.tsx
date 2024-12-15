@@ -1,16 +1,19 @@
-import { Container, Button, Text } from '@mantine/core';
-import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
+import { Container, Button, Text, Input } from '@mantine/core';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useState } from 'react';
+import apiClient from '../common/http.client';
 
 const LogInPage = () => {
+  const [signupStep, setSignupStep] = useState(0);
   const [user, setUser] = useState(null);
+  const [phone, setPhone] = useState<string | null>(null);
+  const [session, setSession] = useState<string | null>(null);
+  const [pwd, setPwd] = useState<string | null>(null);
 
-  // Google Login Handler
-  const login = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse: any) => {
       try {
-        // 사용자 정보 가져오기
-        const userInfo = await axios.get(
+        const userInfo = await apiClient.get<any>(
           'https://www.googleapis.com/oauth2/v3/userinfo',
           {
             headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
@@ -26,24 +29,41 @@ const LogInPage = () => {
     },
   });
 
+  const prepare = async () => {
+    const res = await apiClient.get<any>(`/auth/signup/${phone}`);
+    setSignupStep(1);
+    setSession(res.data);
+  };
+
+  const signup = async () => {
+    const res = await apiClient.post<any>(`/auth/signup`, {
+      phone,
+      password: pwd,
+    });
+  };
+
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
-      <Container>
-        <Text size="xl" mb="md">
-          Google OAuth Login
-        </Text>
-        {user ? (
-          <div>
-            <Text>Welcome, {user.name}!</Text>
-            <img src={user.picture} alt="Profile" />
-          </div>
-        ) : (
-          <Button onClick={(e) => login()} variant="outline">
-            Log in with Google
-          </Button>
-        )}
-      </Container>
-    </GoogleOAuthProvider>
+    <Container>
+      <Input onChange={(e) => setPhone(e.currentTarget.value)} />
+      <Input onChange={(e) => setPwd(e.currentTarget.value)} />
+      {signupStep === 0 ? (
+        <Button onClick={(e) => prepare()}>인증문자열 얻기</Button>
+      ) : signupStep === 1 ? (
+        <a
+          href={`sms:fog0510@gmail.com?body=${session}`}
+          onClick={() => setSignupStep(2)}
+        >
+          인증 문자 보내기
+        </a>
+      ) : signupStep === 2 ? (
+        <Button onClick={(e) => signup()}>회원가입</Button>
+      ) : (
+        <></>
+      )}
+      <Button onClick={(e) => googleLogin()} variant="outline">
+        Log in with Google
+      </Button>
+    </Container>
   );
 };
 
