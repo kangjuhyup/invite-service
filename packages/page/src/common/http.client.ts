@@ -94,6 +94,6 @@ class HttpClient {
   }
 }
 
-const apiClient = new HttpClient(import.meta.env.VITE_API_URL);
+const apiClient = new HttpClient(process.env.NEXT_PUBLIC_API_URL || '');
 
 export default apiClient;
