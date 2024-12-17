@@ -1,6 +1,7 @@
-import { Container, Button, Text, Input } from '@mantine/core';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Container, Button, Input } from '@mantine/core';
 import { useGoogleLogin } from '@react-oauth/google';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import apiClient from '../common/http.client';
 
 const LogInPage = () => {
@@ -9,6 +10,8 @@ const LogInPage = () => {
   const [phone, setPhone] = useState<string | null>(null);
   const [session, setSession] = useState<string | null>(null);
   const [pwd, setPwd] = useState<string | null>(null);
+
+  useEffect(() => {}, [user]);
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse: any) => {
@@ -40,14 +43,23 @@ const LogInPage = () => {
       phone,
       password: pwd,
     });
+    return res;
   };
 
   return (
     <Container>
-      <Input onChange={(e) => setPhone(e.currentTarget.value)} />
-      <Input onChange={(e) => setPwd(e.currentTarget.value)} />
+      <Input
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setPhone(e.currentTarget.value)
+        }
+      />
+      <Input
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setPwd(e.currentTarget.value)
+        }
+      />
       {signupStep === 0 ? (
-        <Button onClick={(e) => prepare()}>인증문자열 얻기</Button>
+        <Button onClick={() => prepare()}>인증문자열 얻기</Button>
       ) : signupStep === 1 ? (
         <a
           href={`sms:fog0510@gmail.com?body=${session}`}
@@ -56,11 +68,11 @@ const LogInPage = () => {
           인증 문자 보내기
         </a>
       ) : signupStep === 2 ? (
-        <Button onClick={(e) => signup()}>회원가입</Button>
+        <Button onClick={() => signup()}>회원가입</Button>
       ) : (
         <></>
       )}
-      <Button onClick={(e) => googleLogin()} variant="outline">
+      <Button onClick={() => googleLogin()} variant="outline">
         Log in with Google
       </Button>
     </Container>
