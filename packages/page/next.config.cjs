@@ -2,8 +2,8 @@
 const nextConfig = {
   /* config options here */
   basePath: '/page',
-  output: 'standalone',
-  reactStricMode: false,
+  // output: 'standalone',
+  // reactStricMode: false,
   assetPrefix: '/page',
 };
 
