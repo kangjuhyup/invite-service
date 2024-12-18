@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Container, Button, Input } from '@mantine/core';
-// import { useGoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@react-oauth/google';
 import { useEffect, useState } from 'react';
 import apiClient from '../../common/http.client';
 
@@ -15,24 +15,24 @@ const LogInPage = () => {
 
   useEffect(() => {}, [user]);
 
-  // const googleLogin = useGoogleLogin({
-  //   onSuccess: async (tokenResponse: any) => {
-  //     try {
-  //       const userInfo = await apiClient.get<any>(
-  //         'https://www.googleapis.com/oauth2/v3/userinfo',
-  //         {
-  //           headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-  //         },
-  //       );
-  //       setUser(userInfo.data); // 사용자 정보 상태에 저장
-  //     } catch (error) {
-  //       console.error('Failed to fetch user info', error);
-  //     }
-  //   },
-  //   onError: () => {
-  //     console.log('Login Failed');
-  //   },
-  // });
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse: any) => {
+      try {
+        const userInfo = await apiClient.get<any>(
+          'https://www.googleapis.com/oauth2/v3/userinfo',
+          {
+            headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+          },
+        );
+        setUser(userInfo.data); // 사용자 정보 상태에 저장
+      } catch (error) {
+        console.error('Failed to fetch user info', error);
+      }
+    },
+    onError: () => {
+      console.log('Login Failed');
+    },
+  });
 
   const prepare = async () => {
     const res = await apiClient.get<any>(`/auth/signup/${phone}`);
@@ -74,9 +74,9 @@ const LogInPage = () => {
       ) : (
         <></>
       )}
-      {/* <Button onClick={() => googleLogin()} variant="outline">
+      <Button onClick={() => googleLogin()} variant="outline">
         Log in with Google
-      </Button> */}
+      </Button>
     </Container>
   );
 };
