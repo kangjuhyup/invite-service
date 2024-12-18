@@ -7,12 +7,12 @@ export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
   async getUser(param: {
-    phone?: string;
+    email?: string;
     userId?: string;
   }): Promise<UserEntity> {
-    const { phone, userId } = param;
-    const user = phone
-      ? await this.userRepository.selectUserFromPhone({ phone })
+    const { email, userId } = param;
+    const user = email
+      ? await this.userRepository.selectUserFromEmail({ email })
       : userId
         ? await this.userRepository.selectUserFromId({ userId })
         : undefined;
@@ -20,8 +20,8 @@ export class UserService {
     return user;
   }
 
-  async getGoogleUser(mail: string): Promise<UserEntity> {
-    const user = await this.userRepository.selectUserFromEmail({ mail });
+  async getGoogleUser(email: string): Promise<UserEntity> {
+    const user = await this.userRepository.selectUserFromEmail({ email });
     if (!user) throw new UnauthorizedException('존재하지 않는 회원입니다.');
     return user;
   }
@@ -33,13 +33,13 @@ export class UserService {
     return user;
   }
 
-  async saveUser(phone: string, pwd: string) {
+  async saveUser(email: string, pwd: string) {
     await this.userRepository.insertUser({
-      user: { nickName: randomString(), phone, password: pwd },
+      user: { nickName: randomString(), email, password: pwd },
       creator: UserService.name,
     });
 
-    return await this.getUser({ phone });
+    return await this.getUser({ email });
   }
 
   async updateRefresh(userId: string, refreshToken: string) {

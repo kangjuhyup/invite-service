@@ -3,12 +3,12 @@ import { DefaultParameter } from './default';
 
 export class SelectUser extends DefaultParameter {
   userId: string;
-  phone: string;
-  mail?: string;
+  phone?: string;
+  email: string;
 }
 
 export class InsertUser extends DefaultParameter {
-  user: Pick<UserEntity, 'nickName' | 'phone' | 'password' | 'refreshToken'>;
+  user: Pick<UserEntity, 'nickName' | 'email' | 'password' | 'refreshToken'>;
   creator: string;
 }
 

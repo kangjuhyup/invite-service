@@ -8,14 +8,14 @@ export class UserEntity extends DefaultEntity {
   @PrimaryGeneratedColumn('uuid', { name: UserColumn.userId })
   userId: string;
 
+  @Column({ name : UserColumn.email })
+  email: string;
+
   @Column({ name: UserColumn.nickName })
   nickName: string;
 
-  @Column({ name: UserColumn.phone })
-  phone: string;
-
-  @Column({ name: UserColumn.mail })
-  mail: string;
+  @Column({ name: UserColumn.phone, nullable: true })
+  phone?: string;
 
   @Column({ name: UserColumn.password })
   password: string;

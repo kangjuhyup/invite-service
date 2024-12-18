@@ -12,35 +12,23 @@ export class UserRepository {
   ) {}
 
   async selectUserFromEmail({
-    mail,
+    email,
     entityManager,
-  }: Pick<SelectUser, 'mail' | 'entityManager'>) {
+  }: Pick<SelectUser, 'email' | 'entityManager'>) {
     const repo = this._getRepository('user', entityManager);
     return await repo.findOne({
       where: {
-        mail,
+        email,
         useYn: YN.Y,
       },
     });
   }
 
-  async selectUserFromId({ userId, entityManager }: Omit<SelectUser, 'phone'>) {
+  async selectUserFromId({ userId, entityManager }: Pick<SelectUser, 'userId'|'entityManager'>) {
     const repo = this._getRepository('user', entityManager);
     return await repo.findOne({
       where: {
         userId,
-        useYn: YN.Y,
-      },
-    });
-  }
-  async selectUserFromPhone({
-    phone,
-    entityManager,
-  }: Omit<SelectUser, 'userId'>) {
-    const repo = this._getRepository('user', entityManager);
-    return await repo.findOne({
-      where: {
-        phone,
         useYn: YN.Y,
       },
     });

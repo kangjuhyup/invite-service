@@ -2,7 +2,7 @@ export const UserColumn = {
   table: 'tb_vm_user',
   userId: 'user_id',
   nickName: 'nc_nm',
-  mail: 'mail',
+  email: 'mail',
   phone: 'mpno',
   password: 'pwd',
   refreshToken: 'rfh_tk',
