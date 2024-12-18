@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build",
     "lint": "yarn eslint .",
-    "start:prod": "next start"
+    "start:prod": "next start -p 5001"
   },
   "dependencies": {
     "@mantine/core": "7.14.3",
