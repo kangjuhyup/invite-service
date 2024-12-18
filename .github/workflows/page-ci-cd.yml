@@ -60,5 +60,5 @@ jobs:
             docker pull ghcr.io/${{ github.repository }}/page:latest
             docker stop invite-page || true
             docker rm invite-page || true
-            docker run -d -p 3000:3000 --network my-network --name invite-page ghcr.io/${{ github.repository }}/page:latest
+            docker run -d -p 5001:5001 --network my-network --name invite-page ghcr.io/${{ github.repository }}/page:latest
           EOF
