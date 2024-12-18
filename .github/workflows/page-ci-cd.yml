@@ -24,6 +24,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: create .env
+        run: |
+            echo "NODE_ENV=${{ vars.NODE_ENV }}" >> .env
+            echo "NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }}" >> .env
+            echo "NEXT_PUBLIC_API_URL=https://invite.jhkang.xyz/api" >> .env
 
       - name: docker build & push
         run: docker buildx build -f ./packages/page/Dockerfile --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/page:latest --push .
