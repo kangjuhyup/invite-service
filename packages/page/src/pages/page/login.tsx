@@ -2,7 +2,7 @@
 import { Container, Button, Input } from '@mantine/core';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useEffect, useState } from 'react';
-import apiClient from '../common/http.client';
+import apiClient from '../../../common/http.client';
 
 const LogInPage = () => {
   const [signupStep, setSignupStep] = useState(0);

@@ -1,9 +1,9 @@
 import { Container, Drawer, Image } from '@mantine/core';
 import { IconBubbleText } from '@tabler/icons-react';
-import useInit from '../../hooks/init.hook';
-import useLetterApi from '../../api/letter.api';
+import useInit from '../../../hooks/init.hook';
+import useLetterApi from '../../../api/letter.api';
 import { useDisclosure } from '@mantine/hooks';
-import FloatingButton from '../../components/button/floating/floating.button';
+import FloatingButton from '../../../components/button/floating/floating.button';
 import { useRouter } from 'next/router';
 
 const LetterPage = () => {

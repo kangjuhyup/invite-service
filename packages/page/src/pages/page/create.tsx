@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { AppShell, Button, Container, Grid } from '@mantine/core';
-import { DropzoneButton } from '../components/button/dropzone/dropzone.button';
+import { DropzoneButton } from '../../components/button/dropzone/dropzone.button';
 import { FileWithPath, MIME_TYPES } from '@mantine/dropzone';
-import MoveResizeImage from '../components/image/move/move.resize.image';
+import MoveResizeImage from '../../components/image/move/move.resize.image';
 import {
   IconDeviceFloppy,
   IconPencil,
@@ -10,7 +10,7 @@ import {
   IconTextGrammar,
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
-import MoveResizeText from '../components/text/move/move.resize.text';
+import MoveResizeText from '../../components/text/move/move.resize.text';
 
 const CreatePage = () => {
   const [files, setFiles] = useState<
