@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Container, Button, Input } from '@mantine/core';
 import { useGoogleLogin } from '@react-oauth/google';

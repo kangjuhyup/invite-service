@@ -1,3 +1,5 @@
+'use client';
+
 import { Container, Drawer, Image } from '@mantine/core';
 import { IconBubbleText } from '@tabler/icons-react';
 import useInit from '../../../hooks/init.hook';

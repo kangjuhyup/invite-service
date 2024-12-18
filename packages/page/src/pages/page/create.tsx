@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { AppShell, Button, Container, Grid } from '@mantine/core';
 import { DropzoneButton } from '../../components/button/dropzone/dropzone.button';
