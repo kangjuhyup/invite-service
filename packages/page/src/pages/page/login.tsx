@@ -7,6 +7,8 @@ import { useEffect, useState } from 'react';
 import apiClient from '../../common/http.client';
 
 const LogInPage = () => {
+  console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
+  console.log('Feature Flag:', process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
   const [signupStep, setSignupStep] = useState(0);
   const [user, setUser] = useState(null);
   const [phone, setPhone] = useState<string | null>(null);
