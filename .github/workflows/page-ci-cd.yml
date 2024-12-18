@@ -25,15 +25,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: setup yarn
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: 'yarn'
-
-      - name: install packages
-        run: yarn install --immutable
-
       - name: docker build & push
         run: docker buildx build -f ./packages/page/Dockerfile --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/page:latest --push .
 
