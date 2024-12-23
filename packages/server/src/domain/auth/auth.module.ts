@@ -11,6 +11,8 @@ import { AuthFacade } from './auth.facade';
 import { MailService } from './service/mail.service';
 import { SessionService } from './service/session.service';
 import { GoogleStrategy } from '@app/jwt/strategy/google.strategy';
+import { GoogleService } from '../google/google.service';
+import { HttpModule } from '@nestjs/axios';
 
 interface AuthModuleAsyncOptions {
   imports?: any[];
@@ -40,6 +42,9 @@ export class AuthModule {
           },
           inject: options.inject,
         }),
+        HttpModule.register({
+          timeout : 5000
+        })
       ],
       controllers: [AuthController],
       providers: [
@@ -62,6 +67,7 @@ export class AuthModule {
         GoogleStrategy,
         AuthService,
         MailService,
+        GoogleService,
         SessionService,
         AuthFacade,
       ],

@@ -56,6 +56,7 @@ export class AuthFacade {
 
   async signInWithGoogle(authCode: string) {
     const email = await this.googleService.getEmailFromCode(authCode);
+    this.logger.debug(`email : ${JSON.stringify(email)}`)
     const user = await this.userService.getUser({email}).catch( async (err) => {
       if (err instanceof UnauthorizedException) {
         return await this.userService.saveUser(email,randomString(10))
