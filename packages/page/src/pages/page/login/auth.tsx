@@ -14,6 +14,7 @@ const CallbackPage = () => {
         }>('/auth/signin/google', { code })
         .catch((err) => {
           alert('로그인 실패');
+          throw err;
         });
       if (result) {
         window.location.href = 'http://localhost:3000/me/profile';
