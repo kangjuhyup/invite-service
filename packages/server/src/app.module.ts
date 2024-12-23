@@ -35,7 +35,7 @@ export const modules = [
       const errors = validateSync(validatedConfig);
       if (errors.length > 0) {
         errors.map((err) => {
-          console.error(err);
+          console.error('필수 환경 변수가 없습니다 :', err.constraints);
         });
       }
 

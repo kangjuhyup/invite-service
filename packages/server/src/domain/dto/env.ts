@@ -89,4 +89,16 @@ export class Enviroments {
   @IsNotEmpty()
   @IsString()
   JWT_REFRESH_EXPIRES: string;
+
+  @IsNotEmpty()
+  @IsString()
+  GOOGLE_CALLBACK_URL : string;
+
+  @IsNotEmpty()
+  @IsString()
+  GOOGLE_CLIENT_ID : string;
+
+  @IsNotEmpty()
+  @IsString()
+  GOOGLE_CLIENT_SECRET : string;
 }

@@ -38,7 +38,7 @@ export class AuthController {
     @Body() dto: SignRequest,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const data = await this.auth.signUp(dto.phone, dto.password);
+    const data = await this.auth.signUp(dto.email, dto.password);
     res.cookie('accessToken', data.access, {
       httpOnly: true,
     });
@@ -57,7 +57,28 @@ export class AuthController {
     @Body() dto: SignRequest,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const data = await this.auth.signIn(dto.phone, dto.password);
+    const data = await this.auth.signIn(dto.email, dto.password);
+    res.cookie('accessToken', data.access, {
+      httpOnly: true,
+    });
+    res.cookie('refreshToken', data.refresh, { httpOnly: true });
+    return {
+      result: true,
+      data,
+    };
+  }
+
+  @ApiOperation({
+    summary : '구글 이메일 로그인',
+    description : '기존 회원이 아닐 경우 회원 가입 처리'
+  })
+  @Post('signin/google')
+  @UseGuards()
+  async signInWithGoogle(
+    @Body() body : {code : string},
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const data = await this.auth.signInWithGoogle(body.code)
     res.cookie('accessToken', data.access, {
       httpOnly: true,
     });

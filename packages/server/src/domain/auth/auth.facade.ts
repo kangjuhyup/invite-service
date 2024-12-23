@@ -8,6 +8,8 @@ import { AuthService } from './service/auth.service';
 import { MailService } from './service/mail.service';
 import { SessionService } from './service/session.service';
 import { UserService } from '../user/user.service';
+import { randomString } from '@app/util/random';
+import { GoogleService } from '../google/google.service';
 
 @Injectable()
 export class AuthFacade {
@@ -17,6 +19,7 @@ export class AuthFacade {
     private readonly authService: AuthService,
     private readonly mailService: MailService,
     private readonly sessionService: SessionService,
+    private readonly googleService: GoogleService,
   ) {}
 
   async prepareSignUp(phone: string) {
@@ -38,10 +41,10 @@ export class AuthFacade {
     return await this.authService.resign(refreshToken);
   }
 
-  async signIn(phone: string, pwd: string) {
+  async signIn(email: string, pwd: string) {
     //TODO: 이미 로그인되었을 경우 기존 로그인 세션 제거
     const { userId, access, refresh } = await this.authService.signIn(
-      phone,
+      email,
       pwd,
     );
     await this.sessionService.setSignInSession(userId, access, refresh);
@@ -51,11 +54,14 @@ export class AuthFacade {
     };
   }
 
-  async signUpWithGoogle(mail: string) {
-    const user = await this.userService.getGoogleUser(mail).catch((err) => {
+  async signInWithGoogle(authCode: string) {
+    const email = await this.googleService.getEmailFromCode(authCode);
+    const user = await this.userService.getUser({email}).catch( async (err) => {
       if (err instanceof UnauthorizedException) {
+        return await this.userService.saveUser(email,randomString(10))
       }
       throw err;
     });
+    return this.signIn(user.email,user.password)
   }
 }

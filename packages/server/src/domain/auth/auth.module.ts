@@ -10,7 +10,6 @@ import { UserRefreshStrategy } from '@app/jwt/strategy/user.refresh.strategy';
 import { AuthFacade } from './auth.facade';
 import { MailService } from './service/mail.service';
 import { SessionService } from './service/session.service';
-import { AuthGoogleController } from './auth.google.controller';
 import { GoogleStrategy } from '@app/jwt/strategy/google.strategy';
 
 interface AuthModuleAsyncOptions {
@@ -42,7 +41,7 @@ export class AuthModule {
           inject: options.inject,
         }),
       ],
-      controllers: [AuthController, AuthGoogleController],
+      controllers: [AuthController],
       providers: [
         {
           provide: UserAccessStrategy,

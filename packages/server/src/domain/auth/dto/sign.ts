@@ -1,20 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class SignRequest {
-  @ApiProperty({ description: '휴대폰 번호', example: '01012341234' })
+  @ApiProperty({ description: '이메일 주소', example: 'fog0510@gmail.com' })
   @IsNotEmpty()
-  @IsPhoneNumber('KR')
-  phone: string;
+  @IsEmail()
+  email: string;
 
   @ApiProperty({ description: '패스워드' })
   @IsNotEmpty()
   @IsString()
   password: string;
-}
-
-export class GoogleSignRequest extends SignRequest{
-  @IsNotEmpty()
-  @IsEmail()
-  mail : string;
 }

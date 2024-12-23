@@ -11,8 +11,8 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(phone: string, pwd: string) {
-    const { userId, password } = await this.userService.getUser({ phone });
+  async signIn(email: string, pwd: string) {
+    const { userId, password } = await this.userService.getUser({ email });
     if (password !== pwd)
       throw new UnauthorizedException('잘못된 비밀번호 입니다.');
     const refresh = this._generateRefreshToken(userId);
@@ -24,8 +24,8 @@ export class AuthService {
     };
   }
 
-  async signUp(phone: string, pwd: string) {
-    const user = await this.userService.saveUser(phone, pwd);
+  async signUp(email: string, pwd: string) {
+    const user = await this.userService.saveUser(email, pwd);
     const access = this._generateAccessToken(user.userId);
     const refresh = this._generateRefreshToken(user.userId);
     await this.userService.updateRefresh(user.userId, refresh);

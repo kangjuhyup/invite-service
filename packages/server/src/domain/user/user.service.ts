@@ -20,12 +20,6 @@ export class UserService {
     return user;
   }
 
-  async getGoogleUser(email: string): Promise<UserEntity> {
-    const user = await this.userRepository.selectUserFromEmail({ email });
-    if (!user) throw new UnauthorizedException('존재하지 않는 회원입니다.');
-    return user;
-  }
-
   async validateRefresh(userId: string, refreshToken: string) {
     const user = await this.getUser({ userId });
     if (user.refreshToken !== refreshToken)
