@@ -2,39 +2,20 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Container, Button, Input } from '@mantine/core';
-import { useGoogleLogin } from '@react-oauth/google';
-import { useEffect, useState } from 'react';
-import apiClient from '../../common/http.client';
+import { useState } from 'react';
+import apiClient from '../../../common/http.client';
 
 const LogInPage = () => {
-  console.log('API URL:', process.env.NEXT_PUBLIC_API_URL);
-  console.log('Feature Flag:', process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID);
   const [signupStep, setSignupStep] = useState(0);
-  const [user, setUser] = useState(null);
   const [phone, setPhone] = useState<string | null>(null);
   const [session, setSession] = useState<string | null>(null);
   const [pwd, setPwd] = useState<string | null>(null);
 
-  useEffect(() => {}, [user]);
-
-  const googleLogin = useGoogleLogin({
-    onSuccess: async (tokenResponse: any) => {
-      try {
-        const userInfo = await apiClient.get<any>(
-          'https://www.googleapis.com/oauth2/v3/userinfo',
-          {
-            headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-          },
-        );
-        setUser(userInfo.data); // 사용자 정보 상태에 저장
-      } catch (error) {
-        console.error('Failed to fetch user info', error);
-      }
-    },
-    onError: () => {
-      console.log('Login Failed');
-    },
-  });
+  const googleLogin = () => {
+    console.log('googleLogin');
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI}&scope=openid%20email%20profile&access_type=offline`;
+    window.location.href = authUrl;
+  };
 
   const prepare = async () => {
     const res = await apiClient.get<any>(`/auth/signup/${phone}`);
