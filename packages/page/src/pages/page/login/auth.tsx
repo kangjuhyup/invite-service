@@ -14,9 +14,11 @@ const CallbackPage = () => {
         }>('/auth/signin/google', { code })
         .catch((err) => {
           alert('로그인 실패');
+          window.location.href = `${process.env.NEXT_PUBLIC_PAGE_URL}/login`;
+          throw err;
         });
       if (result) {
-        window.location.href = 'http://localhost:3000/me/profile';
+        window.location.href = `${process.env.NEXT_PUBLIC_PAGE_URL}/me/profile`;
       }
     }
   };
