@@ -2,10 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
+  const app = await NestFactory.create(AppModule, {bufferLogs : true});
+  app.useLogger(app.get(Logger));
   app.enableCors({
     origin : '*'
   })
@@ -24,7 +25,7 @@ async function bootstrap() {
     .addTag('invite')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'access-token', // 이 이름은 Swagger UI에서 인증 키 이름으로 사용됩니다.
+      'access-token',
     )
     .build();
 

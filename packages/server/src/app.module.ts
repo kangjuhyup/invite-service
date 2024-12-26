@@ -11,6 +11,7 @@ import { AuthModule } from './domain/auth/auth.module';
 import { UserModule } from './domain/user/user.module';
 import { DatabaseModule } from './database/database.module';
 import { StorageModule } from './storage/storage.module';
+import { LoggerModule } from 'nestjs-pino';
 
 export const routers = [
   AuthModule.forRootAsync({
@@ -56,6 +57,25 @@ export const modules = [
       };
     },
     inject: [ConfigService],
+  }),
+  LoggerModule.forRootAsync({
+    inject: [ConfigService],
+    useFactory: (config: ConfigService) => ({
+      pinoHttp: {
+        level: config.get<string>('LOG_LEVEL', 'info'),
+        transport:
+          process.env.NODE_ENV !== 'production'
+            ? {
+                target: 'pino-pretty',
+                options: {
+                  colorize: true,
+                  singleLine: true,
+                  translateTime: 'SYS:standard',
+                },
+              }
+            : undefined,
+      },
+    }),
   }),
 ].filter(Boolean);
 

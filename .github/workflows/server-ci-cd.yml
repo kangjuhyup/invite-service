@@ -59,6 +59,8 @@ jobs:
           echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
           echo "REDIS_PWD=${{ secrets.REDIS_PWD }}" >> .env
           echo "GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }}" >> .env
+          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
+          echo "GOOGLE_CALLBACK_URL=${{ vars.GOOGLE_CALLBACK_URL }}" >> .env
 
       - name: docker build & push
         run: docker buildx build -f ./packages/server/Dockerfile --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/service:latest --push .
