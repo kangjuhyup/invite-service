@@ -10,7 +10,6 @@ import { UserRefreshStrategy } from '@app/jwt/strategy/user.refresh.strategy';
 import { AuthFacade } from './auth.facade';
 import { MailService } from './service/mail.service';
 import { SessionService } from './service/session.service';
-import { GoogleStrategy } from '@app/jwt/strategy/google.strategy';
 import { GoogleService } from '../google/google.service';
 import { HttpModule } from '@nestjs/axios';
 
@@ -20,7 +19,6 @@ interface AuthModuleAsyncOptions {
   useFactory: (...args: any[]) => { secret: string; expiresIn: string };
   isGlobal?: boolean;
 }
-//TODO : Refresh 토큰 추가
 @Module({})
 export class AuthModule {
   static forRootAsync(options: AuthModuleAsyncOptions): DynamicModule {
@@ -64,7 +62,7 @@ export class AuthModule {
           },
           inject: [UserService, ...(options.inject || [])],
         },
-        GoogleStrategy,
+        // GoogleStrategy,
         AuthService,
         MailService,
         GoogleService,
