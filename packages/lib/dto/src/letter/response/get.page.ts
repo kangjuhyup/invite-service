@@ -1,4 +1,3 @@
-import { LetterCategoryCode } from '@app/util/category';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -9,6 +8,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { LetterCategoryCode } from '@lib/util';
 
 class LetterPageItem {
   @ApiProperty({

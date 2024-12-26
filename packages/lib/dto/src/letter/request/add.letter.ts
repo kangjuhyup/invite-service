@@ -1,4 +1,4 @@
-import { LetterCategoryCode } from '@app/util/category';
+import { LetterCategoryCode } from '@lib/util';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
