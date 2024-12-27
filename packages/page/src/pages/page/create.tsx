@@ -1,20 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { AppShell, Button, Container, Grid } from '@mantine/core';
+import { useEffect, useState } from 'react';
+import { ActionIcon, AppShell, Button, Container, Grid } from '@mantine/core';
 import { DropzoneButton } from '../../components/button/dropzone/dropzone.button';
 import { FileWithPath, MIME_TYPES } from '@mantine/dropzone';
 import MoveResizeImage from '../../components/image/move/move.resize.image';
 import {
   IconDeviceFloppy,
-  IconPencil,
   IconSticker,
   IconTextGrammar,
 } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import MoveResizeText from '../../components/text/move/move.resize.text';
+import useLetterApi from '@/api/letter.api';
 
 const CreatePage = () => {
+  const { prepareUrls, getPrepareUrls } = useLetterApi();
   const [files, setFiles] = useState<
     {
       file: FileWithPath;
@@ -70,9 +71,37 @@ const CreatePage = () => {
       texts: textData,
     };
 
+    getPrepareUrls({
+      thumbnailMeta: {
+        width: '0',
+        height: '0',
+      },
+      letterMeta: {
+        width: '0',
+        height: '0',
+      },
+      backgroundMeta: {
+        width: '200',
+        height: '400',
+      },
+      componentMetas: imageData.map((image, idx) => {
+        return {
+          width: image.size.width.toString(),
+          height: image.size.height.toString(),
+          x: image.position.x.toString(),
+          y: image.position.y.toString(),
+          z: idx.toString(),
+          angle: '0',
+        };
+      }),
+    });
     console.log(result);
     return result;
   };
+
+  useEffect(() => {
+    console.log(prepareUrls);
+  }, [prepareUrls]);
 
   return (
     <AppShell
@@ -81,17 +110,12 @@ const CreatePage = () => {
       navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
       padding="md"
     >
-      <AppShell.Header>
-        <Button onClick={handleSave}>
-          <IconDeviceFloppy />
-        </Button>
-      </AppShell.Header>
       <AppShell.Main>
         <Container
           style={{
             backgroundColor: 'blue',
             flex: 1,
-            overflow: 'hidden', // 이미지가 Container를 초과하지 않도록 설정
+            overflow: 'hidden',
           }}
         >
           {files.map((fileInfo, index) => (
@@ -121,7 +145,7 @@ const CreatePage = () => {
             />
           </Grid.Col>
           <Grid.Col h={'100%'} span={3} bg={'blue'}>
-            <Button
+            <ActionIcon
               onClick={() =>
                 setTexts((prevTexts) => [
                   ...prevTexts,
@@ -134,13 +158,15 @@ const CreatePage = () => {
               }
             >
               <IconTextGrammar />
-            </Button>
+            </ActionIcon>
           </Grid.Col>
           <Grid.Col h={'100%'} span={3} bg={'green'}>
             <IconSticker />
           </Grid.Col>
           <Grid.Col h={'100%'} span={3} bg={'yellow'}>
-            <IconPencil />
+            <ActionIcon onClick={() => handleSave()}>
+              <IconDeviceFloppy></IconDeviceFloppy>
+            </ActionIcon>
           </Grid.Col>
         </Grid>
       </AppShell.Footer>
