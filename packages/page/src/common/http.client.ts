@@ -78,7 +78,13 @@ class HttpClient {
   ): Promise<T> {
     return this.request<T>(endpoint, 'POST', {
       ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options?.headers || {}),
+      },
       body: JSON.stringify(body),
+    }).catch((err) => {
+      throw err;
     });
   }
 
