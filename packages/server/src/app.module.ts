@@ -66,7 +66,7 @@ export const modules = [
         transport:
           process.env.NODE_ENV !== 'production'
             ? {
-                target: 'pino-pretty',
+                target: require.resolve('pino-pretty'),
                 options: {
                   colorize: true,
                   singleLine: true,
