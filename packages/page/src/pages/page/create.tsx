@@ -17,6 +17,7 @@ import MoveResizeText, {
 } from '../../components/text/move/move.resize.text';
 import useLetterApi from '@/api/letter.api';
 import { toPng } from 'html-to-image';
+import useGenerateLetter from '@/hooks/generate.letter.hook';
 
 const CreatePage = () => {
   const backgroundRef = useRef<HTMLDivElement>(null);
@@ -33,120 +34,8 @@ const CreatePage = () => {
     setFiles((prevFiles) => [...prevFiles, ...newer]); // 이전 상태에 새로운 파일 추가
   };
 
-  const generateLetter = async () => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      throw new Error('Canvas context not available');
-    }
-    if (!backgroundRef.current) return;
-    const backgroundImage = await toPng(backgroundRef.current);
-    const { offsetHeight: bgHeight, offsetWidth: bgWidth } =
-      backgroundRef.current;
-    canvas.width = bgWidth;
-    canvas.height = bgHeight;
-    const bg = new Image();
-    bg.src = backgroundImage;
-    return new Promise<Record<string, any> | null>((resolve, reject) => {
-      bg.onload = async () => {
-        // 배경 이미지 그리기
-        ctx.drawImage(bg, 0, 0, bgWidth, bgHeight);
-
-        // 이미지 로드 및 그리기
-        const imagePromises = files.map(({ file, size, position }) => {
-          return new Promise<void>((imageResolve) => {
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-            img.onload = () => {
-              ctx.drawImage(
-                img,
-                position.x,
-                position.y,
-                size.width,
-                size.height,
-              );
-              imageResolve();
-            };
-          });
-        });
-
-        // 텍스트 그리기
-        const textPromises = texts.map(({ text, position, size }) => {
-          return new Promise<void>((textResolve) => {
-            ctx.font = `${size.width / 10}px Arial`;
-            ctx.fillStyle = 'black';
-            ctx.fillText(text, position.x, position.y);
-            textResolve();
-          });
-        });
-
-        // 모든 작업이 끝난 후 finalImage 생성
-        await Promise.all([...imagePromises, ...textPromises]);
-        const finalImage = canvas.toDataURL('image/png');
-        resolve({
-          letter: finalImage,
-          background: imageToDataURL(bg),
-        });
-      };
-
-      bg.onerror = () => reject('초대장 생성 실패.');
-    });
-  };
-
-  const imageToDataURL = (image: HTMLImageElement): string => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      throw new Error('Canvas context not available');
-    }
-
-    // Canvas 크기 설정
-    canvas.width = image.width;
-    canvas.height = image.height;
-
-    // Canvas에 이미지 그리기
-    ctx.drawImage(image, 0, 0);
-
-    // Base64 데이터 반환
-    return canvas.toDataURL('image/png');
-  };
-
-  const resizeToThumbnail = async (base64Image: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = base64Image;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject('Canvas context not available');
-          return;
-        }
-        canvas.width = 100;
-        canvas.height = 150;
-        ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, 100, 150);
-        const thumbnailBase64 = canvas.toDataURL('image/png');
-        resolve(thumbnailBase64);
-      };
-      img.onerror = () => {
-        reject('썸네일 생성 실패');
-      };
-    });
-  };
-
-  const dataURLToFile = (dataURL: string, fileName: string): File => {
-    const [metadata, base64Data] = dataURL.split(',');
-    const mime = metadata.match(/:(.*?);/)?.[1] || 'image/png';
-
-    const binary = atob(base64Data);
-    const array = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      array[i] = binary.charCodeAt(i);
-    }
-
-    return new File([array], fileName, { type: mime });
-  };
+  const { generateLetter, resizeToThumbnail, dataURLToFile } =
+    useGenerateLetter(backgroundRef, files, texts);
 
   const handleSave = async () => {
     if (!prepareUrls) return;
