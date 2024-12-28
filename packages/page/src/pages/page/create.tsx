@@ -161,6 +161,9 @@ const CreatePage = () => {
       body: letterFile,
       headers: {
         'Content-Type': 'image/png', // 이미지 MIME 타입
+        'x-amz-meta-session': prepareUrls.sessionKey,
+        'x-amz-meta-height': '600',
+        'x-amz-meta-width': '400',
       },
     });
     await fetch(prepareUrls.thumbnailUrl, {
@@ -168,6 +171,9 @@ const CreatePage = () => {
       body: thumbnailFile,
       headers: {
         'Content-Type': 'image/png', // 이미지 MIME 타입
+        'x-amz-meta-session': prepareUrls.sessionKey,
+        'x-amz-meta-height': '150',
+        'x-amz-meta-width': '100',
       },
     });
     await fetch(prepareUrls.backgroundUrl, {
@@ -175,6 +181,9 @@ const CreatePage = () => {
       body: bgFile,
       headers: {
         'Content-Type': 'image/png', // 이미지 MIME 타입
+        'x-amz-meta-session': prepareUrls.sessionKey,
+        'x-amz-meta-height': '600',
+        'x-amz-meta-width': '400',
       },
     });
     await Promise.all(
@@ -184,6 +193,11 @@ const CreatePage = () => {
           body: files[idx].file,
           headers: {
             'Content-Type': 'image/png', // 이미지 MIME 타입
+            'x-amz-meta-session': prepareUrls.sessionKey,
+            'x-amz-meta-height': `${files[idx].size.height}`,
+            'x-amz-meta-width': `${files[idx].size.width}`,
+            'x-amz-meta-angle': '0',
+            'x-amz-meta-z': '0',
           },
         });
       }),

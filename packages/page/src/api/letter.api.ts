@@ -52,7 +52,7 @@ const useLetterApi = () => {
     }
   };
   const postAddLetter = async (request: AddLetterRequest) => {
-    const responst = await apiClient.post<ApiResponse<AddLetterResponse>>(
+    const response = await apiClient.post<ApiResponse<AddLetterResponse>>(
       `/letter`,
       request,
       {
@@ -61,18 +61,16 @@ const useLetterApi = () => {
         },
       },
     );
+    if (!response.result) {
+      setError(response.error);
+    } else {
+      setAddLetter(response.data);
+    }
   };
-  const getLetterMock = async (letterId: number) => {
-    setLetter({
-      id: 1,
-      img: 'https://yimgf-thinkzon.yesform.com/docimgs/public/1/62/61676/61675904.png',
-      comments: [{ name: '강주협', body: '무조건 참석합니다!' }],
-    });
-  };
+
   return {
     letter,
     getLetter,
-    getLetterMock,
     prepareUrls,
     getPrepareUrls,
     addLetter,

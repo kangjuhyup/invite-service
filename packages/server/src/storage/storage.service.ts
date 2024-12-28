@@ -34,11 +34,9 @@ export class StorageService {
     const command = new PutObjectCommand({
       Bucket: param.bucket,
       Key: param.key,
-      ContentType: 'application/octet-stream',
+      ContentType: 'image/png',
       Metadata: {
-        session: param.meta.session,
-        width: '100',
-        height: '100',
+        ...param.meta,
       },
     });
     return await getSignedUrl(this.s3Client, command, {
