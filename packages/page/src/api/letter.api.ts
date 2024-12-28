@@ -7,6 +7,7 @@ import {
   PrepareResponse,
   AddLetterResponse,
   AddLetterRequest,
+  GetLetterPageResponse,
 } from './dto/letter.dto';
 import useLoginStore from '@/store/login.store';
 
@@ -23,6 +24,7 @@ const useLetterApi = () => {
   const { setError } = useErrorStore();
   const { access } = useLoginStore();
   const [letter, setLetter] = useState<GetLetterResponse>();
+  const [letterPage, setLetterPage] = useState<GetLetterPageResponse>();
   const [prepareUrls, setPrepareUrls] = useState<PrepareResponse>();
   const [addLetter, setAddLetter] = useState<AddLetterResponse>();
   const getLetter = async (letterId: number) => {
@@ -68,6 +70,26 @@ const useLetterApi = () => {
     }
   };
 
+  const getLetterPage = async (limit: number, skip: number) => {
+    const response = await apiClient.get<ApiResponse<GetLetterPageResponse>>(
+      `/letter`,
+      {
+        headers: {
+          Authorization: `Bearer ${access ?? ''}`,
+        },
+        queryParams: {
+          limit,
+          skip,
+        },
+      },
+    );
+    if (!response.result) {
+      setError(response.error);
+    } else {
+      setLetterPage(response.data);
+    }
+  };
+
   return {
     letter,
     getLetter,
@@ -75,6 +97,8 @@ const useLetterApi = () => {
     getPrepareUrls,
     addLetter,
     postAddLetter,
+    letterPage,
+    getLetterPage,
   };
 };
 

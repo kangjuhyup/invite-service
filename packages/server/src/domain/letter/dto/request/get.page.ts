@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
 
 export class GetLetterPageRequest {
@@ -6,6 +7,7 @@ export class GetLetterPageRequest {
     description: '가져올 항목의 개수 (한 페이지당 항목 수)',
     example: 10,
   })
+  @Transform(({value}) => Number(value))
   @IsNotEmpty()
   @IsNumber()
   limit: number;
@@ -15,6 +17,7 @@ export class GetLetterPageRequest {
     example: 0,
     required: false,
   })
+  @Transform(({value}) => Number(value))
   @IsOptional()
   @IsNumber()
   skip?: number;

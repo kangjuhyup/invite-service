@@ -42,3 +42,19 @@ export class AddLetterRequest {
 export interface AddLetterResponse {
   letterId: number;
 }
+
+interface LetterPageItem {
+  id: number;
+
+  title: string;
+
+  category: 'LT001' | 'LT002' | 'LT003';
+
+  thumbnail: string;
+}
+
+export interface GetLetterPageResponse {
+  totalCount: number;
+
+  items: LetterPageItem[];
+}

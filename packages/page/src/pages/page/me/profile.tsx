@@ -1,15 +1,21 @@
+import useLetterApi from '@/api/letter.api';
 import useUserApi from '@/api/user.api';
-import apiClient from '@/common/http.client';
-import useLoginStore from '@/store/login.store';
+import { Container } from '@mantine/core';
 import { useEffect } from 'react';
 
 const ProfilePage = () => {
-  const { access } = useLoginStore();
   const { profile, getProfile } = useUserApi();
+  const { letterPage, getLetterPage } = useLetterApi();
   useEffect(() => {
     getProfile();
+    getLetterPage(10, 0);
   }, []);
-  return <div>{JSON.stringify(profile) ?? '프로필 없음'}</div>;
+  return (
+    <Container>
+      <div>{JSON.stringify(profile)}</div>
+      <div>{JSON.stringify(letterPage)}</div>
+    </Container>
+  );
 };
 
 export default ProfilePage;
