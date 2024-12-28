@@ -18,7 +18,6 @@ export default function App({ Component, pageProps }: AppProps) {
           <AppShell
             header={{ height: 60 }}
             footer={{ height: 50 }}
-            navbar={{ width: 300, breakpoint: 'sm' }}
             padding="md"
           >
             <AppShell.Header>

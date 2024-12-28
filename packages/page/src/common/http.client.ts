@@ -79,7 +79,8 @@ class HttpClient {
     return this.request<T>(endpoint, 'POST', {
       ...options,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type':
+          options?.headers?.['Content-Type'] || 'application/json',
         ...(options?.headers || {}),
       },
       body: JSON.stringify(body),

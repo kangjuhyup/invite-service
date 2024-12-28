@@ -30,3 +30,15 @@ export interface PrepareResponse {
   expires: number;
   sessionKey: string;
 }
+
+export class AddLetterRequest {
+  category: 'LT001' | 'LT002' | 'LT003';
+  title: string;
+  body?: string;
+  commentYn?: boolean;
+  attendYn?: boolean;
+}
+
+export interface AddLetterResponse {
+  letterId: number;
+}

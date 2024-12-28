@@ -2,7 +2,7 @@ import { FileWithPath } from '@mantine/dropzone';
 import useMoveResize from './move.resize.hook';
 import { useEffect } from 'react';
 
-interface FileInfo {
+export interface FileInfo {
   file: FileWithPath;
   size: { width: number; height: number };
   position: { x: number; y: number };

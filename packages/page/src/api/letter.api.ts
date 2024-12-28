@@ -2,7 +2,12 @@ import { useState } from 'react';
 import apiClient from '../common/http.client';
 import ApiResponse from '../common/response';
 import useErrorStore from '../store/error.store';
-import { PrepareRequest, PrepareResponse } from './dto/letter.dto';
+import {
+  PrepareRequest,
+  PrepareResponse,
+  AddLetterResponse,
+  AddLetterRequest,
+} from './dto/letter.dto';
 import useLoginStore from '@/store/login.store';
 
 interface GetLetterResponse {
@@ -19,6 +24,7 @@ const useLetterApi = () => {
   const { access } = useLoginStore();
   const [letter, setLetter] = useState<GetLetterResponse>();
   const [prepareUrls, setPrepareUrls] = useState<PrepareResponse>();
+  const [addLetter, setAddLetter] = useState<AddLetterResponse>();
   const getLetter = async (letterId: number) => {
     const response = await apiClient.get<ApiResponse<GetLetterResponse>>(
       `/${letterId}`,
@@ -45,6 +51,17 @@ const useLetterApi = () => {
       setPrepareUrls(response.data);
     }
   };
+  const postAddLetter = async (request: AddLetterRequest) => {
+    const responst = await apiClient.post<ApiResponse<AddLetterResponse>>(
+      `/letter`,
+      request,
+      {
+        headers: {
+          Authorization: `Bearer ${access ?? ''}`,
+        },
+      },
+    );
+  };
   const getLetterMock = async (letterId: number) => {
     setLetter({
       id: 1,
@@ -58,6 +75,8 @@ const useLetterApi = () => {
     getLetterMock,
     prepareUrls,
     getPrepareUrls,
+    addLetter,
+    postAddLetter,
   };
 };
 
