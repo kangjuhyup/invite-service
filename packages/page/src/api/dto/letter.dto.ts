@@ -32,7 +32,7 @@ export interface PrepareResponse {
 }
 
 export class AddLetterRequest {
-  category: 'LT001' | 'LT002' | 'LT003';
+  category: string;
   title: string;
   body?: string;
   commentYn?: boolean;
@@ -48,7 +48,7 @@ interface LetterPageItem {
 
   title: string;
 
-  category: 'LT001' | 'LT002' | 'LT003';
+  category: string;
 
   thumbnail: string;
 }
