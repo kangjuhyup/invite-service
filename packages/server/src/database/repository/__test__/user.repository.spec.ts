@@ -1,85 +1,158 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { InsertUser } from '../param/user';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { UserRepository } from '../user';
-import { AttachmentEntity } from '@app/database/entity/attachment';
-import { LetterEntity } from '@app/database/entity/letter';
-import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
-import { LetterCategoryEntity } from '@app/database/entity/letter.cateogry';
-import { LetterCommentEntity } from '@app/database/entity/letter.comment';
-import { LetterTotalEntity } from '@app/database/entity/letter.total';
-import { UserEntity } from '@app/database/entity/user';
+import { UserEntity } from '../../entity/user';
+import { YN } from '@app/util/yn';
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
-  let module: TestingModule;
+  let mockRepository: jest.Mocked<Repository<UserEntity>>;
 
-  beforeAll(async () => {
-    const entities = [
-      UserEntity,
-      LetterEntity,
-      LetterCategoryEntity,
-      LetterCommentEntity,
-      LetterTotalEntity,
-      LetterAttachmentEntity,
-      AttachmentEntity,
-    ];
-    module = await Test.createTestingModule({
-      imports: [
-        TypeOrmModule.forRoot({
-          type: 'sqlite',
-          database: ':memory:',
-          entities,
-          synchronize: true,
-        }),
-        TypeOrmModule.forFeature(entities),
+  beforeEach(async () => {
+    mockRepository = {
+      findOne: jest.fn(),
+      insert: jest.fn(),
+      update: jest.fn(),
+    } as any;
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        UserRepository,
+        {
+          provide: getRepositoryToken(UserEntity),
+          useValue: mockRepository,
+        },
       ],
-      providers: [UserRepository],
     }).compile();
 
     userRepository = module.get<UserRepository>(UserRepository);
   });
 
-  afterAll(async () => {
-    await module.close();
-  });
+  describe('이메일로 사용자 조회 테스트', () => {
+    const mockUser: UserEntity = {
+      userId: 'test-user-id',
+      email: 'test@example.com',
+      password: 'hashedPassword',
+      nickName: 'TestUser',
+      refreshToken: 'test-refresh-token',
+      useYn: YN.Y,
+      creator: 'system',
+      createdAt: new Date(),
+      updator: 'system',
+      updatedAt: new Date(),
+    };
 
-  describe('selectUserFromPhone', () => {
-    it('should return a user by phone', async () => {
-      const userData: InsertUser = {
-        user: { nickName: 'John', phone: '01012341234', password: 'test123' },
-        creator: 'test',
-      };
-      await userRepository.insertUser({ ...userData });
+    it('이메일로 사용자를 성공적으로 조회해야 함', async () => {
+      mockRepository.findOne.mockResolvedValue(mockUser);
 
-      const foundUser = await userRepository.selectUserFromPhone({
-        phone: '01012341234',
+      const result = await userRepository.selectUserFromEmail({
+        email: 'test@example.com',
       });
-      expect(foundUser).toBeDefined();
-      expect(foundUser.phone).toBe(userData.user.phone);
-      expect(foundUser.nickName).toBe(userData.user.nickName);
+
+      expect(result).toEqual(mockUser);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          email: 'test@example.com',
+          useYn: YN.Y,
+        },
+      });
     });
 
-    it('should return undefined if user does not exist', async () => {
-      const foundUser = await userRepository.selectUserFromPhone({
-        phone: 'nonexistent',
+    it('존재하지 않는 이메일로 조회 시 undefined를 반환해야 함', async () => {
+      mockRepository.findOne.mockResolvedValue(undefined);
+
+      const result = await userRepository.selectUserFromEmail({
+        email: 'nonexistent@example.com',
       });
-      expect(foundUser).toBeNull();
+
+      expect(result).toBeUndefined();
     });
   });
 
-  describe('insertUser', () => {
-    it('should insert a user and return the generated ID', async () => {
-      const userData: InsertUser = {
-        user: { nickName: 'Jane', phone: '01098765432', password: 'password' },
-        creator: 'test',
-      };
+  describe('사용자 ID로 사용자 조회 테스트', () => {
+    const mockUser: UserEntity = {
+      userId: 'test-user-id',
+      email: 'test@example.com',
+      password: 'hashedPassword',
+      nickName: 'TestUser',
+      refreshToken: 'test-refresh-token',
+      useYn: YN.Y,
+      creator: 'system',
+      createdAt: new Date(),
+      updator: 'system',
+      updatedAt: new Date(),
+    };
 
-      const result = await userRepository.insertUser({
-        ...userData,
+    it('사용자 ID로 사용자를 성공적으로 조회해야 함', async () => {
+      mockRepository.findOne.mockResolvedValue(mockUser);
+
+      const result = await userRepository.selectUserFromId({
+        userId: 'test-user-id',
       });
-      expect(result).toBeDefined();
-      expect(result.identifiers.length).toBeGreaterThan(0);
+
+      expect(result).toEqual(mockUser);
+      expect(mockRepository.findOne).toHaveBeenCalledWith({
+        where: {
+          userId: 'test-user-id',
+          useYn: YN.Y,
+        },
+      });
+    });
+
+    it('존재하지 않는 사용자 ID로 조회 시 undefined를 반환해야 함', async () => {
+      mockRepository.findOne.mockResolvedValue(undefined);
+
+      const result = await userRepository.selectUserFromId({
+        userId: 'nonexistent-id',
+      });
+
+      expect(result).toBeUndefined();
+    });
+  });
+
+  describe('사용자 생성 테스트', () => {
+    const newUser = {
+      email: 'new@example.com',
+      password: 'newPassword',
+      nickName: 'NewUser',
+    };
+
+    it('새로운 사용자를 성공적으로 생성해야 함', async () => {
+      mockRepository.insert.mockResolvedValue(undefined);
+
+      await userRepository.insertUser({
+        user: newUser,
+        creator: 'system',
+      });
+
+      expect(mockRepository.insert).toHaveBeenCalledWith({
+        ...newUser,
+        creator: 'system',
+        updator: 'system',
+      });
+    });
+  });
+
+  describe('리프레시 토큰 업데이트 테스트', () => {
+    it('리프레시 토큰을 성공적으로 업데이트해야 함', async () => {
+      mockRepository.update.mockResolvedValue(undefined);
+
+      await userRepository.updateUser({
+        userId: 'test-user-id',
+        refreshToken: 'new-refresh-token',
+        updator: 'system',
+      });
+
+      expect(mockRepository.update).toHaveBeenCalledWith(
+        {
+          refreshToken: 'new-refresh-token',
+          updator: 'system',
+        },
+        {
+          userId: 'test-user-id',
+        },
+      );
     });
   });
 });

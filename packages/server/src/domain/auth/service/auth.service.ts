@@ -15,11 +15,12 @@ export class AuthService {
     const { userId, password } = await this.userService.getUser({ email });
     if (password !== pwd)
       throw new UnauthorizedException('잘못된 비밀번호 입니다.');
+    const access = this._generateAccessToken(userId);
     const refresh = this._generateRefreshToken(userId);
     await this.userService.updateRefresh(userId, refresh);
     return {
       userId: userId,
-      access: this._generateAccessToken(userId),
+      access,
       refresh,
     };
   }
