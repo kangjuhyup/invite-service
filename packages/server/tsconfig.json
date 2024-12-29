@@ -1,6 +1,6 @@
 {
     "include": ["./src"],
-    "extends" : "../../../tsconfig.json",
+    "extends" : "../../tsconfig.json",
     "compilerOptions": {
       "outDir": "./dist",
       "module": "commonjs",
@@ -23,7 +23,7 @@
       "composite": true,
       "paths": {
         "@app/*": ["./src/*"]
+      }
     }
-    }
-  }
+}
   
