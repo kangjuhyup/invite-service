@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { StorageService } from 'packages/server/src/storage/storage.service';
 import {
   UnauthorizedException,
   BadRequestException,
   Logger,
 } from '@nestjs/common';
-import { LetterAttachmentCode } from 'packages/server/src/util/attachment';
-import { LetterAttachmentService } from '../service/letter.attachment.service';
 import { AttachmentDetail } from '../transaction/insert.letter';
+import { StorageService } from '@app/storage/storage.service';
+import { LetterAttachmentCode } from '@app/util/attachment';
+import { LetterAttachmentService } from '../service/letter.attachment.service';
 
 describe('LetterAttachmentService', () => {
   let service: LetterAttachmentService;

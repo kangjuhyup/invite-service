@@ -8,7 +8,7 @@ export class UserEntity extends DefaultEntity {
   @PrimaryGeneratedColumn('uuid', { name: UserColumn.userId })
   userId: string;
 
-  @Column({ name : UserColumn.email })
+  @Column({ name: UserColumn.email })
   email: string;
 
   @Column({ name: UserColumn.nickName })

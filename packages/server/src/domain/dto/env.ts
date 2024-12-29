@@ -92,13 +92,13 @@ export class Enviroments {
 
   @IsNotEmpty()
   @IsString()
-  GOOGLE_CALLBACK_URL : string;
+  GOOGLE_CALLBACK_URL: string;
 
   @IsNotEmpty()
   @IsString()
-  GOOGLE_CLIENT_ID : string;
+  GOOGLE_CLIENT_ID: string;
 
   @IsNotEmpty()
   @IsString()
-  GOOGLE_CLIENT_SECRET : string;
+  GOOGLE_CLIENT_SECRET: string;
 }

@@ -26,7 +26,7 @@ export class AuthFacade {
     return await this.sessionService.generateSignupSession(phone);
   }
 
-  async signUp(phone: string, pwd: string, mail? : string) {
+  async signUp(phone: string, pwd: string, mail?: string) {
     const session = await this.sessionService.getSignupSession(phone);
     const mails = await this.mailService.getEmails(session);
     if (mails.length === 0)
@@ -56,13 +56,15 @@ export class AuthFacade {
 
   async signInWithGoogle(authCode: string) {
     const email = await this.googleService.getEmailFromCode(authCode);
-    this.logger.debug(`email : ${JSON.stringify(email)}`)
-    const user = await this.userService.getUser({email}).catch( async (err) => {
-      if (err instanceof UnauthorizedException) {
-        return await this.userService.saveUser(email,randomString(10))
-      }
-      throw err;
-    });
-    return this.signIn(user.email,user.password)
+    this.logger.debug(`email : ${JSON.stringify(email)}`);
+    const user = await this.userService
+      .getUser({ email })
+      .catch(async (err) => {
+        if (err instanceof UnauthorizedException) {
+          return await this.userService.saveUser(email, randomString(10));
+        }
+        throw err;
+      });
+    return this.signIn(user.email, user.password);
   }
 }

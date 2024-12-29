@@ -24,7 +24,10 @@ export class UserRepository {
     });
   }
 
-  async selectUserFromId({ userId, entityManager }: Pick<SelectUser, 'userId'|'entityManager'>) {
+  async selectUserFromId({
+    userId,
+    entityManager,
+  }: Pick<SelectUser, 'userId' | 'entityManager'>) {
     const repo = this._getRepository('user', entityManager);
     return await repo.findOne({
       where: {

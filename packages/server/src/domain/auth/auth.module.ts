@@ -41,8 +41,8 @@ export class AuthModule {
           inject: options.inject,
         }),
         HttpModule.register({
-          timeout : 5000
-        })
+          timeout: 5000,
+        }),
       ],
       controllers: [AuthController],
       providers: [

@@ -21,13 +21,11 @@ export class AuthController {
   constructor(private readonly auth: AuthFacade) {}
 
   @Get('signup/:phone')
-  async prepareSignup(
-    @Param('phone') phone : string
-  ) {
+  async prepareSignup(@Param('phone') phone: string) {
     return {
-      result : true,
-      data : await this.auth.prepareSignUp(phone)
-    }
+      result: true,
+      data: await this.auth.prepareSignUp(phone),
+    };
   }
 
   @ApiOperation({
@@ -69,16 +67,16 @@ export class AuthController {
   }
 
   @ApiOperation({
-    summary : '구글 이메일 로그인',
-    description : '기존 회원이 아닐 경우 회원 가입 처리'
+    summary: '구글 이메일 로그인',
+    description: '기존 회원이 아닐 경우 회원 가입 처리',
   })
   @Post('signin/google')
   @UseGuards()
   async signInWithGoogle(
-    @Body() body : {code : string},
+    @Body() body: { code: string },
     @Res({ passthrough: true }) res: Response,
   ) {
-    const data = await this.auth.signInWithGoogle(body.code)
+    const data = await this.auth.signInWithGoogle(body.code);
     res.cookie('accessToken', data.access, {
       httpOnly: true,
     });

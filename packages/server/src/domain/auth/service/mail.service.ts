@@ -94,5 +94,4 @@ export class MailService implements OnModuleDestroy, OnModuleInit {
       fetch.once('error', (err) => reject(err));
     });
   }
-  
 }

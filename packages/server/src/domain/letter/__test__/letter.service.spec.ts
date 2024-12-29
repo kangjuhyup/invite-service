@@ -1,21 +1,23 @@
 // src/letter/service/letter.service.spec.ts
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { StorageService } from 'packages/server/src/storage/storage.service';
-import { RedisClientService } from 'packages/server/src/redis/redis.client.service';
-import { LetterRepository } from 'packages/server/src/database/repository/letter';
-import { InsertLetterTransaction } from '../transaction/insert.letter';
 import { BadRequestException } from '@nestjs/common';
-import { User } from 'packages/server/src/jwt/user';
 import { PrepareRequest } from '../dto/request/prepare';
 import { PrepareResponse } from '../dto/response/prepare';
 import { AddLetterRequest } from '../dto/request/add.letter';
 import { AddLetterResponse } from '../dto/response/add.letter';
 import { GetLetterPageRequest } from '../dto/request/get.page';
 import { GetLetterPageResponse } from '../dto/response/get.page';
-import { AttachmentDetail } from '../transaction/insert.letter';
+import {
+  AttachmentDetail,
+  InsertLetterTransaction,
+} from '../transaction/insert.letter';
 import { LetterService } from '../service/letter.service';
 import { LetterAttachmentService } from '../service/letter.attachment.service';
+import { LetterRepository } from '@app/database/repository/letter';
+import { User } from '@app/jwt/user';
+import { RedisClientService } from '@app/redis/redis.client.service';
+import { StorageService } from '@app/storage/storage.service';
 
 describe('LetterService', () => {
   let service: LetterService;

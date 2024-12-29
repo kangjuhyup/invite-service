@@ -1,3 +1,5 @@
+import { LetterEntity } from '@app/database/entity/letter';
+import { LetterAttachmentCode } from '@app/util/attachment';
 import { LetterCategoryCode } from '@app/util/category';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -10,7 +12,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-class LetterPageItem {
+export class LetterPageItem {
   @ApiProperty({
     description: '초대장 ID',
     example: 1,
@@ -43,6 +45,20 @@ class LetterPageItem {
   @IsNotEmpty()
   @IsString()
   thumbnail: string;
+
+  static of(
+    id: number,
+    title: string,
+    category: LetterCategoryCode,
+    thumbnail: string,
+  ) {
+    const item = new LetterPageItem();
+    item.id = id;
+    item.title = title;
+    item.category = category;
+    item.thumbnail = thumbnail;
+    return item;
+  }
 }
 
 export class GetLetterPageResponse {
@@ -62,4 +78,20 @@ export class GetLetterPageResponse {
   @ValidateNested({ each: true })
   @Type(() => LetterPageItem)
   items: LetterPageItem[];
+
+  static of(totalCount: number, letters: LetterEntity[]) {
+    const response = new GetLetterPageResponse();
+    response.totalCount = totalCount;
+    response.items = letters.map((l) =>
+      LetterPageItem.of(
+        l.letterId,
+        l.title,
+        l.letterCategoryCode,
+        l.letterAttachment.find(
+          (la) => la.attachmentCode === LetterAttachmentCode.THUMBNAIL,
+        )?.attachment.attachmentPath,
+      ),
+    );
+    return response;
+  }
 }
