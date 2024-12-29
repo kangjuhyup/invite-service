@@ -8,6 +8,9 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { LetterEntity } from '@app/database/entity/letter';
+import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
+import { LetterAttachmentCode } from '@app/util/attachment';
 
 class Background {
   @ApiProperty({
@@ -33,6 +36,14 @@ class Background {
   @IsNotEmpty()
   @IsNumber()
   height: number;
+
+  static of(letterAttachment: LetterAttachmentEntity) {
+    const bg = new Background();
+    bg.path = letterAttachment.attachment.attachmentPath;
+    bg.width = letterAttachment.width;
+    bg.height = letterAttachment.height;
+    return bg;
+  }
 }
 
 class Image {
@@ -91,6 +102,18 @@ class Image {
   @IsOptional()
   @IsNumber()
   ang: number;
+
+  static of(letterAttachment: LetterAttachmentEntity) {
+    const img = new Image();
+    img.path = letterAttachment.attachment.attachmentPath;
+    img.width = letterAttachment.width;
+    img.height = letterAttachment.height;
+    img.x = letterAttachment.x;
+    img.y = letterAttachment.y;
+    img.z = letterAttachment.z;
+    img.ang = letterAttachment.angle;
+    return img;
+  }
 }
 
 export class GetLetterDetailResponse {
@@ -120,4 +143,19 @@ export class GetLetterDetailResponse {
   @ValidateNested({ each: true })
   @Type(() => Image)
   components?: Image[];
+
+  static of(letter: LetterEntity) {
+    const response = new GetLetterDetailResponse();
+    response.title = letter.title;
+    response.body = letter.body;
+    response.background = Background.of(
+      letter.letterAttachment.find(
+        (la) => la.attachmentCode === LetterAttachmentCode.BACKGROUND,
+      ),
+    );
+    response.components = letter.letterAttachment
+      .filter((la) => la.attachmentCode === LetterAttachmentCode.COMPONENT)
+      .map((la) => Image.of(la));
+    return response;
+  }
 }

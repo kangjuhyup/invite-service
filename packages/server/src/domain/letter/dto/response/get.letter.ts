@@ -1,3 +1,5 @@
+import { LetterEntity } from '@app/database/entity/letter';
+import { LetterCommentEntity } from '@app/database/entity/letter.comment';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
@@ -6,8 +8,9 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+import { LetterAttachmentCode } from '@app/util/attachment';
 
-class Letter {
+export class Letter {
   @ApiProperty({
     description: '이미지 경로',
     example: 'https://example.com/img.png',
@@ -31,15 +34,33 @@ class Letter {
   @IsNotEmpty()
   @IsNumber()
   height: number;
+
+  static of(letter: LetterEntity) {
+    const response = new Letter();
+    const attachment = letter.letterAttachment.find(
+      (la) => la.attachmentCode === LetterAttachmentCode.LETTER,
+    );
+    response.path = attachment.attachment.attachmentPath;
+    response.width = attachment.width;
+    response.height = attachment.height;
+    return response;
+  }
 }
 
-class Comment {
+export class Comment {
   @IsNotEmpty()
   @IsString()
   name: string;
   @IsNotEmpty()
   @IsString()
   body: string;
+
+  static of(comment: LetterCommentEntity) {
+    const response = new Comment();
+    response.name = comment.editor;
+    response.body = comment.body;
+    return response;
+  }
 }
 
 export class GetLetterResponse {
@@ -66,4 +87,12 @@ export class GetLetterResponse {
   @Type(() => Comment)
   @IsNotEmpty()
   comments: Array<Comment>;
+
+  static of(letter: LetterEntity) {
+    const response = new GetLetterResponse();
+    (response.letterId = letter.letterId),
+      (response.letter = Letter.of(letter)),
+      (response.comments = letter.letterComment.map((lc) => Comment.of(lc)));
+    return response;
+  }
 }
