@@ -13,7 +13,6 @@ import { HttpResponse } from '../dto/response';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { GetLetterPageRequest } from './dto/request/get.page';
 import { GetLetterPageResponse } from './dto/response/get.page';
-import { LetterService } from './service/letter.service';
 import { PrepareResponse } from './dto/response/prepare';
 import { PrepareRequest } from './dto/request/prepare';
 import { AddLetterRequest } from './dto/request/add.letter';
@@ -23,10 +22,11 @@ import { GetLetterDetailResponse } from './dto/response/get.detail';
 import { ResponseValidationInterceptor } from '@app/interceptor/response.validation';
 import { UserAccessGuard } from '@app/jwt/guard/user.access.guard';
 import { GetLetterResponse } from './dto/response/get.letter';
+import { LetterFacade } from './letter.facade';
 
 @Controller('letter')
 export class LetterController {
-  constructor(private readonly letterService: LetterService) {}
+  constructor(private readonly letterFacade: LetterFacade) {}
 
   @ApiOperation({ summary: '내 초대장 페이지 조회' })
   @ApiOkResponse({
@@ -44,7 +44,7 @@ export class LetterController {
   ): Promise<HttpResponse<GetLetterPageResponse>> {
     return {
       result: true,
-      data: await this.letterService.getLetters(dto, req.user),
+      data: await this.letterFacade.getLetters(dto, req.user),
     };
   }
 
@@ -68,7 +68,7 @@ export class LetterController {
   ): Promise<HttpResponse<PrepareResponse>> {
     return {
       result: true,
-      data: await this.letterService.prepareAddLetter(dto, req.user),
+      data: await this.letterFacade.prepareAddLetter(dto, req.user),
     };
   }
 
@@ -88,7 +88,7 @@ export class LetterController {
   ): Promise<HttpResponse<AddLetterResponse>> {
     return {
       result: true,
-      data: await this.letterService.addLetter(dto, req.user),
+      data: await this.letterFacade.addLetter(dto, req.user),
     };
   }
 
@@ -105,7 +105,7 @@ export class LetterController {
   ): Promise<HttpResponse<GetLetterDetailResponse>> {
     return {
       result: true,
-      data: await this.letterService.getLetterDetail(dto.id),
+      data: await this.letterFacade.getLetterDetail(dto.id),
     };
   }
 
@@ -122,7 +122,7 @@ export class LetterController {
   ): Promise<HttpResponse<GetLetterResponse>> {
     return {
       result: true,
-      data: await this.letterService.getLetter(dto.id),
+      data: await this.letterFacade.getLetter(dto.id),
     };
   }
 }
