@@ -31,8 +31,8 @@ export interface PrepareResponse {
   sessionKey: string;
 }
 
-export class AddLetterRequest {
-  category: string;
+export interface AddLetterRequest {
+  cateogry: string;
   title: string;
   body?: string;
   commentYn?: boolean;
