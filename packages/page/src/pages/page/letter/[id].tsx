@@ -9,7 +9,7 @@ import FloatingButton from '../../../components/button/floating/floating.button'
 import { useRouter } from 'next/router';
 
 const LetterPage = () => {
-  const { letter, getLetterMock: getLetter } = useLetterApi();
+  const { letter, getLetter } = useLetterApi();
   const router = useRouter();
   const { id: letterId } = router.query;
   const [opend, { open, close }] = useDisclosure(false);
