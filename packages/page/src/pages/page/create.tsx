@@ -16,7 +16,6 @@ import MoveResizeText, {
   TextInfo,
 } from '../../components/text/move/move.resize.text';
 import useLetterApi from '@/api/letter.api';
-import { toPng } from 'html-to-image';
 import useGenerateLetter from '@/hooks/generate.letter.hook';
 
 const CreatePage = () => {

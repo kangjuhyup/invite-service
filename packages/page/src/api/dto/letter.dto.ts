@@ -32,7 +32,7 @@ export interface PrepareResponse {
 }
 
 export interface AddLetterRequest {
-  cateogry: string;
+  category: string;
   title: string;
   body?: string;
   commentYn?: boolean;
