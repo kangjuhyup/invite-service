@@ -12,6 +12,9 @@ import { UserModule } from './domain/user/user.module';
 import { DatabaseModule } from './database/database.module';
 import { StorageModule } from './storage/storage.module';
 import { LoggerModule } from 'nestjs-pino';
+import { MetricModule } from './domain/metric/metric.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { MetricInterceptor } from './interceptor/http.metric';
 
 export const routers = [
   AuthModule.forRootAsync({
@@ -77,11 +80,17 @@ export const modules = [
       },
     }),
   }),
+  MetricModule,
 ].filter(Boolean);
 
 @Module({
   imports: [...routers, ...modules],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,  
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: MetricInterceptor,
+    },
+  ],
 })
 export class AppModule {}
