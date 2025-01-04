@@ -15,11 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <MantineProvider>
       <GoogleOAuthProvider clientId={googleClientId}>
         <LoginProvider>
-          <AppShell
-            header={{ height: 60 }}
-            footer={{ height: 50 }}
-            padding="md"
-          >
+          <AppShell header={{ height: 60 }} footer={{ height: 50 }}>
             <AppShell.Header>
               <Header />
             </AppShell.Header>

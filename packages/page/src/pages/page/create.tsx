@@ -1,7 +1,14 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { ActionIcon, AppShell, Container, Flex, Grid } from '@mantine/core';
+import {
+  ActionIcon,
+  AppShell,
+  Container,
+  Grid,
+  Group,
+  Text,
+} from '@mantine/core';
 import { DropzoneButton } from '../../components/button/dropzone/dropzone.button';
 import { FileWithPath, MIME_TYPES } from '@mantine/dropzone';
 import MoveResizeImage, {
@@ -91,7 +98,7 @@ const CreatePage = () => {
       }),
     );
     postAddLetter({
-      category: 'LT001',
+      cateogry: 'LT001',
       title: '테스트',
       body: '테스트',
     });
@@ -149,7 +156,7 @@ const CreatePage = () => {
 
   return (
     <>
-      <Container w={'100vw'} h={'100vh'}>
+      <Container>
         <div
           ref={backgroundRef}
           style={{
@@ -188,37 +195,66 @@ const CreatePage = () => {
           );
         })}
       </Container>
-      <AppShell.Footer>
-        <Grid flex={1}>
-          <Grid.Col h={'100%'} span={3} bg={'red'}>
-            <DropzoneButton
-              onDrop={handleDrop}
-              mimeTypes={[MIME_TYPES.png, MIME_TYPES.gif, MIME_TYPES.jpeg]}
-            />
+      <AppShell.Footer
+        p="md"
+        style={{
+          // background: 'var(--mantine-color-dark-6)',
+          borderTop: '1px solid var(--mantine-color-dark-4)',
+        }}
+      >
+        <Grid>
+          <Grid.Col span={3}>
+            <Group justify="center">
+              <DropzoneButton
+                onDrop={handleDrop}
+                mimeTypes={[MIME_TYPES.png, MIME_TYPES.gif, MIME_TYPES.jpeg]}
+              />
+              <Text>Drop Image</Text>
+            </Group>
           </Grid.Col>
-          <Grid.Col h={'100%'} span={3} bg={'blue'}>
-            <ActionIcon
-              onClick={() =>
-                setTexts((prevTexts) => [
-                  ...prevTexts,
-                  {
-                    text: 'Text...',
-                    size: { width: 18, height: 18 },
-                    position: { x: 100, y: 100 },
-                  },
-                ])
-              }
-            >
-              <IconTextGrammar />
-            </ActionIcon>
+
+          <Grid.Col span={3}>
+            <Group justify="center">
+              <ActionIcon
+                variant="light"
+                color="blue"
+                onClick={() =>
+                  setTexts((prevTexts) => [
+                    ...prevTexts,
+                    {
+                      text: 'Text...',
+                      size: { width: 18, height: 18 },
+                      position: { x: 100, y: 100 },
+                    },
+                  ])
+                }
+              >
+                <IconTextGrammar style={{ width: '70%', height: '70%' }} />
+              </ActionIcon>
+              <Text>Input Text</Text>
+            </Group>
           </Grid.Col>
-          <Grid.Col h={'100%'} span={3} bg={'green'}>
-            <IconSticker />
+
+          <Grid.Col span={3}>
+            <Group justify="center">
+              <ActionIcon variant="light" size="lg" color="blue">
+                <IconSticker style={{ width: '70%', height: '70%' }} />
+              </ActionIcon>
+              <Text>Use Sticker</Text>
+            </Group>
           </Grid.Col>
-          <Grid.Col h={'100%'} span={3} bg={'yellow'}>
-            <ActionIcon onClick={() => handlePrepare()}>
-              <IconDeviceFloppy></IconDeviceFloppy>
-            </ActionIcon>
+
+          <Grid.Col span={3}>
+            <Group justify="center">
+              <ActionIcon
+                variant="light"
+                color="blue"
+                onClick={() => handlePrepare()}
+              >
+                <IconDeviceFloppy style={{ width: '70%', height: '70%' }} />
+              </ActionIcon>
+              <Text>Save</Text>
+            </Group>
           </Grid.Col>
         </Grid>
       </AppShell.Footer>

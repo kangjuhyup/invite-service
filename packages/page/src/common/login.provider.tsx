@@ -11,6 +11,39 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
   const store = useLoginStore();
 
   useEffect(() => {
+    const checkAccessToken = () => {
+      if (router.pathname === '/page/login') {
+        return;
+      }
+      const { access } = store;
+      if (!access) {
+        console.error('로그인되지 않았습니다.');
+        router.replace('/page/login');
+        return;
+      }
+
+      try {
+        const tokenData = JSON.parse(atob(access.split('.')[1]));
+        const expirationTime = tokenData.exp * 1000; // Convert to milliseconds
+        const currentTime = new Date().getTime();
+
+        if (currentTime >= expirationTime) {
+          store.clearToken();
+          router.replace('/page/login');
+        }
+      } catch (error) {
+        store.clearToken();
+        router.replace('/page/login');
+      }
+    };
+
+    checkAccessToken();
+    const intervalId = setInterval(checkAccessToken, 30000); // Check every 30 seconds
+
+    return () => clearInterval(intervalId);
+  }, [router, store]);
+
+  useEffect(() => {
     const { access } = store;
 
     if (!access && router.pathname !== '/page/login') {
@@ -21,12 +54,4 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
   return (
     <LoginContext.Provider value={store}>{children}</LoginContext.Provider>
   );
-};
-
-export const useLogin = () => {
-  const context = useContext(LoginContext);
-  if (!context) {
-    throw new Error('useLogin must be used within a LoginProvider');
-  }
-  return context;
 };

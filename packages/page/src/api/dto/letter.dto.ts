@@ -58,3 +58,20 @@ export interface GetLetterPageResponse {
 
   items: LetterPageItem[];
 }
+
+interface Letter {
+  path: string;
+  width: number;
+  height: number;
+}
+
+interface Comment {
+  name: string;
+  body: string;
+}
+
+export interface GetLetterResponse {
+  letterId: number;
+  letter: Letter;
+  comments: Comment[];
+}

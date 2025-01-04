@@ -17,8 +17,17 @@ const LetterPage = () => {
 
   return (
     <>
-      <Container w="100%" h="100%">
-        <Image src={letter?.img || ''} />
+      <Container w="100%" h="100%" display="flex" style={{ justifyContent: 'center', alignItems: 'center' }}>
+        <Image
+          w={`${letter?.letter?.width}px`}
+          h={`${letter?.letter?.height}px`}
+          mx="auto"
+          src={
+            process.env.NEXT_PUBLIC_WASABI_ENDPOINT +
+              '/' +
+              letter?.letter?.path || ''
+          }
+        />
         <FloatingButton onClick={open} icon={<IconBubbleText />} />
         <Drawer
           size="xl"

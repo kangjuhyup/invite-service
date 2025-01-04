@@ -8,17 +8,9 @@ import {
   AddLetterResponse,
   AddLetterRequest,
   GetLetterPageResponse,
+  GetLetterResponse,
 } from './dto/letter.dto';
 import useLoginStore from '@/store/login.store';
-
-interface GetLetterResponse {
-  id: number;
-  img: string;
-  comments: {
-    name: string;
-    body: string;
-  }[];
-}
 
 const useLetterApi = () => {
   const { setError } = useErrorStore();
@@ -29,7 +21,7 @@ const useLetterApi = () => {
   const [addLetter, setAddLetter] = useState<AddLetterResponse>();
   const getLetter = async (letterId: number) => {
     const response = await apiClient.get<ApiResponse<GetLetterResponse>>(
-      `/${letterId}`,
+      `/letter/${letterId}`,
     );
     if (!response.result) {
       setError(response.error);
