@@ -90,9 +90,9 @@ export class GetLetterResponse {
 
   static of(letter: LetterEntity) {
     const response = new GetLetterResponse();
-    (response.letterId = letter.letterId),
-      (response.letter = Letter.of(letter)),
-      (response.comments = letter.letterComment.map((lc) => Comment.of(lc)));
+    response.letterId = letter.letterId
+    response.letter = Letter.of(letter),
+    response.comments = letter.letterComment?.map((lc) => Comment.of(lc)) || [];
     return response;
   }
 }
