@@ -98,7 +98,7 @@ const CreatePage = () => {
       }),
     );
     postAddLetter({
-      cateogry: 'LT001',
+      category: 'LT001',
       title: '테스트',
       body: '테스트',
     });

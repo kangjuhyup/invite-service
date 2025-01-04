@@ -1,5 +1,7 @@
+import useImageApi from '@/api/image.api';
 import useLetterApi from '@/api/letter.api';
 import useUserApi from '@/api/user.api';
+import PresignedImage from '@/components/image/presigned/presigned.image';
 import {
   Container,
   Image,
@@ -22,6 +24,7 @@ import { useEffect, useState } from 'react';
 
 const ProfilePage = () => {
   const router = useRouter();
+  const { getPresignedUrl } = useImageApi();
   const { profile, getProfile } = useUserApi();
   const { letterPage, getLetterPage } = useLetterApi();
 
@@ -107,15 +110,7 @@ const ProfilePage = () => {
                   >
                     <Card.Section>
                       <AspectRatio ratio={16 / 9}>
-                        <Image
-                          src={
-                            process.env.NEXT_PUBLIC_WASABI_ENDPOINT +
-                            '/' +
-                            letter.thumbnail
-                          }
-                          alt={letter.title || 'Letter thumbnail'}
-                          fit="cover"
-                        />
+                        <PresignedImage path={letter.thumbnail} />
                       </AspectRatio>
                     </Card.Section>
 

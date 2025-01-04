@@ -7,27 +7,34 @@ import useLetterApi from '../../../api/letter.api';
 import { useDisclosure } from '@mantine/hooks';
 import FloatingButton from '../../../components/button/floating/floating.button';
 import { useRouter } from 'next/router';
+import useImageApi from '@/api/image.api';
+import { useEffect } from 'react';
+import PresignedImage from '@/components/image/presigned/presigned.image';
 
 const LetterPage = () => {
   const { letter, getLetter } = useLetterApi();
   const router = useRouter();
   const { id: letterId } = router.query;
   const [opend, { open, close }] = useDisclosure(false);
-  useInit({ apis: [() => letterId && getLetter(Number(letterId))] });
+  useInit({
+    apis: [() => letterId && getLetter(Number(letterId))],
+  });
 
   return (
     <>
-      <Container w="100%" h="100%" display="flex" style={{ justifyContent: 'center', alignItems: 'center' }}>
-        <Image
-          w={`${letter?.letter?.width}px`}
-          h={`${letter?.letter?.height}px`}
-          mx="auto"
-          src={
-            process.env.NEXT_PUBLIC_WASABI_ENDPOINT +
-              '/' +
-              letter?.letter?.path || ''
-          }
-        />
+      <Container
+        w="100%"
+        h="100%"
+        display="flex"
+        style={{ justifyContent: 'center', alignItems: 'center' }}
+      >
+        {letter?.letter?.path && (
+          <PresignedImage
+            width={`${letter?.letter?.width}px`}
+            height={`${letter?.letter?.height}px`}
+            path={letter?.letter?.path}
+          />
+        )}
         <FloatingButton onClick={open} icon={<IconBubbleText />} />
         <Drawer
           size="xl"

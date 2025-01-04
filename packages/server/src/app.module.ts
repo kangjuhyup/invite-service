@@ -15,6 +15,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { MetricModule } from './domain/metric/metric.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MetricInterceptor } from './interceptor/http.metric';
+import { ImageModule } from './domain/image/image.module';
 
 export const routers = [
   AuthModule.forRootAsync({
@@ -27,6 +28,7 @@ export const routers = [
   }),
   UserModule,
   LetterModule,
+  ImageModule,
 ];
 
 export const modules = [
