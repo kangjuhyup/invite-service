@@ -24,8 +24,10 @@ import MoveResizeText, {
 } from '../../components/text/move/move.resize.text';
 import useLetterApi from '@/api/letter.api';
 import useGenerateLetter from '@/hooks/generate.letter.hook';
+import { useRouter } from 'next/router';
 
 const CreatePage = () => {
+  const router = useRouter();
   const backgroundRef = useRef<HTMLDivElement>(null);
   const { prepareUrls, getPrepareUrls, addLetter, postAddLetter } =
     useLetterApi();
@@ -154,9 +156,23 @@ const CreatePage = () => {
     handleSave();
   }, [prepareUrls]);
 
+  useEffect(() => {
+    if (addLetter) router.replace(`/page/letter/${addLetter.letterId}`);
+  }, [addLetter]);
+
   return (
     <>
-      <Container>
+      <Container
+        style={{
+          position: 'absolute', // 부모 기준 위치 설정
+          top: '50%', // 화면의 50% 아래
+          left: '50%', // 화면의 50% 오른쪽
+          transform: 'translate(-50%, -50%)',
+          background: 'blue',
+          width: '400px',
+          height: '600px',
+        }}
+      >
         <div
           ref={backgroundRef}
           style={{
