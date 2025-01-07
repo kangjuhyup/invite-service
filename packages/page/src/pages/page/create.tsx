@@ -33,6 +33,8 @@ const CreatePage = () => {
     useLetterApi();
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [texts, setTexts] = useState<TextInfo[]>([]);
+  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+
   const handleDrop = (newFiles: FileWithPath[]) => {
     const newer = newFiles.map((f) => ({
       file: f,
@@ -152,6 +154,19 @@ const CreatePage = () => {
     return result;
   };
 
+  const handleBackgroundChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBackgroundImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   useEffect(() => {
     handleSave();
   }, [prepareUrls]);
@@ -168,11 +183,17 @@ const CreatePage = () => {
           top: '50%', // 화면의 50% 아래
           left: '50%', // 화면의 50% 오른쪽
           transform: 'translate(-50%, -50%)',
-          background: 'blue',
+
           width: '400px',
           height: '600px',
         }}
       >
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleBackgroundChange}
+          style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}
+        />
         <div
           ref={backgroundRef}
           style={{
@@ -180,7 +201,9 @@ const CreatePage = () => {
             top: '50%', // 화면의 50% 아래
             left: '50%', // 화면의 50% 오른쪽
             transform: 'translate(-50%, -50%)',
-            background: 'blue',
+            background: backgroundImage ? `url(${backgroundImage})` : 'blue',
+            backgroundSize: '100% 100%',
+            backgroundRepeat: 'no-repeat',
             width: '400px',
             height: '600px',
           }}
