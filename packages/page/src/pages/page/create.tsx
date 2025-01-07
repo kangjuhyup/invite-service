@@ -97,6 +97,8 @@ const CreatePage = () => {
             'x-amz-meta-width': `${files[idx].size.width}`,
             'x-amz-meta-angle': '0',
             'x-amz-meta-z': '0',
+            'x-amz-meta-x': `${files[idx].position.x}`,
+            'x-amz-meta-y': `${files[idx].position.y}`,
           },
         });
       }),
