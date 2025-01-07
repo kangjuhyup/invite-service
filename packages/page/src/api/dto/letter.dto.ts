@@ -75,3 +75,36 @@ export interface GetLetterResponse {
   letter: Letter;
   comments: Comment[];
 }
+interface Background {
+  path: string;
+
+  width: number;
+
+  height: number;
+}
+
+interface Image {
+  path: string;
+
+  width: number;
+
+  height: number;
+
+  x: number;
+
+  y: number;
+
+  z: number;
+
+  ang: number;
+}
+
+export interface GetLetterDetailResponse {
+  title: string;
+
+  body?: string;
+
+  background: Background;
+
+  components?: Image[];
+}

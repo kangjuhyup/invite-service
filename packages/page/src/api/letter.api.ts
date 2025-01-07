@@ -9,6 +9,7 @@ import {
   AddLetterRequest,
   GetLetterPageResponse,
   GetLetterResponse,
+  GetLetterDetailResponse,
 } from './dto/letter.dto';
 import useLoginStore from '@/store/login.store';
 
@@ -16,8 +17,10 @@ const useLetterApi = () => {
   const { setError } = useErrorStore();
   const { access } = useLoginStore();
   const [letter, setLetter] = useState<GetLetterResponse>();
+  const [letterDetail, setLetterDetail] = useState<GetLetterDetailResponse>();
   const [letterPage, setLetterPage] = useState<GetLetterPageResponse>();
   const [prepareUrls, setPrepareUrls] = useState<PrepareResponse>();
+
   const [addLetter, setAddLetter] = useState<AddLetterResponse>();
   const getLetter = async (letterId: number) => {
     const response = await apiClient.get<ApiResponse<GetLetterResponse>>(
@@ -82,6 +85,17 @@ const useLetterApi = () => {
     }
   };
 
+  const getLetterDetail = async (letterId: number) => {
+    const response = await apiClient.get<ApiResponse<GetLetterDetailResponse>>(
+      `/letter/detail/${letterId}`,
+    );
+    if (!response.result) {
+      setError(response.error);
+    } else {
+      setLetterDetail(response.data);
+    }
+  };
+
   return {
     letter,
     getLetter,
@@ -91,6 +105,8 @@ const useLetterApi = () => {
     postAddLetter,
     letterPage,
     getLetterPage,
+    letterDetail,
+    getLetterDetail,
   };
 };
 
