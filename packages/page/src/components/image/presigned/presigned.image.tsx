@@ -6,16 +6,36 @@ interface PresignedImageProps {
   path: string;
   width?: string;
   height?: string;
+  position?: 'relative' | 'absolute' | 'fixed';
+  x?: string;
+  y?: string;
 }
 
-const PresignedImage = ({ path, width, height }: PresignedImageProps) => {
+const PresignedImage = ({
+  path,
+  width = '100%',
+  height = '100%',
+  position,
+  x,
+  y,
+}: PresignedImageProps) => {
   const { presignedUrl, getPresignedUrl } = useImageApi();
   useEffect(() => {
     if (path) {
       getPresignedUrl(path);
     }
   }, [path]);
-  return <Image fit={'fill'} w={width} h={height} src={presignedUrl}></Image>;
+  return (
+    <Image
+      fit={'fill'}
+      w={width}
+      h={height}
+      src={presignedUrl}
+      pos={position}
+      top={y}
+      left={x}
+    ></Image>
+  );
 };
 
 export default PresignedImage;
