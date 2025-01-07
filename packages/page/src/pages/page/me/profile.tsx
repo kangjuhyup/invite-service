@@ -18,7 +18,11 @@ import {
   Title,
   Transition,
 } from '@mantine/core';
-import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconChevronUp,
+  IconStatusChange,
+} from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
@@ -34,17 +38,6 @@ const ProfilePage = () => {
   }, []);
 
   const [gridOpened, setGridOpened] = useState(true);
-  const [openedStates, setOpenedStates] = useState(
-    new Array(letterPage?.items.length).fill(false),
-  );
-
-  const toggleCard = (index: number) => {
-    setOpenedStates((prev) => {
-      const newStates = [...prev];
-      newStates[index] = !newStates[index];
-      return newStates;
-    });
-  };
 
   return (
     <Container size="lg" py="xl">
@@ -101,14 +94,15 @@ const ProfilePage = () => {
                     padding="md"
                     radius="md"
                     withBorder
-                    onClick={() =>
-                      router.push({
-                        pathname: '/page/letter/[id]',
-                        query: { id: letter.id },
-                      })
-                    }
                   >
-                    <Card.Section>
+                    <Card.Section
+                      onClick={() =>
+                        router.push({
+                          pathname: '/page/letter/[id]',
+                          query: { id: letter.id },
+                        })
+                      }
+                    >
                       <AspectRatio ratio={16 / 9}>
                         <PresignedImage path={letter.thumbnail} />
                       </AspectRatio>
@@ -120,30 +114,13 @@ const ProfilePage = () => {
                       </Text>
                       <Button
                         variant="light"
-                        onClick={() => toggleCard(index)}
-                        leftSection={
-                          openedStates[index] ? (
-                            <IconChevronUp size={16} />
-                          ) : (
-                            <IconChevronDown size={16} />
-                          )
+                        onClick={() =>
+                          router.replace(`/page/letter/modify/${letter.id}`)
                         }
                       >
-                        {openedStates[index] ? '접기' : '더보기'}
+                        수정하기
                       </Button>
                     </Group>
-
-                    <Collapse
-                      in={openedStates[index]}
-                      transitionDuration={400}
-                      transitionTimingFunction="ease"
-                    >
-                      <Text size="sm" c="dimmed" mt="md">
-                        편지 내용이 여기에 표시됩니다. 이 부분은 접었다 폈다 할
-                        수 있습니다. 필요한 경우 추가 정보나 상세 내용을 이곳에
-                        표시할 수 있습니다.
-                      </Text>
-                    </Collapse>
                   </Card>
                 )}
               </Transition>
