@@ -16,3 +16,4 @@ db
 .vscode
 out
 .vite_cache
+.codegpt

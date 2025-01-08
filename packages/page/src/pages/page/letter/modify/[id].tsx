@@ -32,6 +32,7 @@ const ModifyLetterPage = () => {
             />
             {letterDetail.components?.map((component) => (
               <PresignedImage
+                movable
                 key={component.path}
                 path={component.path}
                 width={`${component.width}px`}

@@ -96,9 +96,28 @@ const CreatePage = () => {
             'x-amz-meta-height': `${files[idx].size.height}`,
             'x-amz-meta-width': `${files[idx].size.width}`,
             'x-amz-meta-angle': '0',
-            'x-amz-meta-z': '0',
+            'x-amz-meta-z': `${idx}`,
             'x-amz-meta-x': `${files[idx].position.x}`,
             'x-amz-meta-y': `${files[idx].position.y}`,
+          },
+        });
+      }),
+    );
+
+    await Promise.all(
+      prepareUrls.textUrls.map(async (textUrl, idx) => {
+        await fetch(textUrl, {
+          method: 'PUT',
+          body: texts[idx].text,
+          headers: {
+            'Content-Type': 'text/plain',
+            'x-amz-meta-session': prepareUrls.sessionKey,
+            'x-amz-meta-height': `${texts[idx].size.height}`,
+            'x-amz-meta-width': `${texts[idx].size.width}`,
+            'x-amz-meta-angle': '0',
+            'x-amz-meta-z': `${idx}`,
+            'x-amz-meta-x': `${texts[idx].position.x}`,
+            'x-amz-meta-y': `${texts[idx].position.y}`,
           },
         });
       }),
@@ -148,6 +167,17 @@ const CreatePage = () => {
           height: image.size.height.toString(),
           x: image.position.x.toString(),
           y: image.position.y.toString(),
+          z: idx.toString(),
+          angle: '0',
+        };
+      }),
+      textMetas: textData.map((text, idx) => {
+        return {
+          width: text.size.width.toString(),
+          height: text.size.height.toString(),
+          font: 'Noto Sans KR',
+          x: text.position.x.toString(),
+          y: text.position.y.toString(),
           z: idx.toString(),
           angle: '0',
         };

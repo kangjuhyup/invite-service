@@ -12,6 +12,10 @@ export interface MetaDetail extends MetaDefault {
   angle?: string;
 }
 
+export interface MetaText extends MetaDefault {
+  font: string;
+}
+
 export interface PrepareRequest {
   thumbnailMeta: MetaDefault;
 
@@ -20,6 +24,8 @@ export interface PrepareRequest {
   backgroundMeta: MetaDefault;
 
   componentMetas: MetaDetail[];
+
+  textMetas: MetaText[];
 }
 
 export interface PrepareResponse {
@@ -27,6 +33,7 @@ export interface PrepareResponse {
   letterUrl: string;
   backgroundUrl: string;
   componentUrls: string[];
+  textUrls: string[];
   expires: number;
   sessionKey: string;
 }

@@ -3,14 +3,10 @@ import apiClient from '../common/http.client';
 import ApiResponse from '../common/response';
 import useErrorStore from '../store/error.store';
 
-interface GetPresignedUrlResponse {}
-
 const useImageApi = () => {
-  const [presignedUrl, setPresignedUrl] = useState<GetPresignedUrlResponse>();
+  const [presignedUrl, setPresignedUrl] = useState<string>();
   const getPresignedUrl = async (path: string) => {
-    const response = await apiClient.get<ApiResponse<GetPresignedUrlResponse>>(
-      `/image/${path}`,
-    );
+    const response = await apiClient.get<ApiResponse<string>>(`/image/${path}`);
     setPresignedUrl(response.data);
     return response.data;
   };
