@@ -6,6 +6,7 @@ import {
   IsArray,
   ValidateNested,
   IsNumberString,
+  IsString,
 } from 'class-validator';
 
 export class MetaDefault {
@@ -29,6 +30,7 @@ export class MetaDefault {
 }
 
 export class MetaDetail extends MetaDefault {
+
   @ApiProperty({
     description: 'X coordinate of the object',
     example: '100',
@@ -70,6 +72,13 @@ export class MetaDetail extends MetaDefault {
   angle?: string;
 }
 
+class MetaText extends MetaDetail {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  font: string;
+}
+
 export class PrepareRequest {
   @ApiProperty({ description: 'Thumbnail metadata', type: MetaDefault })
   @IsNotEmpty()
@@ -95,4 +104,11 @@ export class PrepareRequest {
   @Type(() => MetaDetail)
   @IsArray()
   componentMetas: MetaDetail[];
+
+  @ApiProperty({ description: 'Text metadata', type: [MetaText] })
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => MetaText)
+  @IsArray()
+  textMetas?: MetaText[]
 }

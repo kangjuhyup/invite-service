@@ -62,7 +62,7 @@ export class LetterAttachmentService extends LetterBaseService {
     const componentMetas = componentResults
       .filter((result) => result.status === 'fulfilled' && result.value)
       .map((result) => (result as PromiseFulfilledResult<any>).value);
-
+    this.logger.debug(JSON.stringify(componentMetas));
     return { thumbnailMeta, letterMeta, backgroundMeta, componentMetas };
   }
 

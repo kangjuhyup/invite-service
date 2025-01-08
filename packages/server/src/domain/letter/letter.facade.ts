@@ -51,6 +51,7 @@ export class LetterFacade {
       backgroundMeta,
       letterMeta,
       componentMetas,
+      textMetas,
     }: PrepareRequest,
     user: User,
   ): Promise<PrepareResponse> {
@@ -64,18 +65,21 @@ export class LetterFacade {
         session: sessionKey,
         ...thumbnailMeta,
       },
+      type : 'image',
     });
     const letterUrl = await this.storage.generateUploadPresignedUrl({
       bucket: this.letterAttachmentService.letterBucket,
       key: uuid,
       expires: this.letterAttachmentService.urlExpires,
       meta: { session: sessionKey, ...letterMeta },
+      type : 'image',
     });
     const backgroundUrl = await this.storage.generateUploadPresignedUrl({
       bucket: this.letterAttachmentService.backGroundBucket,
       key: uuid,
       expires: this.letterAttachmentService.urlExpires,
       meta: { session: sessionKey, ...backgroundMeta },
+      type : 'image',
     });
     const componentUrls = await Promise.all(
       componentMetas.map(async (componentMeta, i) => {
@@ -84,6 +88,19 @@ export class LetterFacade {
           key: uuid + '-' + i,
           expires: this.letterAttachmentService.urlExpires,
           meta: { session: sessionKey, ...componentMeta },
+          type: 'image',
+        });
+      }),
+    );
+
+    const textUrls = await Promise.all(
+      textMetas.map(async (textMeta, i) => {
+        return await this.storage.generateUploadPresignedUrl({
+          bucket: this.letterAttachmentService.componentBucket,
+          key: uuid + '-' + `${componentMetas.length+i}`,
+          expires: this.letterAttachmentService.urlExpires,
+          meta: { session: sessionKey, ...textMeta },
+          type: 'text',
         });
       }),
     );
@@ -93,18 +110,19 @@ export class LetterFacade {
       {
         sessionKey: sessionKey,
         objectKey: uuid,
-        componentCount: componentMetas.length,
+        componentCount: componentMetas.length + textMetas.length,
       },
       70,
     );
-    return {
+    return PrepareResponse.of(
       thumbnailUrl,
       letterUrl,
       backgroundUrl,
       componentUrls,
-      expires: this.letterAttachmentService.urlExpires,
+      textUrls,
+      this.letterAttachmentService.urlExpires,
       sessionKey,
-    };
+    );
   }
 
   async addLetter(

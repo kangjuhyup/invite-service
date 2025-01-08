@@ -26,6 +26,7 @@ export class StorageService {
   }
 
   async generateUploadPresignedUrl(param: {
+    type : 'image' | 'text'
     bucket: string;
     key: string;
     expires: number;
@@ -34,7 +35,7 @@ export class StorageService {
     const command = new PutObjectCommand({
       Bucket: param.bucket,
       Key: param.key,
-      ContentType: 'image/png',
+      ContentType: param.type === 'image' ? 'image/png' : 'text/plain',
       Metadata: {
         ...param.meta,
       },
