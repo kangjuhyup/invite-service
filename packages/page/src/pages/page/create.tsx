@@ -1,30 +1,17 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import {
-  ActionIcon,
-  AppShell,
-  Container,
-  Grid,
-  Group,
-  Text,
-} from '@mantine/core';
-import { DropzoneButton } from '../../components/button/dropzone/dropzone.button';
-import { FileWithPath, MIME_TYPES } from '@mantine/dropzone';
+import { Container } from '@mantine/core';
+import { FileWithPath } from '@mantine/dropzone';
 import MoveResizeImage, {
   FileInfo,
 } from '../../components/image/move/move.resize.image';
-import {
-  IconDeviceFloppy,
-  IconSticker,
-  IconTextGrammar,
-} from '@tabler/icons-react';
-import MoveResizeText, {
-  TextInfo,
-} from '../../components/text/move/move.resize.text';
+import MoveText, { TextInfo } from '../../components/text/move/move.text';
 import useLetterApi from '@/api/letter.api';
 import useGenerateLetter from '@/hooks/generate.letter.hook';
 import { useRouter } from 'next/router';
+import CreatePageDefaultFooter from '@/components/footer/create.footer';
+import TextControlFooter from '@/components/footer/text.footer';
 
 const CreatePage = () => {
   const router = useRouter();
@@ -34,6 +21,8 @@ const CreatePage = () => {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [texts, setTexts] = useState<TextInfo[]>([]);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [footerType, setFooterType] = useState(0);
+  const [selectedTextIndex, setSelectedTextIndex] = useState<number>(-1);
 
   const handleDrop = (newFiles: FileWithPath[]) => {
     const newer = newFiles.map((f) => ({
@@ -253,8 +242,10 @@ const CreatePage = () => {
         ))}
         {texts.map((text, index) => {
           return (
-            <MoveResizeText
+            <MoveText
               index={index}
+              key={index}
+              textInfo={text}
               onUpdate={(text) => {
                 setTexts((prevTexts) =>
                   prevTexts.map((t, i) =>
@@ -262,73 +253,77 @@ const CreatePage = () => {
                   ),
                 );
               }}
+              onClick={() => {
+                setSelectedTextIndex(index);
+                setFooterType(1);
+              }}
             />
           );
         })}
       </Container>
-      <AppShell.Footer
-        p="md"
-        style={{
-          // background: 'var(--mantine-color-dark-6)',
-          borderTop: '1px solid var(--mantine-color-dark-4)',
-        }}
-      >
-        <Grid>
-          <Grid.Col span={3}>
-            <Group justify="center">
-              <DropzoneButton
-                onDrop={handleDrop}
-                mimeTypes={[MIME_TYPES.png, MIME_TYPES.gif, MIME_TYPES.jpeg]}
-              />
-              <Text>Drop Image</Text>
-            </Group>
-          </Grid.Col>
-
-          <Grid.Col span={3}>
-            <Group justify="center">
-              <ActionIcon
-                variant="light"
-                color="blue"
-                onClick={() =>
-                  setTexts((prevTexts) => [
-                    ...prevTexts,
-                    {
-                      text: 'Text...',
-                      size: { width: 18, height: 18 },
-                      position: { x: 100, y: 100 },
-                    },
-                  ])
-                }
-              >
-                <IconTextGrammar style={{ width: '70%', height: '70%' }} />
-              </ActionIcon>
-              <Text>Input Text</Text>
-            </Group>
-          </Grid.Col>
-
-          <Grid.Col span={3}>
-            <Group justify="center">
-              <ActionIcon variant="light" size="lg" color="blue">
-                <IconSticker style={{ width: '70%', height: '70%' }} />
-              </ActionIcon>
-              <Text>Use Sticker</Text>
-            </Group>
-          </Grid.Col>
-
-          <Grid.Col span={3}>
-            <Group justify="center">
-              <ActionIcon
-                variant="light"
-                color="blue"
-                onClick={() => handlePrepare()}
-              >
-                <IconDeviceFloppy style={{ width: '70%', height: '70%' }} />
-              </ActionIcon>
-              <Text>Save</Text>
-            </Group>
-          </Grid.Col>
-        </Grid>
-      </AppShell.Footer>
+      {footerType === 0 ? (
+        <CreatePageDefaultFooter
+          onImageDrop={handleDrop}
+          onTextAdd={() => {
+            const newIndex = texts.length;
+            setTexts((prevTexts) => [
+              ...prevTexts,
+              {
+                text: 'Text...',
+                size: { width: 18, height: 18 },
+                position: { x: 100, y: 100 },
+                font: 'Noto Sans KR',
+                bold: false,
+              },
+            ]);
+            setSelectedTextIndex(newIndex);
+            setFooterType(1);
+          }}
+          onSave={handlePrepare}
+          onStickerAdd={() => {
+            // 스티커 기능 구현 예정
+            console.log('Sticker feature coming soon');
+          }}
+        />
+      ) : footerType === 1 && selectedTextIndex !== -1 ? (
+        <TextControlFooter
+          fontSize={Math.round(texts[selectedTextIndex].size.width)}
+          isBold={texts[selectedTextIndex].bold}
+          currentFont={texts[selectedTextIndex].font}
+          onFontSizeChange={(size: number) => {
+            setTexts((prevTexts) =>
+              prevTexts.map((text, index) =>
+                index === selectedTextIndex
+                  ? {
+                      ...text,
+                      size: { width: size, height: size },
+                    }
+                  : text,
+              ),
+            );
+          }}
+          onBoldToggle={() => {
+            setTexts((prevTexts) =>
+              prevTexts.map((text, index) =>
+                index === selectedTextIndex
+                  ? { ...text, bold: !text.bold }
+                  : text,
+              ),
+            );
+          }}
+          onFontChange={(font: string) => {
+            setTexts((prevTexts) =>
+              prevTexts.map((text, index) =>
+                index === selectedTextIndex ? { ...text, font: font } : text,
+              ),
+            );
+          }}
+          onComplete={() => {
+            setSelectedTextIndex(-1);
+            setFooterType(0);
+          }}
+        />
+      ) : null}
     </>
   );
 };
