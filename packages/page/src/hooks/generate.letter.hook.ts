@@ -1,7 +1,7 @@
 import { RefObject } from 'react';
 import { toPng } from 'html-to-image';
 import { FileInfo } from '@/components/image/move/move.resize.image';
-import { TextInfo } from '@/components/text/move/move.resize.text';
+import { TextInfo } from '@/components/text/move/move.text';
 
 const useGenerateLetter = (
   backgroundRef: RefObject<HTMLDivElement>,

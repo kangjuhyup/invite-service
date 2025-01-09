@@ -78,11 +78,11 @@ const useMoveResize = () => {
   }, [dragging, resizing]);
 
   const init = (
-    size: { width: number; height: number },
     position: { x: number; y: number },
+    size?: { width: number; height: number },
   ) => {
     setPosition(position);
-    setSize(size);
+    if (size) setSize(size);
   };
 
   return {

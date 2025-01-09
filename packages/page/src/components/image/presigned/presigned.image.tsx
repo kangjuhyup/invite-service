@@ -1,7 +1,13 @@
 import useImageApi from '@/api/image.api';
 import { Container, Image, Text } from '@mantine/core';
 import useMoveResize from '../move/move.resize.hook';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+
+interface ContentData {
+  type: string;
+  text?: string;
+  url?: string;
+}
 
 interface PresignedImageProps {
   path: string;
@@ -29,26 +35,44 @@ const PresignedImage = ({
 }: PresignedImageProps) => {
   const { presignedUrl, getPresignedUrl } = useImageApi();
   const { size, position: pos, handleMouseDown, init } = useMoveResize();
-  const [contentType, setContentType] = useState<string>('');
-  const [textContent, setTextContent] = useState<string>('');
+  const [contentData, setContentData] = useState<ContentData>({ type: '' });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (path) {
-        const url = await getPresignedUrl(path);
-        if (!url) return;
-        const response = await fetch(url, {
-          method: 'GET',
-        });
+  const fetchContentData = useCallback(
+    async (url: string): Promise<ContentData> => {
+      try {
+        const response = await fetch(url, { method: 'GET' });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const type = response.headers.get('Content-Type') || '';
-        setContentType(type);
         if (type === 'text/plain') {
           const text = await response.text();
-          setTextContent(text);
+          return { type, text, url };
         }
+        return { type, url };
+      } catch (error) {
+        console.error('Error fetching content:', error);
+        return { type: '' };
       }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const initializeContent = async () => {
+      if (!path || presignedUrl) return;
+
+      const url = await getPresignedUrl(path);
+      if (!url) return;
+
+      // 이미 같은 URL로 데이터를 가져왔다면 다시 가져오지 않음
+      if (contentData.url === url) return;
+
+      const data = await fetchContentData(url);
+      setContentData(data);
     };
-    fetchData();
+    initializeContent();
   }, [path]);
 
   const extractNumber = (value: string | number) => {
@@ -59,9 +83,6 @@ const PresignedImage = ({
     return value;
   };
 
-  const initialX = extractNumber(x);
-  const initialY = extractNumber(y);
-
   useEffect(() => {
     if (movable) {
       const initialWidth = typeof width === 'string' ? 200 : (width as number);
@@ -70,20 +91,20 @@ const PresignedImage = ({
       const initialX = extractNumber(x);
       const initialY = extractNumber(y);
       init(
-        { width: initialWidth, height: initialHeight },
         { x: initialX, y: initialY },
+        { width: initialWidth, height: initialHeight },
       );
     }
-  }, [movable]);
+  }, []);
 
   useEffect(() => {
     if (movable && onUpdate) {
       onUpdate({ size, position: pos });
     }
-  }, [size, pos]);
+  }, [size, pos, movable, onUpdate]);
 
   const renderContent = () => {
-    if (contentType === 'text/plain') {
+    if (contentData.type === 'text/plain' && contentData.text) {
       return (
         <Text
           style={{
@@ -93,14 +114,14 @@ const PresignedImage = ({
             whiteSpace: 'pre-wrap',
           }}
         >
-          {textContent}
+          {contentData.text}
         </Text>
       );
     }
 
     return (
       <Image
-        src={presignedUrl}
+        src={contentData.url}
         alt={path}
         style={{
           width: '100%',
@@ -112,10 +133,10 @@ const PresignedImage = ({
   };
 
   if (!movable) {
-    if (contentType === 'text/plain') {
+    if (contentData.type === 'text/plain' && contentData.text) {
       return (
         <Text pos={position} top={y} left={x}>
-          {textContent}
+          {contentData.text}
         </Text>
       );
     }
@@ -125,7 +146,7 @@ const PresignedImage = ({
         fit={'fill'}
         w={width}
         h={height}
-        src={presignedUrl}
+        src={contentData.url}
         pos={position}
         top={y}
         left={x}
