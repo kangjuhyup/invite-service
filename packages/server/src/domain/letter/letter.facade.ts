@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { randomString } from '@app/util/random';
 import { booleanToYN } from '@app/util/yn';
 import { LetterAttachmentCode } from '@app/util/attachment';
+import { CommentService } from '../comment/service/comment.service';
 
 @Injectable()
 export class LetterFacade {
@@ -24,6 +25,7 @@ export class LetterFacade {
 
   constructor(
     private readonly letterService: LetterService,
+    private readonly commentService: CommentService,
     private readonly storage: StorageService,
     private readonly redis: RedisClientService,
     private readonly letterAttachmentService: LetterAttachmentService,
@@ -185,5 +187,11 @@ export class LetterFacade {
     return {
       letterId,
     };
+  }
+
+  async deleteLetter(letterId: number, user: User) {
+    await this.letterService.checkLetterAuthor(letterId, user);
+    await this.commentService.deleteCommentFromLetter(letterId);
+    await this.letterService.deleteLetter(letterId);
   }
 }

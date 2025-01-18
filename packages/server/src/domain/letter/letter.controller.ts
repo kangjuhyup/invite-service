@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -123,6 +124,17 @@ export class LetterController {
     return {
       result: true,
       data: await this.letterFacade.getLetter(dto.id),
+    };
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: '초대장 삭제' })
+  @ApiBearerAuth()
+  @UseGuards(UserAccessGuard)
+  async deleteLetter(@Param() dto: GetLetterDetailRequest, @Request() req) {
+    await this.letterFacade.deleteLetter(dto.id, req.user);
+    return {
+      result: true, 
     };
   }
 }
