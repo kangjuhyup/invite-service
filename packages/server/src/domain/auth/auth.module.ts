@@ -8,7 +8,6 @@ import { AuthService } from './service/auth.service';
 import { UserAccessStrategy } from '@app/jwt/strategy/user.access.strategy';
 import { UserRefreshStrategy } from '@app/jwt/strategy/user.refresh.strategy';
 import { AuthFacade } from './auth.facade';
-import { MailService } from './service/mail.service';
 import { SessionService } from './service/session.service';
 import { GoogleService } from '../google/google.service';
 import { HttpModule } from '@nestjs/axios';
@@ -64,7 +63,6 @@ export class AuthModule {
         },
         // GoogleStrategy,
         AuthService,
-        MailService,
         GoogleService,
         SessionService,
         AuthFacade,

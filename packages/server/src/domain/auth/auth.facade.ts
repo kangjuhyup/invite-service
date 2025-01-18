@@ -5,7 +5,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './service/auth.service';
-import { MailService } from './service/mail.service';
 import { SessionService } from './service/session.service';
 import { UserService } from '../user/user.service';
 import { randomString } from '@app/util/random';
@@ -17,7 +16,6 @@ export class AuthFacade {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
-    private readonly mailService: MailService,
     private readonly sessionService: SessionService,
     private readonly googleService: GoogleService,
   ) {}
@@ -28,12 +26,6 @@ export class AuthFacade {
 
   async signUp(phone: string, pwd: string, mail?: string) {
     const session = await this.sessionService.getSignupSession(phone);
-    const mails = await this.mailService.getEmails(session);
-    if (mails.length === 0)
-      throw new ForbiddenException('인증메일이 전달되지 않았습니다.');
-    const mailPhone = await this.mailService.getPhoneFromEmail(mails);
-    if (phone !== mailPhone)
-      throw new UnauthorizedException('휴대폰번호가 일치하지 않습니다.');
     return await this.authService.signUp(phone, pwd);
   }
 

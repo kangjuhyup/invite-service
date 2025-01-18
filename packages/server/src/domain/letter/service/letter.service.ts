@@ -42,4 +42,16 @@ export class LetterService {
     });
     return GetLetterDetailResponse.of(letter);
   }
+
+  async deleteLetter(id: number) {
+    await this.letterRepository.deleteLetter({ letterId: id });
+  }
+
+  async checkLetterAuthor(letterId: number, user : User) {
+    const letter = await this.letterRepository.selectLetterFromId({
+      letterId,
+    });
+    if (letter.userId !== user.id) throw new Error('작성자가 아닙니다.');
+    
+  }
 }
