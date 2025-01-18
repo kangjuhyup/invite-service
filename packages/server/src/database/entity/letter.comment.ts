@@ -8,9 +8,11 @@ import {
 import { LetterEntity } from './letter';
 import { LetterColumn } from '../column/letter.column';
 import { LetterCommentColumn } from '../column/letter.comment.column';
+import { DefaultEntity } from './default';
+import { sha256Hash } from '@app/util/crypto';
 
 @Entity({ name: LetterCommentColumn.table })
-export class LetterCommentEntity {
+export class LetterCommentEntity extends DefaultEntity {
   @PrimaryGeneratedColumn({ name: LetterCommentColumn.commentId, type: 'int' })
   letterCommentId: number;
 
@@ -26,6 +28,14 @@ export class LetterCommentEntity {
   editor: string;
 
   @Column({
+    name: LetterCommentColumn.password,
+    type: 'varchar',
+    length: 255,
+    nullable: false,
+  })
+  password: string;
+
+  @Column({
     name: LetterCommentColumn.body,
     type: 'varchar',
     length: 255,
@@ -36,4 +46,17 @@ export class LetterCommentEntity {
   @ManyToOne(() => LetterEntity, { nullable: false })
   @JoinColumn({ name: LetterColumn.letterId })
   letter: LetterEntity;
+
+  static of(letterId: number, password: string, editor: string, body: string): LetterCommentEntity {
+    const comment = new LetterCommentEntity();
+    comment.letterId = letterId;
+    comment.password = sha256Hash(password);
+    comment.editor = editor;
+    comment.body = body;
+    return comment;
+  }
+
+  verifyPassword(password: string): boolean {
+    return this.password === sha256Hash(password);
+  }
 }

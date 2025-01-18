@@ -2,8 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import {
+  DeleteLetter,
+  DeleteLetterAttachment,
+  InsertComment,
   InsertLetter,
   InsertLetterAttachment,
+  SelectComment,
   SelectLetter,
 } from './param/letter';
 import { LetterAttachmentCode } from '@app/util/attachment';
@@ -12,6 +16,7 @@ import { DefaultColumn } from '../column/default';
 import { LetterAttachmentColumn } from '../column/letter.attachment.column';
 import { LetterEntity } from '../entity/letter';
 import { LetterAttachmentEntity } from '../entity/letter.attachment';
+import { LetterCommentEntity } from '../entity/letter.comment';
 
 @Injectable()
 export class LetterRepository {
@@ -20,6 +25,8 @@ export class LetterRepository {
     private readonly letter: Repository<LetterEntity>,
     @InjectRepository(LetterAttachmentEntity)
     private readonly letterAttachment: Repository<LetterAttachmentEntity>,
+    @InjectRepository(LetterCommentEntity)
+    private readonly letterComment: Repository<LetterCommentEntity>,
   ) {}
 
   async selectLetterFromUser({
@@ -93,6 +100,30 @@ export class LetterRepository {
     return await repo.insert(letter);
   }
 
+  async deleteLetter({ letterId, entityManager }: Pick<DeleteLetter, 'letterId'|'entityManager'>) {
+    const repo = this._getRepository('letter', entityManager);
+    return await repo.update(
+      {
+        letterId,
+      },
+      {
+        useYn: YN.N,
+      },
+    );
+  }
+
+  async deleteLetterAttachments({ letterId, entityManager }: Pick<DeleteLetterAttachment, 'letterId'|'entityManager'>) {
+    const repo = this._getRepository('letterAttachment', entityManager);
+    return await repo.update(
+      {
+        letterId,
+      },
+      {
+        useYn: YN.N,
+      },
+    );
+  }
+
   async insertLetterAttachment({
     letterAttachments,
     entityManager,
@@ -105,17 +136,70 @@ export class LetterRepository {
       .execute();
   }
 
-  private _getRepository(
-    type: 'letter' | 'letterAttachment',
+  async insertComment({
+    comment,
+    entityManager,
+  }: InsertComment) {
+    const repo = this._getRepository('letterComment', entityManager);
+    return await repo.insert(comment);
+  }
+
+async selectComment({letterCommentId, entityManager}: Omit<SelectComment, 'letterId'>) {
+    const repo = this._getRepository('letterComment', entityManager);
+    return await repo.findOne({
+        where: {
+            letterCommentId: letterCommentId
+        }
+    });
+}
+
+async selectComments({letterId,entityManager}:Omit<SelectComment,'letterCommentId'>) {
+    const repo = this._getRepository('letterComment', entityManager);
+    return await repo.find({
+        where: {
+            letterId: letterId
+        }
+    });
+}
+
+async deleteComment({letterCommentId,entityManager}:Omit<SelectComment,'letterId'>) {
+    const repo = this._getRepository('letterComment', entityManager);
+    return await repo.update({
+        letterCommentId: letterCommentId
+    }, {
+        useYn: YN.N
+    });
+}
+
+async deleteCommentFromLetter({letterId,entityManager}:Omit<SelectComment,'letterCommentId'>) {
+    const repo = this._getRepository('letterComment', entityManager);
+    return await repo.update({
+        letterId: letterId
+    }, {
+        useYn: YN.N
+    });
+}
+
+  private _getRepository<T extends 'letter' | 'letterAttachment' | 'letterComment'>(
+    type: T,
     entityManager?: EntityManager,
-  ) {
+  ): T extends 'letter'
+    ? Repository<LetterEntity>
+    : T extends 'letterAttachment'
+    ? Repository<LetterAttachmentEntity>
+    : Repository<LetterCommentEntity> {
     if (type === 'letter')
-      return entityManager
+      return (entityManager
         ? entityManager.getRepository(LetterEntity)
-        : this.letter;
+        : this.letter) as any;
     if (type === 'letterAttachment')
-      return entityManager
+      return (entityManager
         ? entityManager.getRepository(LetterAttachmentEntity)
-        : this.letterAttachment;
+        : this.letterAttachment) as any;
+    if (type === 'letterComment')
+      return (entityManager
+        ? entityManager.getRepository(LetterCommentEntity)
+        : this.letterComment) as any;
+    throw new Error('Invalid repository type');
   }
 }

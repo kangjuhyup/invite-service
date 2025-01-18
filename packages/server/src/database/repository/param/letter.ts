@@ -2,6 +2,7 @@ import { LetterEntity } from '@app/database/entity/letter';
 import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
 import { LetterCategoryCode } from '@app/util/category';
 import { DefaultParameter } from './default';
+import { LetterCommentEntity } from '@app/database/entity/letter.comment';
 
 export type Letter = Pick<
   LetterEntity,
@@ -42,6 +43,29 @@ export class SelectLetter extends DefaultParameter {
 export class InsertLetter extends DefaultParameter {
   letter: Letter;
 }
+
+export class DeleteLetter extends DefaultParameter {
+  letterId: number;
+}
+
 export class InsertLetterAttachment extends DefaultParameter {
   letterAttachments: Array<LetterAttachment>;
+}
+
+export class DeleteLetterAttachment extends DefaultParameter {
+  letterId: number;
+  attachmentId: number;
+}
+
+export class InsertComment extends  DefaultParameter {
+  comment: LetterCommentEntity;
+}
+
+export class SelectComment extends DefaultParameter {
+  letterId: number;
+  letterCommentId: number;
+}
+
+export class DeleteComment extends DefaultParameter {
+  letterCommentId: number;
 }

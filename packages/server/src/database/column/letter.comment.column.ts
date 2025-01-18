@@ -1,7 +1,8 @@
 export const LetterCommentColumn = {
-  table: 'tb_vm_ltr_cmt',
+  table: 'tb_vm_letr_cmt',
   commentId: 'cmt_id',
   editor: 'edt_nm',
+  password: 'pwd',
   body: 'body',
 } as const;
 

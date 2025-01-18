@@ -11,6 +11,7 @@ import { LetterAttachmentEntity } from './entity/letter.attachment';
 import { AttachmentEntity } from './entity/attachment';
 import { AttachmentRepository } from './repository/attachment';
 import { Enviroments } from '@app/domain/dto/env';
+import { LetterCommentEntity } from './entity/letter.comment';
 
 const repositories = [LetterRepository, AttachmentRepository, UserRepository];
 
@@ -42,6 +43,7 @@ const repositories = [LetterRepository, AttachmentRepository, UserRepository];
       LetterEntity,
       LetterAttachmentEntity,
       AttachmentEntity,
+      LetterCommentEntity,
     ]),
   ],
   providers: [...repositories],

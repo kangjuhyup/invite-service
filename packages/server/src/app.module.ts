@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { LetterModule } from './domain/letter/letter.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { plainToClass } from 'class-transformer';
@@ -16,6 +15,7 @@ import { MetricModule } from './domain/metric/metric.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MetricInterceptor } from './interceptor/http.metric';
 import { ImageModule } from './domain/image/image.module';
+import { CommentModule } from './domain/comment/comment.module';
 
 export const routers = [
   AuthModule.forRootAsync({
@@ -29,6 +29,7 @@ export const routers = [
   UserModule,
   LetterModule,
   ImageModule,
+  CommentModule,
 ];
 
 export const modules = [
@@ -88,7 +89,7 @@ export const modules = [
 @Module({
   imports: [...routers, ...modules],
   controllers: [AppController],
-  providers: [AppService,  
+  providers: [  
     {
       provide: APP_INTERCEPTOR,
       useClass: MetricInterceptor,
