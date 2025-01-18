@@ -72,15 +72,43 @@ describe('StorageService', () => {
       );
       expect(url).toBe('https://presigned-download-url');
     });
-    it('업로드 Url 생성', async () => {
+
+    it('이미지 업로드 Url 생성', async () => {
       (getSignedUrl as jest.Mock).mockResolvedValue(
         'https://presigned-upload-url',
       );
 
       const url = await service.generateUploadPresignedUrl({
+        type: 'image',
         bucket: 'test-bucket',
         key: 'test-key',
         expires: 3600,
+        meta: {
+          session: 'test'
+        }
+      });
+
+      expect(getSignedUrl).toHaveBeenCalledWith(
+        s3Client,
+        expect.any(PutObjectCommand),
+        { expiresIn: 3600 },
+      );
+      expect(url).toBe('https://presigned-upload-url');
+    });
+
+    it('텍스트 업로드 Url 생성', async () => {
+      (getSignedUrl as jest.Mock).mockResolvedValue(
+        'https://presigned-upload-url',
+      );
+
+      const url = await service.generateUploadPresignedUrl({
+        type: 'text',
+        bucket: 'test-bucket',
+        key: 'test-key',
+        expires: 3600,
+        meta: {
+          session: 'test'
+        }
       });
 
       expect(getSignedUrl).toHaveBeenCalledWith(
