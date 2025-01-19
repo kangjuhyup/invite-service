@@ -39,7 +39,7 @@ const useGenerateLetter = (
         const imagePromises = files.map(({ file, size, position }) => {
           return new Promise<void>((resolve) => {
             const img = new Image();
-            img.src = URL.createObjectURL(file);
+            img.src = typeof file === 'string' ? file : URL.createObjectURL(file);
             img.onload = () => {
               ctx.drawImage(
                 img,
