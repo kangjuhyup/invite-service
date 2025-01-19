@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { CommentService } from "./service/comment.service";
-import { AddCommentRequest } from "./dto/add.comment";
+import { AddCommentRequest } from "./dto/request/add.comment";
 import { User } from "@app/jwt/user";
+import { GetLetterCommentResponse } from "./dto/response/get.comment.response";
 
 @Injectable()
 export class CommentFacade {
@@ -10,7 +11,8 @@ export class CommentFacade {
     ) {}
 
     async selectComments(letterId: number) {
-        return await this.commentService.selectComments(letterId);
+        const comments = await this.commentService.selectComments(letterId);
+        return GetLetterCommentResponse.of(letterId,comments);
     }
 
     async addComment(letterId: number, dto: AddCommentRequest) {

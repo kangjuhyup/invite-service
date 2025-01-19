@@ -11,6 +11,24 @@ import {
 import { LetterAttachmentCode } from '@app/util/attachment';
 
 export class Letter {
+
+  @ApiProperty({
+    description: '초대장 제목',
+    example: 'Sample Title',
+  })
+  @IsNotEmpty()
+  @IsString()
+  title : string;
+
+  @ApiProperty({
+    description: '초대장 내용',
+    example: 'Sample Body',
+    required: false
+  })
+  @IsNotEmpty()
+  @IsString()
+  body? : string;
+
   @ApiProperty({
     description: '이미지 경로',
     example: 'https://example.com/img.png',
@@ -40,6 +58,8 @@ export class Letter {
     const attachment = letter.letterAttachment.find(
       (la) => la.attachmentCode === LetterAttachmentCode.LETTER,
     );
+    response.title = letter.title;
+    response.body = letter.body;
     response.path = attachment.attachment.attachmentPath;
     response.width = attachment.width;
     response.height = attachment.height;

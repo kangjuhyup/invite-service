@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Headers, Param, Post, UseGuards } from "@nestjs/common";
-import { AddCommentRequest } from "./dto/add.comment";
+import { AddCommentRequest } from "./dto/request/add.comment";
 import { UserAccessGuard } from "@app/jwt/guard/user.access.guard";
 import { CommentFacade } from "./comment.facade";
 import { ApiOperation, ApiParam, ApiHeader, ApiBody, ApiTags } from "@nestjs/swagger";
@@ -16,7 +16,10 @@ export class CommentController {
     @ApiParam({ name: 'letterId', description: '초대장 ID' })
     @Get('/letter/:letterId')
     async getComments(@Param('letterId') letterId: number) {
-        return this.commentFacade.selectComments(letterId);
+        return { 
+            result : true, 
+            data : await this.commentFacade.selectComments(letterId)
+        };
     }
 
     @ApiOperation({ summary: '초대장에 댓글 작성' })
@@ -24,7 +27,10 @@ export class CommentController {
     @ApiBody({ type: AddCommentRequest })
     @Post('/letter/:letterId')
     async addComment(@Param('letterId') letterId: number, @Body() dto: AddCommentRequest) {
-        return this.commentFacade.addComment(letterId, dto);
+        await this.commentFacade.addComment(letterId, dto);
+        return {
+            result : true
+        }
     }
 
     @ApiOperation({ summary: '댓글 삭제' })
@@ -39,6 +45,9 @@ export class CommentController {
         @Param('commentId') commentId: number, 
         @Headers('x-comment-password') password: string
     ) {
-        return this.commentFacade.deleteComment(commentId, password);
+        await this.commentFacade.deleteComment(commentId, password);
+        return {
+            result : true
+        }
     }
 }

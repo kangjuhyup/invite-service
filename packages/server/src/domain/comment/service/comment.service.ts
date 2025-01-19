@@ -15,7 +15,7 @@ export class CommentService {
         editor : string,
         content : string
     }) {
-        const newComment = LetterCommentEntity.of(param.letterId, param.password, param.editor, param.content);
+        const newComment = LetterCommentEntity.of(param.letterId, param.password, param.editor, param.content, 'addComment');
         return await this.letterRepository.insertComment({comment : newComment});
     }
 
