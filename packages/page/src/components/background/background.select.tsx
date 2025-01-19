@@ -7,7 +7,10 @@ interface BackgroundSelectProps {
   onImageSelect: (image: string) => void;
 }
 
-const BackgroundSelect = ({ onColorSelect, onImageSelect }: BackgroundSelectProps) => {
+const BackgroundSelect = ({
+  onColorSelect,
+  onImageSelect,
+}: BackgroundSelectProps) => {
   const [isColorMode, setIsColorMode] = useState(true);
 
   const handleImageChange = (file: File | null) => {
@@ -22,7 +25,7 @@ const BackgroundSelect = ({ onColorSelect, onImageSelect }: BackgroundSelectProp
 
   return (
     <Stack>
-      <Group position="center">
+      <Group>
         <Button
           variant={isColorMode ? 'filled' : 'light'}
           onClick={() => setIsColorMode(true)}
@@ -64,9 +67,10 @@ const BackgroundSelect = ({ onColorSelect, onImageSelect }: BackgroundSelectProp
         <FileInput
           placeholder="이미지 선택"
           accept="image/*"
-          icon={<IconPhoto size={14} />}
           onChange={handleImageChange}
-        />
+        >
+          <IconPhoto size={14} />
+        </FileInput>
       )}
     </Stack>
   );
