@@ -1,20 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   /* config options here */
-  basePath: '/page',
+  basePath: `/${process.env.NEXT_PUBLIC_BASE_PATH}`,
   // output: 'standalone',
   // reactStricMode: false,
-  assetPrefix: '/page',
+  assetPrefix: `/${process.env.NEXT_PUBLIC_BASE_PATH}`,
   publicRuntimeConfig: {
-    basePath: '/page',
+    basePath: `/${process.env.NEXT_PUBLIC_BASE_PATH}`,
   },
   async rewrites() {
-    return [
-      {
-        source: '/page/api/:path*',
-        destination: '/api/:path*',
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/page/api/:path*',
+          destination: '/api/:path*',
+        },
+      ],
+    };
   },
 };
 

@@ -20,10 +20,8 @@ import FloatingButton from '../../../components/button/floating/floating.button'
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import PresignedImage from '@/components/image/presigned/presigned.image';
-import getConfig from 'next/config';
 
-const { publicRuntimeConfig } = getConfig();
-const basePath = publicRuntimeConfig.basePath || '';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ? `/${process.env.NEXT_PUBLIC_BASE_PATH}` : '';
 
 declare global {
   interface Window {
