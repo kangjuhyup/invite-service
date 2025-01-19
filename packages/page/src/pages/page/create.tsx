@@ -121,7 +121,8 @@ const CreatePage = () => {
   const handlePrepare = async () => {
     // 이미지 정보와 텍스트 정보를 반환
     const imageData = files.map((file) => ({
-      fileName: file.file.name,
+      fileName:
+        typeof file.file === 'string' ? file.file : file.file.name || 'unknown',
       size: file.size,
       position: file.position,
     }));
@@ -231,7 +232,6 @@ const CreatePage = () => {
         />
         {files.map((fileInfo, index) => (
           <MoveResizeImage
-            key={fileInfo.file.name}
             fileInfo={fileInfo}
             onUpdate={(data) => {
               setFiles((prevFiles) =>

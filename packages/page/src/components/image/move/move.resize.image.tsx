@@ -3,7 +3,7 @@ import useMoveResize from './move.resize.hook';
 import { useEffect } from 'react';
 
 export interface FileInfo {
-  file: FileWithPath;
+  file: FileWithPath | string;
   size: { width: number; height: number };
   position: { x: number; y: number };
 }
@@ -15,10 +15,11 @@ interface MoveResizeImageProps {
 
 const MoveResizeImage = ({ fileInfo, onUpdate }: MoveResizeImageProps) => {
   const { size, position, handleMouseDown, init } = useMoveResize();
-
   useEffect(() => {
-    init(fileInfo.size, fileInfo.position);
+    if (!fileInfo) return;
+    init(fileInfo.position, fileInfo.size);
   }, []);
+
   useEffect(() => {
     if (fileInfo) onUpdate({ file: fileInfo.file, size, position });
   }, [size, position]);
@@ -36,8 +37,11 @@ const MoveResizeImage = ({ fileInfo, onUpdate }: MoveResizeImageProps) => {
       onMouseDown={handleMouseDown} // 마우스 버튼을 눌렀을 때 드래그 시작
     >
       <img
-        src={URL.createObjectURL(fileInfo.file)}
-        alt={fileInfo.file.name}
+        src={
+          fileInfo.file instanceof File
+            ? URL.createObjectURL(fileInfo.file)
+            : fileInfo.file
+        }
         style={{
           width: '100%',
           height: '100%',

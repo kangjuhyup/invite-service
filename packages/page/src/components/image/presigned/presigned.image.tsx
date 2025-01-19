@@ -1,7 +1,7 @@
 import useImageApi from '@/api/image.api';
 import { Container, Image, Text } from '@mantine/core';
 import useMoveResize from '../move/move.resize.hook';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, CSSProperties } from 'react';
 
 interface ContentData {
   type: string;
@@ -17,6 +17,7 @@ interface PresignedImageProps {
   x?: string | number;
   y?: string | number;
   movable?: boolean;
+  style?: CSSProperties;
   onUpdate?: (data: {
     size: { width: number; height: number };
     position: { x: number; y: number };
@@ -31,6 +32,7 @@ const PresignedImage = ({
   x = 0,
   y = 0,
   movable = false,
+  style,
   onUpdate,
 }: PresignedImageProps) => {
   const { presignedUrl, getPresignedUrl } = useImageApi();
@@ -127,6 +129,7 @@ const PresignedImage = ({
           width: '100%',
           height: '100%',
           objectFit: 'fill',
+          ...style,
         }}
       />
     );
@@ -135,7 +138,7 @@ const PresignedImage = ({
   if (!movable) {
     if (contentData.type === 'text/plain' && contentData.text) {
       return (
-        <Text pos={position} top={y} left={x}>
+        <Text pos={position} top={y} left={x} style={style}>
           {contentData.text}
         </Text>
       );
@@ -150,6 +153,7 @@ const PresignedImage = ({
         pos={position}
         top={y}
         left={x}
+        style={style}
       />
     );
   }
@@ -163,6 +167,7 @@ const PresignedImage = ({
         width: size.width,
         height: size.height,
         cursor: 'move',
+        ...style,
       }}
       onTouchStart={handleMouseDown}
       onMouseDown={handleMouseDown}

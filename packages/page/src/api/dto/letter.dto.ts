@@ -67,13 +67,16 @@ export interface GetLetterPageResponse {
 }
 
 interface Letter {
+  title: string;
+  body?: string;
   path: string;
   width: number;
   height: number;
 }
 
 interface Comment {
-  name: string;
+  id: number;
+  editor: string;
   body: string;
 }
 
@@ -114,4 +117,19 @@ export interface GetLetterDetailResponse {
   background: Background;
 
   components?: Image[];
+}
+
+export interface GetLetterCommentRequest {
+  letterId: number;
+}
+
+export interface GetLetterCommentResponse {
+  letterId: number;
+  comments: Comment[];
+}
+
+export interface AddLetterCommentRequest {
+  password: string;
+  content: string;
+  editor: string;
 }

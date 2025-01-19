@@ -10,6 +10,8 @@ import {
   GetLetterPageResponse,
   GetLetterResponse,
   GetLetterDetailResponse,
+  AddLetterCommentRequest,
+  GetLetterCommentResponse,
 } from './dto/letter.dto';
 import useLoginStore from '@/store/login.store';
 
@@ -20,8 +22,9 @@ const useLetterApi = () => {
   const [letterDetail, setLetterDetail] = useState<GetLetterDetailResponse>();
   const [letterPage, setLetterPage] = useState<GetLetterPageResponse>();
   const [prepareUrls, setPrepareUrls] = useState<PrepareResponse>();
-
   const [addLetter, setAddLetter] = useState<AddLetterResponse>();
+  const [comments, setComments] = useState<GetLetterCommentResponse>();
+
   const getLetter = async (letterId: number) => {
     const response = await apiClient.get<ApiResponse<GetLetterResponse>>(
       `/letter/${letterId}`,
@@ -96,6 +99,46 @@ const useLetterApi = () => {
     }
   };
 
+  const getLetterComments = async (letterId: number) => {
+    const response = await apiClient.get<ApiResponse<GetLetterCommentResponse>>(
+      `/comment/letter/${letterId}`,
+    );
+    if (!response.result) {
+      setError(response.error);
+    } else {
+      setComments(response.data);
+    }
+  };
+
+  const addComment = async (letterId: number, dto: AddLetterCommentRequest) => {
+    const response = await apiClient.post<ApiResponse<GetLetterDetailResponse>>(
+      `/comment/letter/${letterId}`,
+      dto,
+      {
+        headers: {
+          Authorization: `Bearer ${access ?? ''}`,
+        },
+      },
+    );
+    if (!response.result) {
+      setError(response.error);
+    }
+  };
+
+  const deleteComment = async (commentId: number, password: string) => {
+    const response = await apiClient.delete<
+      ApiResponse<GetLetterDetailResponse>
+    >(`/comment/${commentId}`, {
+      headers: {
+        Authorization: `Bearer ${access ?? ''}`,
+        'x-comment-password': password,
+      },
+    });
+    if (!response.result) {
+      setError(response.error);
+    }
+  };
+
   return {
     letter,
     getLetter,
@@ -107,6 +150,10 @@ const useLetterApi = () => {
     getLetterPage,
     letterDetail,
     getLetterDetail,
+    comments,
+    getLetterComments,
+    addComment,
+    deleteComment,
   };
 };
 
