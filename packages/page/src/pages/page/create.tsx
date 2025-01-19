@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Container } from '@mantine/core';
+import { Container, Modal, Button } from '@mantine/core';
 import { FileWithPath } from '@mantine/dropzone';
 import MoveResizeImage, {
   FileInfo,
@@ -12,6 +12,9 @@ import useGenerateLetter from '@/hooks/generate.letter.hook';
 import { useRouter } from 'next/router';
 import CreatePageDefaultFooter from '@/components/footer/create.footer';
 import TextControlFooter from '@/components/footer/text.footer';
+import { BACKGROUND_HEIGHT, BACKGROUND_WIDTH } from '@/const';
+import { useDisclosure } from '@mantine/hooks';
+import BackgroundSelect from '@/components/background/background.select';
 
 const CreatePage = () => {
   const router = useRouter();
@@ -21,8 +24,36 @@ const CreatePage = () => {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [texts, setTexts] = useState<TextInfo[]>([]);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
+  const [backgroundColor, setBackgroundColor] = useState<string>('blue');
   const [footerType, setFooterType] = useState(0);
   const [selectedTextIndex, setSelectedTextIndex] = useState<number>(-1);
+  const [opened, { open, close }] = useDisclosure(false);
+
+  const containerStyle = {
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: BACKGROUND_WIDTH,
+    height: BACKGROUND_HEIGHT,
+  };
+
+  const getBackgroundStyle = () => ({
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: BACKGROUND_WIDTH,
+    height: BACKGROUND_HEIGHT,
+    ...(backgroundImage
+      ? {
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: '100% 100%',
+        }
+      : {
+          backgroundColor,
+        }),
+  });
 
   const handleDrop = (newFiles: FileWithPath[]) => {
     const newer = newFiles.map((f) => ({
@@ -199,39 +230,27 @@ const CreatePage = () => {
 
   return (
     <>
-      <Container
-        style={{
-          position: 'absolute', // 부모 기준 위치 설정
-          top: '50%', // 화면의 50% 아래
-          left: '50%', // 화면의 50% 오른쪽
-          transform: 'translate(-50%, -50%)',
-
-          width: '400px',
-          height: '600px',
-        }}
-      >
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleBackgroundChange}
-          style={{ position: 'absolute', top: 10, left: 10, zIndex: 10 }}
-        />
+      <Container style={containerStyle}>
+        <Modal opened={opened} onClose={close} title="배경 선택">
+          <BackgroundSelect
+            onColorSelect={(color) => {
+              setBackgroundColor(color);
+              setBackgroundImage(null);
+              close();
+            }}
+            onImageSelect={(image) => {
+              setBackgroundImage(image);
+              close();
+            }}
+          />
+        </Modal>
         <div
           ref={backgroundRef}
-          style={{
-            position: 'absolute', // 부모 기준 위치 설정
-            top: '50%', // 화면의 50% 아래
-            left: '50%', // 화면의 50% 오른쪽
-            transform: 'translate(-50%, -50%)',
-            background: backgroundImage ? `url(${backgroundImage})` : 'blue',
-            backgroundSize: '100% 100%',
-            backgroundRepeat: 'no-repeat',
-            width: '400px',
-            height: '600px',
-          }}
+          style={getBackgroundStyle()}
         />
         {files.map((fileInfo, index) => (
           <MoveResizeImage
+            key={index}
             fileInfo={fileInfo}
             onUpdate={(data) => {
               setFiles((prevFiles) =>
@@ -243,8 +262,8 @@ const CreatePage = () => {
         {texts.map((text, index) => {
           return (
             <MoveText
-              index={index}
               key={index}
+              index={index}
               textInfo={text}
               onUpdate={(text) => {
                 setTexts((prevTexts) =>
@@ -280,10 +299,7 @@ const CreatePage = () => {
             setFooterType(1);
           }}
           onSave={handlePrepare}
-          onStickerAdd={() => {
-            // 스티커 기능 구현 예정
-            console.log('Sticker feature coming soon');
-          }}
+          onBackgroundSelect={open}
         />
       ) : footerType === 1 && selectedTextIndex !== -1 ? (
         <TextControlFooter

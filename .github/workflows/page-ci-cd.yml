@@ -20,7 +20,7 @@ jobs:
 
       - name: Add KAKAO_API_KEY to .env.production
         run: |
-          echo "KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }}" >> ./packages/page/.env.production
+          echo "KAKAO_API_KEY=${{ secrets.KAKAO_API_KEY }}" >> packages/page/.env.production
 
       - name: login contianer registry
         uses: docker/login-action@v2
