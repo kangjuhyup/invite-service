@@ -46,10 +46,18 @@ const LetterPage = () => {
   }, [letterId]);
 
   useEffect(() => {
-    // 카카오 SDK 초기화
-    if (!window.Kakao.isInitialized()) {
-      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY);
-    }
+    const initKakao = async () => {
+      try {
+        const response = await fetch('/api/kakao/key');
+        const data = await response.json();
+        if (!window.Kakao.isInitialized()) {
+          window.Kakao.init(data.key);
+        }
+      } catch (error) {
+        console.error('Failed to initialize Kakao SDK:', error);
+      }
+    };
+    initKakao();
   }, []);
 
   const handleKakaoShare = () => {
