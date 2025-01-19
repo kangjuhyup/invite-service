@@ -40,7 +40,8 @@ describe('CommentService', () => {
                 testCommentData.letterId,
                 testCommentData.password,
                 testCommentData.editor,
-                testCommentData.content
+                testCommentData.content,
+                'addComment'
             );
             const insertResult: InsertResult = {
                 identifiers: [{ id: 1 }],
@@ -61,8 +62,8 @@ describe('CommentService', () => {
         it('특정 초대장의 댓글 목록을 조회해야 함', async () => {
             // given
             const comments = [
-                LetterCommentEntity.of(1, 'password1', 'editor1', 'content1'),
-                LetterCommentEntity.of(1, 'password2', 'editor2', 'content2')
+                LetterCommentEntity.of(1, 'password1', 'editor1', 'content1', 'selectComments'),
+                LetterCommentEntity.of(1, 'password2', 'editor2', 'content2', 'selectComments')
             ];
             when(mockLetterRepository.selectComments(deepEqual({letterId: 1}))).thenResolve(comments);
 
@@ -108,7 +109,7 @@ describe('CommentService', () => {
             // given
             const commentId = 1;
             const password = 'correctPassword';
-            const comment = LetterCommentEntity.of(1, password, '작성자', '내용');
+            const comment = LetterCommentEntity.of(1, password, '작성자', '내용', 'checkCommentAuthor');
             comment.letterCommentId = commentId;
             
             when(mockLetterRepository.selectComment(deepEqual({letterCommentId: commentId}))).thenResolve(comment);
@@ -134,7 +135,7 @@ describe('CommentService', () => {
             const commentId = 1;
             const correctPassword = 'correctPassword';
             const wrongPassword = 'wrongPassword';
-            const comment = LetterCommentEntity.of(1, correctPassword, '작성자', '내용');
+            const comment = LetterCommentEntity.of(1, correctPassword, '작성자', '내용', 'checkCommentAuthor');
             comment.letterCommentId = commentId;
             
             when(mockLetterRepository.selectComment(deepEqual({letterCommentId: commentId}))).thenResolve(comment);
