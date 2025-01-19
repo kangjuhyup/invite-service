@@ -40,6 +40,12 @@ const LetterPage = () => {
   });
 
   useEffect(() => {
+    if (!letterId) return;
+    getLetter(Number(letterId));
+    getLetterComments(Number(letterId));
+  }, [letterId]);
+
+  useEffect(() => {
     // 카카오 SDK 초기화
     if (!window.Kakao.isInitialized()) {
       window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY);
@@ -86,10 +92,6 @@ const LetterPage = () => {
     // getLetter(Number(letterId));
   };
 
-  useInit({
-    apis: [() => letterId && getLetter(Number(letterId))],
-  });
-
   return (
     <>
       <Container
@@ -117,7 +119,11 @@ const LetterPage = () => {
               width={`${letter?.letter?.width}px`}
               height={`${letter?.letter?.height}px`}
               path={letter?.letter?.path}
-              style={{ objectFit: 'contain', maxWidth: '100%', maxHeight: '100%' }}
+              style={{
+                objectFit: 'contain',
+                maxWidth: '100%',
+                maxHeight: '100%',
+              }}
             />
           </Box>
         )}

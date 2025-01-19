@@ -1,0 +1,14 @@
+1. Speak to me in Korean
+2. My build system is next.js and nest.js with typescript
+3. My package manager is yarn v4.50
+4. My version control is git
+5. My testing framework is jest
+6. My testing mock libary is ts-mockito
+7. My code coverage libary is jest
+8. My code formatter is prettier
+9. My code linter is eslint
+10. My database is MySQL
+11. My ORM is TypeORM
+12. My frontend css framework is mantine
+13. nvm use 20
+14. My yarn workspaces are page and server
