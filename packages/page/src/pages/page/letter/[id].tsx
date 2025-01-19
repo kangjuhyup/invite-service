@@ -20,6 +20,10 @@ import FloatingButton from '../../../components/button/floating/floating.button'
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import PresignedImage from '@/components/image/presigned/presigned.image';
+import getConfig from 'next/config';
+
+const { publicRuntimeConfig } = getConfig();
+const basePath = publicRuntimeConfig.basePath || '';
 
 declare global {
   interface Window {
@@ -48,7 +52,7 @@ const LetterPage = () => {
   useEffect(() => {
     const initKakao = async () => {
       try {
-        const response = await fetch('/api/kakao/key');
+        const response = await fetch(`${basePath}/api/kakao/key`);
         const data = await response.json();
         if (!window.Kakao.isInitialized()) {
           window.Kakao.init(data.key);
