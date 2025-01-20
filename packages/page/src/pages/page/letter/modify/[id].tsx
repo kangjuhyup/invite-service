@@ -134,6 +134,10 @@ const ModifyLetterPage = () => {
                   onUpdate={(data: FileInfo) => {
                     console.log('Image updated:', data);
                   }}
+                  onClick={() => {
+                    //TODO : Footer 표시
+                    console.log('Image clicked');
+                  }}
                 />
               );
             })}
