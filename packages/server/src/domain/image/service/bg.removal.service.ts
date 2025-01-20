@@ -22,7 +22,7 @@ export class BackgroundRemovalService implements OnModuleInit {
             model: 'small',
             output: {
                 quality: 0.8,
-                format: 'image/jpeg', //image/jpeg, image/webp
+                format: 'image/webp', //image/jpeg, image/webp
             },
         };
         

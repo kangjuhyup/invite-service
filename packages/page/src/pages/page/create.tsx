@@ -12,21 +12,25 @@ import useGenerateLetter from '@/hooks/generate.letter.hook';
 import { useRouter } from 'next/router';
 import CreatePageDefaultFooter from '@/components/footer/create.footer';
 import TextControlFooter from '@/components/footer/text.footer';
+import ImageControlFooter from '@/components/footer/image.footer';
 import { BACKGROUND_HEIGHT, BACKGROUND_WIDTH } from '@/const';
 import { useDisclosure } from '@mantine/hooks';
 import BackgroundSelect from '@/components/background/background.select';
+import useImageApi from '@/api/image.api';
 
 const CreatePage = () => {
   const router = useRouter();
   const backgroundRef = useRef<HTMLDivElement>(null);
   const { prepareUrls, getPrepareUrls, addLetter, postAddLetter } =
     useLetterApi();
+  const { presignedUrl, getPresignedUrl, removeBackground } = useImageApi();
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [texts, setTexts] = useState<TextInfo[]>([]);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
   const [backgroundColor, setBackgroundColor] = useState<string>('blue');
   const [footerType, setFooterType] = useState(0);
   const [selectedTextIndex, setSelectedTextIndex] = useState<number>(-1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(-1);
   const [opened, { open, close }] = useDisclosure(false);
 
   const containerStyle = {
@@ -244,10 +248,7 @@ const CreatePage = () => {
             }}
           />
         </Modal>
-        <div
-          ref={backgroundRef}
-          style={getBackgroundStyle()}
-        />
+        <div ref={backgroundRef} style={getBackgroundStyle()} />
         {files.map((fileInfo, index) => (
           <MoveResizeImage
             key={index}
@@ -256,6 +257,10 @@ const CreatePage = () => {
               setFiles((prevFiles) =>
                 prevFiles.map((f, i) => (i === index ? { ...f, ...data } : f)),
               );
+            }}
+            onClick={() => {
+              setSelectedImageIndex(index);
+              setFooterType(2);
             }}
           />
         ))}
@@ -336,6 +341,62 @@ const CreatePage = () => {
           }}
           onComplete={() => {
             setSelectedTextIndex(-1);
+            setFooterType(0);
+          }}
+        />
+      ) : footerType === 2 && selectedImageIndex !== -1 ? (
+        <ImageControlFooter
+          width={files[selectedImageIndex].size.width}
+          height={files[selectedImageIndex].size.height}
+          onSizeChange={(width: number, height: number) => {
+            setFiles((prevFiles) =>
+              prevFiles.map((file, index) =>
+                index === selectedImageIndex
+                  ? {
+                      ...file,
+                      size: { width, height },
+                    }
+                  : file,
+              ),
+            );
+          }}
+          onRotate={() => {
+            // 회전 기능은 추후 구현
+          }}
+          onRemoveBackground={async () => {
+            const currentFile = files[selectedImageIndex].file;
+            if (!(currentFile instanceof File)) return;
+            try {
+              console.log('배경 제거 시작 : ', currentFile);
+              const arrayBuffer = await removeBackground(currentFile);
+              if (arrayBuffer) {
+                const newFile = new File([arrayBuffer], currentFile.name, {
+                  type: 'image/png',
+                });
+                setFiles((prevFiles) =>
+                  prevFiles.map((file, index) =>
+                    index === selectedImageIndex
+                      ? {
+                          ...file,
+                          file: newFile,
+                        }
+                      : file,
+                  ),
+                );
+              }
+            } catch (error) {
+              console.error('배경 제거 중 오류 발생:', error);
+            }
+          }}
+          onDelete={() => {
+            setFiles((prevFiles) =>
+              prevFiles.filter((_, index) => index !== selectedImageIndex),
+            );
+            setSelectedImageIndex(-1);
+            setFooterType(0);
+          }}
+          onComplete={() => {
+            setSelectedImageIndex(-1);
             setFooterType(0);
           }}
         />

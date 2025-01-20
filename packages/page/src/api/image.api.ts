@@ -11,7 +11,16 @@ const useImageApi = () => {
     return response.data;
   };
 
-  return { presignedUrl, getPresignedUrl };
+  const removeBackground = async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    return apiClient.post<ArrayBuffer>('/image/bg-remove', formData, {
+      responseType: 'arraybuffer',
+    });
+  };
+
+  return { presignedUrl, getPresignedUrl, removeBackground };
 };
 
 export default useImageApi;

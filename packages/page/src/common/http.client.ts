@@ -3,6 +3,7 @@ type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 interface HttpClientOptions extends RequestInit {
   headers?: Record<string, string>;
   queryParams?: Record<string, string | number>;
+  responseType?: 'arraybuffer';
 }
 
 class HttpClient {
@@ -64,6 +65,10 @@ class HttpClient {
       throw new Error(errorData.message || `Error: ${response.status}`);
     }
 
+    if (options.responseType === 'arraybuffer') {
+      return response.arrayBuffer() as Promise<T>;
+    }
+
     return response.json() as Promise<T>;
   }
 
@@ -76,14 +81,17 @@ class HttpClient {
     body: any,
     options?: HttpClientOptions,
   ): Promise<T> {
+    const headers = body instanceof FormData
+      ? { ...(options?.headers || {}) }
+      : {
+          'Content-Type': options?.headers?.['Content-Type'] || 'application/json',
+          ...(options?.headers || {}),
+        };
+
     return this.request<T>(endpoint, 'POST', {
       ...options,
-      headers: {
-        'Content-Type':
-          options?.headers?.['Content-Type'] || 'application/json',
-        ...(options?.headers || {}),
-      },
-      body: JSON.stringify(body),
+      headers,
+      body: body instanceof FormData ? body : JSON.stringify(body),
     }).catch((err) => {
       throw err;
     });
