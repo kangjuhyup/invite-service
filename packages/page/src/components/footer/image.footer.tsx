@@ -1,9 +1,17 @@
-import { AppShell, Grid, Group, ActionIcon, Text, NumberInput } from '@mantine/core';
+import {
+  AppShell,
+  Grid,
+  Group,
+  ActionIcon,
+  Text,
+  NumberInput,
+} from '@mantine/core';
 import {
   IconCheck,
   IconRotate,
   IconResize,
   IconTrash,
+  IconBackground,
 } from '@tabler/icons-react';
 
 interface ImageControlFooterProps {
@@ -11,6 +19,7 @@ interface ImageControlFooterProps {
   onRotate: () => void;
   onDelete: () => void;
   onComplete: () => void;
+  onRemoveBackground: () => void;
   width: number;
   height: number;
 }
@@ -20,6 +29,7 @@ const ImageControlFooter = ({
   onRotate,
   onDelete,
   onComplete,
+  onRemoveBackground,
   width,
   height,
 }: ImageControlFooterProps) => {
@@ -56,6 +66,14 @@ const ImageControlFooter = ({
     },
     {
       icon: (
+        <ActionIcon variant="light" color="blue" onClick={onRemoveBackground}>
+          <IconBackground style={{ width: '70%', height: '70%' }} />
+        </ActionIcon>
+      ),
+      label: '배경제거',
+    },
+    {
+      icon: (
         <ActionIcon variant="light" color="red" onClick={onDelete}>
           <IconTrash style={{ width: '70%', height: '70%' }} />
         </ActionIcon>
@@ -81,7 +99,7 @@ const ImageControlFooter = ({
     >
       <Grid>
         {footerActions.map((action, index) => (
-          <Grid.Col span={3} key={index}>
+          <Grid.Col span={footerActions.length === 5 ? 2.4 : 3} key={index}>
             <Group justify="center" gap="xs">
               {action.icon}
               <Text size="sm">{action.label}</Text>
