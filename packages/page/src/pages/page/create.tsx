@@ -12,6 +12,7 @@ import useGenerateLetter from '@/hooks/generate.letter.hook';
 import { useRouter } from 'next/router';
 import CreatePageDefaultFooter from '@/components/footer/create.footer';
 import TextControlFooter from '@/components/footer/text.footer';
+import ImageControlFooter from '@/components/footer/image.footer';
 import { BACKGROUND_HEIGHT, BACKGROUND_WIDTH } from '@/const';
 import { useDisclosure } from '@mantine/hooks';
 import BackgroundSelect from '@/components/background/background.select';
@@ -27,6 +28,7 @@ const CreatePage = () => {
   const [backgroundColor, setBackgroundColor] = useState<string>('blue');
   const [footerType, setFooterType] = useState(0);
   const [selectedTextIndex, setSelectedTextIndex] = useState<number>(-1);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(-1);
   const [opened, { open, close }] = useDisclosure(false);
 
   const containerStyle = {
@@ -257,6 +259,10 @@ const CreatePage = () => {
                 prevFiles.map((f, i) => (i === index ? { ...f, ...data } : f)),
               );
             }}
+            onClick={() => {
+              setSelectedImageIndex(index);
+              setFooterType(2);
+            }}
           />
         ))}
         {texts.map((text, index) => {
@@ -336,6 +342,37 @@ const CreatePage = () => {
           }}
           onComplete={() => {
             setSelectedTextIndex(-1);
+            setFooterType(0);
+          }}
+        />
+      ) : footerType === 2 && selectedImageIndex !== -1 ? (
+        <ImageControlFooter
+          width={files[selectedImageIndex].size.width}
+          height={files[selectedImageIndex].size.height}
+          onSizeChange={(width: number, height: number) => {
+            setFiles((prevFiles) =>
+              prevFiles.map((file, index) =>
+                index === selectedImageIndex
+                  ? {
+                      ...file,
+                      size: { width, height },
+                    }
+                  : file,
+              ),
+            );
+          }}
+          onRotate={() => {
+            // 회전 기능은 추후 구현
+          }}
+          onDelete={() => {
+            setFiles((prevFiles) =>
+              prevFiles.filter((_, index) => index !== selectedImageIndex),
+            );
+            setSelectedImageIndex(-1);
+            setFooterType(0);
+          }}
+          onComplete={() => {
+            setSelectedImageIndex(-1);
             setFooterType(0);
           }}
         />

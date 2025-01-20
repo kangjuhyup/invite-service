@@ -1,70 +1,66 @@
+import { AppShell, Grid, Group, ActionIcon, Text, NumberInput } from '@mantine/core';
 import {
-  AppShell,
-  Grid,
-  Group,
-  ActionIcon,
-  Text,
-  Select,
-  NumberInput,
-} from '@mantine/core';
-import {
-  IconBold,
   IconCheck,
-  IconEraser,
-  IconMinus,
-  IconPlus,
+  IconRotate,
+  IconResize,
+  IconTrash,
 } from '@tabler/icons-react';
 
-interface TextControlFooterProps {
-  onFontSizeChange: (size: number) => void;
-  onBoldToggle: () => void;
-  onFontChange: (font: string) => void;
+interface ImageControlFooterProps {
+  onSizeChange: (width: number, height: number) => void;
+  onRotate: () => void;
+  onDelete: () => void;
   onComplete: () => void;
-  fontSize: number;
-  isBold: boolean;
-  currentFont: string;
+  width: number;
+  height: number;
 }
 
-const TextControlFooter = ({
-  onFontSizeChange,
-  onBoldToggle,
-  onFontChange,
+const ImageControlFooter = ({
+  onSizeChange,
+  onRotate,
+  onDelete,
   onComplete,
-  fontSize,
-  isBold,
-  currentFont,
-}: TextControlFooterProps) => {
-  const fontOptions = [
-    { value: 'Noto Sans KR', label: 'Noto Sans' },
-    { value: 'Roboto', label: 'Roboto' },
-    { value: 'Open Sans', label: 'Open Sans' },
-    { value: 'Lato', label: 'Lato' },
-  ];
-
+  width,
+  height,
+}: ImageControlFooterProps) => {
   const footerActions = [
     {
       icon: (
         <Group>
-          <ActionIcon
-            variant="light"
-            color="blue"
-            onClick={() => onFontSizeChange(fontSize - 1)}
-            disabled={fontSize <= 8}
-          >
-            <IconEraser style={{ width: '70%', height: '70%' }} />
-          </ActionIcon>
-          <Text size="sm">{fontSize}px</Text>
-          <ActionIcon
-            variant="light"
-            color="blue"
-            onClick={() => onFontSizeChange(fontSize + 1)}
-            disabled={fontSize >= 72}
-          >
-            <IconPlus style={{ width: '70%', height: '70%' }} />
-          </ActionIcon>
+          <NumberInput
+            value={width}
+            onChange={(value) => onSizeChange(Number(value), height)}
+            min={50}
+            max={400}
+            style={{ width: 70 }}
+          />
+          <Text>x</Text>
+          <NumberInput
+            value={height}
+            onChange={(value) => onSizeChange(width, Number(value))}
+            min={50}
+            max={400}
+            style={{ width: 70 }}
+          />
         </Group>
       ),
-      label: '배경제거',
+      label: '크기',
+    },
+    {
+      icon: (
+        <ActionIcon variant="light" color="blue" onClick={onRotate}>
+          <IconRotate style={{ width: '70%', height: '70%' }} />
+        </ActionIcon>
+      ),
+      label: '회전',
+    },
+    {
+      icon: (
+        <ActionIcon variant="light" color="red" onClick={onDelete}>
+          <IconTrash style={{ width: '70%', height: '70%' }} />
+        </ActionIcon>
+      ),
+      label: '삭제',
     },
     {
       icon: (
@@ -97,4 +93,4 @@ const TextControlFooter = ({
   );
 };
 
-export default TextControlFooter;
+export default ImageControlFooter;

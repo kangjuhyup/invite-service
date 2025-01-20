@@ -11,9 +11,14 @@ export interface FileInfo {
 interface MoveResizeImageProps {
   fileInfo: FileInfo;
   onUpdate: (data: FileInfo) => void;
+  onClick: () => void;
 }
 
-const MoveResizeImage = ({ fileInfo, onUpdate }: MoveResizeImageProps) => {
+const MoveResizeImage = ({
+  fileInfo,
+  onUpdate,
+  onClick,
+}: MoveResizeImageProps) => {
   const { size, position, handleMouseDown, init } = useMoveResize();
   useEffect(() => {
     if (!fileInfo) return;
@@ -33,6 +38,7 @@ const MoveResizeImage = ({ fileInfo, onUpdate }: MoveResizeImageProps) => {
         height: size.height,
         cursor: 'move', // 드래그할 때 마우스 커서 변경
       }}
+      onClick={onClick}
       onTouchStart={handleMouseDown}
       onMouseDown={handleMouseDown} // 마우스 버튼을 눌렀을 때 드래그 시작
     >

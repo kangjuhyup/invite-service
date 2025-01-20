@@ -31,6 +31,8 @@ const CreatePageDefaultFooter = ({
         padding: '20px',
         background: 'white',
         borderTop: '1px solid #ddd',
+        width: '100%',
+        justifyContent: 'space-evenly'
       }}
     >
       <Dropzone
