@@ -27,7 +27,7 @@ const CreatePage = () => {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [texts, setTexts] = useState<TextInfo[]>([]);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
-  const [backgroundColor, setBackgroundColor] = useState<string>('blue');
+  const [backgroundColor, setBackgroundColor] = useState<string>('white');
   const [footerType, setFooterType] = useState(0);
   const [selectedTextIndex, setSelectedTextIndex] = useState<number>(-1);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(-1);
@@ -49,6 +49,7 @@ const CreatePage = () => {
     transform: 'translate(-50%, -50%)',
     width: BACKGROUND_WIDTH,
     height: BACKGROUND_HEIGHT,
+    border: '1px solid gray',
     ...(backgroundImage
       ? {
           backgroundImage: `url(${backgroundImage})`,
