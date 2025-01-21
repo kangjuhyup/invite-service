@@ -46,6 +46,7 @@ const MoveText = ({
         padding: '10px',
       }}
       onClick={onClick}
+      onTouchStart={handleMouseDown}
       onMouseDown={handleMouseDown}
     >
       <TextInput
