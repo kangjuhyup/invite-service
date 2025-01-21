@@ -301,6 +301,7 @@ const CreatePage = () => {
                 position: { x: 100, y: 100 },
                 font: 'Noto Sans KR',
                 bold: false,
+                color: 'black',
               },
             ]);
             setSelectedTextIndex(newIndex);
@@ -338,7 +339,14 @@ const CreatePage = () => {
           onFontChange={(font: string) => {
             setTexts((prevTexts) =>
               prevTexts.map((text, index) =>
-                index === selectedTextIndex ? { ...text, font: font } : text,
+                index === selectedTextIndex ? { ...text, font } : text,
+              ),
+            );
+          }}
+          onColorSelect={(color: string) => {
+            setTexts((prevTexts) =>
+              prevTexts.map((text, index) =>
+                index === selectedTextIndex ? { ...text, color } : text,
               ),
             );
           }}
