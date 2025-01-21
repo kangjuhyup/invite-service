@@ -21,7 +21,9 @@ import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import PresignedImage from '@/components/image/presigned/presigned.image';
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ? `/${process.env.NEXT_PUBLIC_BASE_PATH}` : '';
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH
+  ? `/${process.env.NEXT_PUBLIC_BASE_PATH}`
+  : '';
 
 declare global {
   interface Window {
@@ -70,16 +72,16 @@ const LetterPage = () => {
         description: letter?.letter.title,
         imageUrl: letter?.letter?.path,
         link: {
-          mobileWebUrl: window.location.href,
-          webUrl: window.location.href,
+          mobileWebUrl: window.location.href + '?isView=true',
+          webUrl: window.location.href + '?isView=true',
         },
       },
       buttons: [
         {
           title: '초대장 보기',
           link: {
-            mobileWebUrl: window.location.href,
-            webUrl: window.location.href,
+            mobileWebUrl: window.location.href + '?isView=true',
+            webUrl: window.location.href + '?isView=true',
           },
         },
       ],

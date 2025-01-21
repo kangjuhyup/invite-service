@@ -15,6 +15,10 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
       if (router.pathname === '/page/login') {
         return;
       }
+
+      if (router.query.isView === 'true') {
+        return;
+      }
       const { access } = store;
       if (!access) {
         console.error('로그인되지 않았습니다.');
