@@ -17,8 +17,10 @@ import { BACKGROUND_HEIGHT, BACKGROUND_WIDTH } from '@/const';
 import { useDisclosure } from '@mantine/hooks';
 import BackgroundSelect from '@/components/background/background.select';
 import useImageApi from '@/api/image.api';
+import { useDisablePullToRefresh } from '@/hooks/disable.refresh.hook';
 
 const CreatePage = () => {
+  useDisablePullToRefresh();
   const router = useRouter();
   const backgroundRef = useRef<HTMLDivElement>(null);
   const { prepareUrls, getPrepareUrls, addLetter, postAddLetter } =
