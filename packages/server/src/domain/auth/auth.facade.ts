@@ -59,4 +59,12 @@ export class AuthFacade {
       });
     return this.signIn(user.email, user.password);
   }
+
+  async signOut(refreshToken: string) {
+    if (!refreshToken) {
+      throw new ForbiddenException('RefreshToken required');
+    }
+    const userId = await this.authService.signOut(refreshToken);
+    await this.sessionService.deleteSignInSession(userId);
+  }
 }
