@@ -4,9 +4,11 @@ import {
   Group,
   ActionIcon,
   Text,
-  Select,
-  NumberInput,
   ColorPicker,
+  Modal,
+  Popover,
+  Stack,
+  Button,
 } from '@mantine/core';
 import {
   IconBold,
@@ -14,8 +16,9 @@ import {
   IconColorPicker,
   IconMinus,
   IconPlus,
+  IconTextGrammar,
 } from '@tabler/icons-react';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 
 interface TextControlFooterProps {
   onFontSizeChange: (size: number) => void;
@@ -39,13 +42,17 @@ const TextControlFooter = ({
   currentFont,
 }: TextControlFooterProps) => {
   const [openPicker, setOpenPicker] = useState(false);
-  const colorButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [openFontSelect, setOpenFontSelect] = useState(false);
 
   const fontOptions = [
-    { value: 'Noto Sans KR', label: 'Noto Sans' },
-    { value: 'Roboto', label: 'Roboto' },
-    { value: 'Open Sans', label: 'Open Sans' },
-    { value: 'Lato', label: 'Lato' },
+    { value: 'Arial', label: 'Arial' },
+    { value: 'Helvetica', label: 'Helvetica' },
+    { value: 'Times New Roman', label: 'Times New Roman' },
+    { value: 'Georgia', label: 'Georgia' },
+    { value: 'Verdana', label: 'Verdana' },
+    { value: 'Courier New', label: 'Courier New' },
+    { value: 'Tahoma', label: 'Tahoma' },
+    { value: 'Impact', label: 'Impact' },
   ];
 
   const footerActions = [
@@ -71,20 +78,17 @@ const TextControlFooter = ({
           </ActionIcon>
         </Group>
       ),
-      label: '크기',
     },
     {
       icon: (
         <ActionIcon
           variant="light"
           color="blue"
-          onClick={() => setOpenPicker((prev) => !prev)}
-          ref={colorButtonRef}
+          onClick={() => setOpenPicker(true)}
         >
           <IconColorPicker style={{ width: '70%', height: '70%' }} />
         </ActionIcon>
       ),
-      label: '색상',
     },
     {
       icon: (
@@ -96,17 +100,45 @@ const TextControlFooter = ({
           <IconBold style={{ width: '70%', height: '70%' }} />
         </ActionIcon>
       ),
-      label: '굵게',
     },
     {
       icon: (
-        <Select
-          value={currentFont}
-          onChange={(value) => onFontChange(value || 'Noto Sans KR')}
-          data={fontOptions}
-        />
+        <Popover
+          opened={openFontSelect}
+          onChange={setOpenFontSelect}
+          width={150}
+          position="top"
+          withArrow
+          shadow="md"
+        >
+          <Popover.Target>
+            <ActionIcon
+              variant="light"
+              color="blue"
+              onClick={() => setOpenFontSelect((o) => !o)}
+            >
+              <IconTextGrammar style={{ width: '70%', height: '70%' }} />
+            </ActionIcon>
+          </Popover.Target>
+          <Popover.Dropdown style={{ maxHeight: '300px', overflow: 'auto' }}>
+            <Stack>
+              {fontOptions.map((font) => (
+                <Button
+                  key={font.value}
+                  variant={currentFont === font.value ? 'filled' : 'light'}
+                  onClick={() => {
+                    onFontChange(font.value);
+                    setOpenFontSelect(false);
+                  }}
+                  style={{ fontFamily: font.value }}
+                >
+                  {font.label}
+                </Button>
+              ))}
+            </Stack>
+          </Popover.Dropdown>
+        </Popover>
       ),
-      label: '글꼴',
     },
     {
       icon: (
@@ -114,68 +146,60 @@ const TextControlFooter = ({
           <IconCheck style={{ width: '70%', height: '70%' }} />
         </ActionIcon>
       ),
-      label: '완료',
     },
   ];
 
   return (
-    <AppShell.Footer
-      p="md"
-      style={{
-        borderTop: '1px solid var(--mantine-color-dark-4)',
-        position: 'relative',
-      }}
-    >
-      <Grid>
-        {footerActions.map((action, index) => (
-          <Grid.Col span={3} key={index}>
-            <Group justify="center" gap="xs">
-              {action.icon}
-              <Text size="sm">{action.label}</Text>
-            </Group>
-          </Grid.Col>
-        ))}
-      </Grid>
-      {openPicker && (
-        <div
-          style={{
-            position: 'absolute',
-            top: colorButtonRef.current
-              ? colorButtonRef.current.getBoundingClientRect().top - 200
-              : 0,
-            left: colorButtonRef.current
-              ? colorButtonRef.current.getBoundingClientRect().left
-              : 0,
-            zIndex: 10,
-            background: 'white',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-            padding: '10px',
-            borderRadius: '8px',
+    <>
+      <AppShell.Footer
+        p="md"
+        style={{
+          borderTop: '1px solid var(--mantine-color-dark-4)',
+        }}
+      >
+        <Grid justify="center" align="center">
+          {footerActions.map((action, index) => (
+            <Grid.Col span={2} key={index}>
+              <Group justify="center" align="center" gap="xs" style={{ height: '100%' }}>
+                {action.icon}
+              </Group>
+            </Grid.Col>
+          ))}
+        </Grid>
+      </AppShell.Footer>
+      <Modal
+        opened={openPicker}
+        onClose={() => setOpenPicker(false)}
+        title="색상 선택"
+        centered
+        size="sm"
+      >
+        <ColorPicker
+          format="rgba"
+          fullWidth
+          swatches={[
+            '#25262b',
+            '#868e96',
+            '#fa5252',
+            '#e64980',
+            '#be4bdb',
+            '#7950f2',
+            '#4c6ef5',
+            '#228be6',
+            '#15aabf',
+            '#12b886',
+            '#40c057',
+            '#82c91e',
+            '#fab005',
+            '#fd7e14',
+          ]}
+          onChange={(color) => {
+            onColorSelect(color);
+            setOpenPicker(false);
           }}
-        >
-          <ColorPicker
-            format="rgba"
-            swatches={[
-              '#25262b',
-              '#868e96',
-              '#fa5252',
-              '#e64980',
-              '#be4bdb',
-              '#7950f2',
-              '#4c6ef5',
-              '#228be6',
-              '#15aabf',
-              '#12b886',
-              '#40c057',
-              '#82c91e',
-              '#fab005',
-              '#fd7e14',
-            ]}
-            onChange={onColorSelect}
-          />
-        </div>
-      )}
-    </AppShell.Footer>
+        />
+      </Modal>
+    </>
   );
 };
 
