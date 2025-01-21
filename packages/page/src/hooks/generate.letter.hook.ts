@@ -39,7 +39,8 @@ const useGenerateLetter = (
         const imagePromises = files.map(({ file, size, position }) => {
           return new Promise<void>((resolve) => {
             const img = new Image();
-            img.src = typeof file === 'string' ? file : URL.createObjectURL(file);
+            img.src =
+              typeof file === 'string' ? file : URL.createObjectURL(file);
             img.onload = () => {
               ctx.drawImage(
                 img,
@@ -56,7 +57,7 @@ const useGenerateLetter = (
         // 텍스트 그리기
         const textPromises = texts.map(({ text, position, size }) => {
           return new Promise<void>((resolve) => {
-            ctx.font = `${size.width / 10}px Arial`;
+            ctx.font = `${size.width}px`;
             ctx.fillStyle = 'black';
             ctx.fillText(text, position.x, position.y);
             resolve();
