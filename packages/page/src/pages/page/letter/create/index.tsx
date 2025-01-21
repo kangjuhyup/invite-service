@@ -5,8 +5,8 @@ import { Container, Modal } from '@mantine/core';
 import { FileWithPath } from '@mantine/dropzone';
 import MoveResizeImage, {
   FileInfo,
-} from '../../components/image/move/move.resize.image';
-import MoveText, { TextInfo } from '../../components/text/move/move.text';
+} from '@/components/image/move/move.resize.image';
+import MoveText, { TextInfo } from '@/components/text/move/move.text';
 import useLetterApi from '@/api/letter.api';
 import useGenerateLetter from '@/hooks/generate.letter.hook';
 import { useRouter } from 'next/router';
