@@ -11,9 +11,17 @@ import {
   Grid,
   PasswordInput,
   Stack,
+  rem,
+  Group,
+  ActionIcon,
+  Modal,
 } from '@mantine/core';
-import { IconBubbleText, IconShare } from '@tabler/icons-react';
-import useInit from '../../../hooks/init.hook';
+import {
+  IconBubbleText,
+  IconShare,
+  IconMessageCircle,
+  IconTrash,
+} from '@tabler/icons-react';
 import useLetterApi from '../../../api/letter.api';
 import { useDisclosure } from '@mantine/hooks';
 import FloatingButton from '../../../components/button/floating/floating.button';
@@ -32,11 +40,22 @@ declare global {
 }
 
 const LetterPage = () => {
-  const { letter, getLetter, addComment, comments, getLetterComments } =
-    useLetterApi();
+  const {
+    letter,
+    getLetter,
+    addComment,
+    comments,
+    getLetterComments,
+    deleteComment,
+  } = useLetterApi();
   const router = useRouter();
   const { id: letterId } = router.query;
   const [opened, { open, close }] = useDisclosure(false);
+  const [deleteModalOpened, setDeleteModalOpened] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [selectedCommentId, setSelectedCommentId] = useState<number | null>(
+    null,
+  );
   const [commentForm, setCommentForm] = useState({
     content: '',
     editor: '',
@@ -104,6 +123,21 @@ const LetterPage = () => {
     // getLetter(Number(letterId));
   };
 
+  const handleDelete = async () => {
+    if (!selectedCommentId) return;
+
+    await deleteComment(selectedCommentId, deletePassword);
+    await getLetterComments(Number(letterId));
+    setDeleteModalOpened(false);
+    setDeletePassword('');
+    setSelectedCommentId(null);
+  };
+
+  const openDeleteModal = (commentId: number) => {
+    setSelectedCommentId(commentId);
+    setDeleteModalOpened(true);
+  };
+
   return (
     <>
       <Container
@@ -162,44 +196,132 @@ const LetterPage = () => {
           title="댓글"
         >
           <Box display={'flex'} flexDirection={'column'} h={'100%'}>
-            <List style={{ flexGrow: 1, overflowY: 'auto' }}>
+            <List
+              style={{ flexGrow: 1, overflowY: 'auto', marginBottom: '80px' }}
+              spacing="xs"
+              icon={
+                <IconMessageCircle
+                  style={{ width: rem(16), height: rem(16) }}
+                  color="var(--mantine-color-blue-filled)"
+                />
+              }
+            >
               {comments
                 ? comments.comments.map((comment, idx) => (
-                    <List.Item key={idx}>
-                      <Text weight={500}>{comment.editor}</Text>
-                      <Text>{comment.body}</Text>
+                    <List.Item key={idx} style={{ padding: '10px' }}>
+                      <Box
+                        style={{
+                          padding: '15px',
+                          backgroundColor: 'var(--mantine-color-gray-0)',
+                          borderRadius: 'var(--mantine-radius-sm)',
+                        }}
+                      >
+                        <Group justify="space-between" align="flex-start">
+                          <div>
+                            <Text size="sm" fw={700} c="blue" mb={5}>
+                              {comment.editor}
+                            </Text>
+                            <Text size="sm">{comment.body}</Text>
+                          </div>
+                          <ActionIcon
+                            variant="subtle"
+                            color="red"
+                            onClick={() => openDeleteModal(comment.id)}
+                          >
+                            <IconTrash
+                              style={{ width: rem(16), height: rem(16) }}
+                            />
+                          </ActionIcon>
+                        </Group>
+                      </Box>
                     </List.Item>
                   ))
                 : null}
             </List>
-            <Stack p={10}>
-              <TextInput
-                placeholder="닉네임"
-                value={commentForm.editor}
-                onChange={(e) =>
-                  setCommentForm({ ...commentForm, editor: e.target.value })
-                }
-              />
-              <PasswordInput
-                placeholder="비밀번호"
-                value={commentForm.password}
-                onChange={(e) =>
-                  setCommentForm({ ...commentForm, password: e.target.value })
-                }
-              />
-              <TextInput
-                placeholder="댓글을 입력하세요..."
-                value={commentForm.content}
-                onChange={(e) =>
-                  setCommentForm({ ...commentForm, content: e.target.value })
-                }
-              />
-              <Button onClick={handleSubmit} fullWidth>
-                댓글 작성
-              </Button>
-            </Stack>
+            <Box
+              style={{
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                padding: '10px',
+                background: 'var(--mantine-color-body)',
+                borderTop: '1px solid var(--mantine-color-gray-3)',
+              }}
+            >
+              <Grid gutter="xs">
+                <Grid.Col span={6}>
+                  <TextInput
+                    placeholder="닉네임"
+                    value={commentForm.editor}
+                    onChange={(e) =>
+                      setCommentForm({ ...commentForm, editor: e.target.value })
+                    }
+                  />
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <PasswordInput
+                    placeholder="비밀번호"
+                    value={commentForm.password}
+                    onChange={(e) =>
+                      setCommentForm({
+                        ...commentForm,
+                        password: e.target.value,
+                      })
+                    }
+                  />
+                </Grid.Col>
+                <Grid.Col span={9}>
+                  <TextInput
+                    placeholder="댓글을 입력하세요..."
+                    value={commentForm.content}
+                    onChange={(e) =>
+                      setCommentForm({
+                        ...commentForm,
+                        content: e.target.value,
+                      })
+                    }
+                  />
+                </Grid.Col>
+                <Grid.Col span={3}>
+                  <Button onClick={handleSubmit} fullWidth h="100%">
+                    작성
+                  </Button>
+                </Grid.Col>
+              </Grid>
+            </Box>
           </Box>
         </Drawer>
+        <Modal
+          opened={deleteModalOpened}
+          onClose={() => {
+            setDeleteModalOpened(false);
+            setDeletePassword('');
+            setSelectedCommentId(null);
+          }}
+          title="댓글 삭제"
+          centered
+        >
+          <Stack>
+            <Text size="sm">댓글을 삭제하려면 비밀번호를 입력하세요.</Text>
+            <PasswordInput
+              placeholder="비밀번호"
+              value={deletePassword}
+              onChange={(e) => setDeletePassword(e.target.value)}
+            />
+            <Group justify="flex-end">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteModalOpened(false)}
+              >
+                취소
+              </Button>
+              <Button color="red" onClick={handleDelete}>
+                삭제
+              </Button>
+            </Group>
+          </Stack>
+        </Modal>
       </Container>
     </>
   );

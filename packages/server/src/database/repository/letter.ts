@@ -157,7 +157,8 @@ async selectComments({letterId,entityManager}:Omit<SelectComment,'letterCommentI
     const repo = this._getRepository('letterComment', entityManager);
     return await repo.find({
         where: {
-            letterId: letterId
+            letterId: letterId,
+            useYn: YN.Y
         }
     });
 }
