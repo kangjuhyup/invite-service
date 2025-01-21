@@ -38,4 +38,10 @@ export class SessionService {
       this.redis.generateKey('AuthFacade', `signin-${userId}`),
     );
   }
+
+  async deleteSignInSession(userId: string) {
+    await this.redis.delete(
+      this.redis.generateKey('AuthFacade', `signin-${userId}`),
+    );
+  }
 }

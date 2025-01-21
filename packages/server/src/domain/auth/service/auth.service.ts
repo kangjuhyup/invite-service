@@ -40,6 +40,14 @@ export class AuthService {
     return { access, refresh };
   }
 
+  async signOut(refreshToken: string) {
+    const { userId } = await this.jwtService.verify(refreshToken, {
+      secret: this.config.get<string>('JWT_SECRET'),
+    });
+    await this.userService.updateRefresh(userId, null);
+    return userId;
+  }
+
   private _generateRefreshToken(id: string) {
     const payload = { id };
     return this.jwtService.sign(payload, {
