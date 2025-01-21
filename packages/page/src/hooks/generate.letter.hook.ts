@@ -55,10 +55,10 @@ const useGenerateLetter = (
         });
 
         // 텍스트 그리기
-        const textPromises = texts.map(({ text, position, size }) => {
+        const textPromises = texts.map(({ text, position, size, color }) => {
           return new Promise<void>((resolve) => {
             ctx.font = `${size.width}px`;
-            ctx.fillStyle = 'black';
+            ctx.fillStyle = color;
             ctx.fillText(text, position.x, position.y);
             resolve();
           });

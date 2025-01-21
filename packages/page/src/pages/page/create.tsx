@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Container, Modal, Button } from '@mantine/core';
+import { Container, Modal } from '@mantine/core';
 import { FileWithPath } from '@mantine/dropzone';
 import MoveResizeImage, {
   FileInfo,
@@ -25,7 +25,7 @@ const CreatePage = () => {
   const backgroundRef = useRef<HTMLDivElement>(null);
   const { prepareUrls, getPrepareUrls, addLetter, postAddLetter } =
     useLetterApi();
-  const { presignedUrl, getPresignedUrl, removeBackground } = useImageApi();
+  const { removeBackground } = useImageApi();
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [texts, setTexts] = useState<TextInfo[]>([]);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
@@ -214,19 +214,6 @@ const CreatePage = () => {
     return result;
   };
 
-  const handleBackgroundChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setBackgroundImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   useEffect(() => {
     handleSave();
   }, [prepareUrls]);
@@ -301,6 +288,7 @@ const CreatePage = () => {
                 position: { x: 100, y: 100 },
                 font: 'Noto Sans KR',
                 bold: false,
+                color: 'black',
               },
             ]);
             setSelectedTextIndex(newIndex);
@@ -338,7 +326,14 @@ const CreatePage = () => {
           onFontChange={(font: string) => {
             setTexts((prevTexts) =>
               prevTexts.map((text, index) =>
-                index === selectedTextIndex ? { ...text, font: font } : text,
+                index === selectedTextIndex ? { ...text, font } : text,
+              ),
+            );
+          }}
+          onColorSelect={(color: string) => {
+            setTexts((prevTexts) =>
+              prevTexts.map((text, index) =>
+                index === selectedTextIndex ? { ...text, color } : text,
               ),
             );
           }}

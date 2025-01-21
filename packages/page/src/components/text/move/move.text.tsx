@@ -7,6 +7,7 @@ export interface TextInfo {
   size: { width: number; height: number };
   position: { x: number; y: number };
   font: string;
+  color: string;
   bold: boolean;
 }
 
@@ -62,6 +63,7 @@ const MoveText = ({
             fontWeight: textInfo.bold ? 'bold' : 'normal',
             background: 'transparent',
             border: 'none',
+            color: textInfo.color,
             padding: 0,
             '&:focus': {
               border: '1px dashed #228be6',
