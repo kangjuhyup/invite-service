@@ -24,9 +24,11 @@ COPY --from=builder /usr/src/app/packages/server/dist packages/server/dist
 COPY --from=builder /usr/src/app/packages/server/package.json packages/server/package.json
 COPY --from=builder /usr/src/app/.env packages/server/.env
 COPY --from=builder /usr/src/app/packages/server/public packages/server/public
+COPY --from=builder /usr/src/app/packages/server/ecosystem.config.js packages/server/ecosystem.config.js
 
 RUN yarn workspaces focus server --production
+RUN yarn global add pm2
 
 EXPOSE 3003
 
-CMD ["yarn", "workspace", "server", "start:prod"]
+CMD ["pm2-runtime", "packages/server/ecosystem.config.js"]
