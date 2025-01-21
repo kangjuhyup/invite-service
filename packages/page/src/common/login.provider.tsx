@@ -48,7 +48,11 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const { access } = store;
 
-    if (!access && router.pathname !== '/page/login') {
+    if (
+      !access &&
+      router.pathname !== '/page/login' &&
+      router.query.isView !== 'true'
+    ) {
       router.replace('/page/login');
     }
   }, [store.access, router]);
