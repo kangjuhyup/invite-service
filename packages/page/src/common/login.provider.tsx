@@ -11,11 +11,12 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
   const store = useLoginStore();
 
   useEffect(() => {
+    if (!router.isReady) return;
     const checkAccessToken = () => {
       if (router.pathname === '/page/login') {
         return;
       }
-
+      console.log(router.query);
       if (router.query.isView === 'true') {
         return;
       }
