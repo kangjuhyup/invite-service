@@ -111,6 +111,7 @@ const ModifyLetterPage = () => {
                       position: { x: detailComponent.x, y: detailComponent.y },
                       font: 'Noto Sans KR',
                       bold: false,
+                      color: 'black',
                     }}
                     onUpdate={(data: Partial<TextInfo>) => {
                       console.log('Text updated:', data);
