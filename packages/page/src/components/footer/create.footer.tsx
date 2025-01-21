@@ -1,4 +1,4 @@
-import { Group, Button } from '@mantine/core';
+import { Group, Button, ActionIcon, AppShell, Grid, Text } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import {
   IconTextGrammar,
@@ -21,43 +21,65 @@ const CreatePageDefaultFooter = ({
   onSave,
   onBackgroundSelect,
 }: CreatePageDefaultFooterProps) => {
+  const footerActions = [
+    {
+      icon: (
+        <Dropzone
+          onDrop={onImageDrop}
+          accept={['image/*']}
+          style={{ border: 'none', background: 'none', padding: 0 }}
+        >
+          <ActionIcon variant="light" color="blue">
+            <IconPhoto style={{ width: '70%', height: '70%' }} />
+          </ActionIcon>
+        </Dropzone>
+      ),
+      label: '이미지',
+    },
+    {
+      icon: (
+        <ActionIcon variant="light" color="blue" onClick={onTextAdd}>
+          <IconTextGrammar style={{ width: '70%', height: '70%' }} />
+        </ActionIcon>
+      ),
+      label: '텍스트',
+    },
+    {
+      icon: (
+        <ActionIcon variant="light" color="blue" onClick={onBackgroundSelect}>
+          <IconPalette style={{ width: '70%', height: '70%' }} />
+        </ActionIcon>
+      ),
+      label: '배경',
+    },
+    {
+      icon: (
+        <ActionIcon variant="light" color="green" onClick={onSave}>
+          <IconDeviceFloppy style={{ width: '70%', height: '70%' }} />
+        </ActionIcon>
+      ),
+      label: '저장',
+    },
+  ];
+
   return (
-    <Group
+    <AppShell.Footer
+      p="md"
       style={{
-        position: 'fixed',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        padding: '20px',
-        background: 'white',
-        borderTop: '1px solid #ddd',
-        width: '100%',
-        justifyContent: 'space-evenly'
+        borderTop: '1px solid var(--mantine-color-dark-4)',
       }}
     >
-      <Dropzone
-        onDrop={onImageDrop}
-        accept={['image/*']}
-        style={{ border: 'none', background: 'none', padding: 0 }}
-      >
-        <Button>
-          <IconPhoto size={20} style={{ marginRight: 10 }} />
-          이미지
-        </Button>
-      </Dropzone>
-      <Button onClick={onTextAdd}>
-        <IconTextGrammar size={20} style={{ marginRight: 10 }} />
-        텍스트
-      </Button>
-      <Button onClick={onBackgroundSelect}>
-        <IconPalette size={20} style={{ marginRight: 10 }} />
-        배경
-      </Button>
-      <Button onClick={onSave}>
-        <IconDeviceFloppy size={20} style={{ marginRight: 10 }} />
-        저장
-      </Button>
-    </Group>
+      <Grid>
+        {footerActions.map((action, index) => (
+          <Grid.Col span={footerActions.length === 4 ? 3 : 2.4} key={index}>
+            <Group justify="center" gap="xs">
+              {action.icon}
+              <Text size="sm">{action.label}</Text>
+            </Group>
+          </Grid.Col>
+        ))}
+      </Grid>
+    </AppShell.Footer>
   );
 };
 
