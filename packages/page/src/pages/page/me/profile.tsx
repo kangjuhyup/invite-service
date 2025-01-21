@@ -1,10 +1,8 @@
-import useImageApi from '@/api/image.api';
 import useLetterApi from '@/api/letter.api';
 import useUserApi from '@/api/user.api';
 import PresignedImage from '@/components/image/presigned/presigned.image';
 import {
   Container,
-  Image,
   Grid,
   Card,
   Text,
@@ -17,27 +15,47 @@ import {
   Collapse,
   Title,
   Transition,
+  Menu,
+  ActionIcon,
 } from '@mantine/core';
 import {
   IconChevronDown,
   IconChevronUp,
-  IconStatusChange,
+  IconDotsVertical,
+  IconEdit,
+  IconTrash,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 const ProfilePage = () => {
   const router = useRouter();
-  const { getPresignedUrl } = useImageApi();
   const { profile, getProfile } = useUserApi();
-  const { letterPage, getLetterPage } = useLetterApi();
+  const { letterPage, getLetterPage, deleteLetter } = useLetterApi();
 
   useEffect(() => {
     getProfile();
-    getLetterPage(10, 0);
+    getLetterPage(100, 0);
   }, []);
 
   const [gridOpened, setGridOpened] = useState(true);
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    if (letterPage?.items) {
+      setIsVisible(false);
+      setTimeout(() => setIsVisible(true), 100);
+    }
+  }, [letterPage?.items]);
+
+  const refreshLetters = async () => {
+    await getLetterPage(100, 0);
+  };
+
+  const handleDelete = async (letterId: number) => {
+    await deleteLetter(letterId);
+    await refreshLetters();
+  };
 
   return (
     <Container size="lg" py="xl">
@@ -80,9 +98,9 @@ const ProfilePage = () => {
       >
         <Grid pt="md" gutter="md">
           {letterPage?.items.map((letter, index) => (
-            <Grid.Col key={index} span={{ base: 12, sm: 6, md: 4 }}>
+            <Grid.Col key={letter.id} span={{ base: 12, sm: 6, md: 4 }}>
               <Transition
-                mounted={true}
+                mounted={isVisible}
                 transition="fade"
                 duration={400}
                 timingFunction="ease"
@@ -112,14 +130,43 @@ const ProfilePage = () => {
                       <Text fw={500} size="lg">
                         {letter.title || 'Untitled Letter'}
                       </Text>
-                      <Button
-                        variant="light"
-                        onClick={() =>
-                          router.replace(`/page/letter/modify/${letter.id}`)
-                        }
-                      >
-                        수정하기
-                      </Button>
+                      <Menu shadow="md" width={200} position="bottom-end">
+                        <Menu.Target>
+                          <ActionIcon variant="subtle" color="gray">
+                            <IconDotsVertical
+                              style={{ width: '70%', height: '70%' }}
+                              stroke={1.5}
+                            />
+                          </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                          <Menu.Item
+                            leftSection={
+                              <IconEdit
+                                style={{ width: '14px', height: '14px' }}
+                              />
+                            }
+                            onClick={() =>
+                              router.replace(`/page/letter/modify/${letter.id}`)
+                            }
+                          >
+                            수정하기
+                          </Menu.Item>
+                          <Menu.Item
+                            color="red"
+                            leftSection={
+                              <IconTrash
+                                style={{ width: '14px', height: '14px' }}
+                              />
+                            }
+                            onClick={() => {
+                              handleDelete(letter.id);
+                            }}
+                          >
+                            삭제하기
+                          </Menu.Item>
+                        </Menu.Dropdown>
+                      </Menu>
                     </Group>
                   </Card>
                 )}

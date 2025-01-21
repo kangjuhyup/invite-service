@@ -68,6 +68,20 @@ const useLetterApi = () => {
     }
   };
 
+  const deleteLetter = async (letterId: number) => {
+    const response = await apiClient.delete<ApiResponse<void>>(
+      `/letter/${letterId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${access ?? ''}`,
+        },
+      },
+    );
+    if (!response.result) {
+      setError(response.error);
+    }
+  };
+
   const getLetterPage = async (limit: number, skip: number) => {
     const response = await apiClient.get<ApiResponse<GetLetterPageResponse>>(
       `/letter`,
@@ -146,6 +160,7 @@ const useLetterApi = () => {
     getPrepareUrls,
     addLetter,
     postAddLetter,
+    deleteLetter,
     letterPage,
     getLetterPage,
     letterDetail,
