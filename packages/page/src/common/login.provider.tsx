@@ -13,32 +13,29 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (!router.isReady) return;
     const checkAccessToken = () => {
-      if (router.pathname === '/page/login') {
+      if (router.pathname === '/page/login' || router.query.isView === 'true') {
         return;
-      }
-      console.log(router.query);
-      if (router.query.isView === 'true') {
-        return;
-      }
-      const { access } = store;
-      if (!access) {
-        console.error('로그인되지 않았습니다.');
-        router.replace('/page/login');
-        return;
-      }
+      } else {
+        const { access } = store;
+        if (!access) {
+          console.error('로그인되지 않았습니다.');
+          router.replace('/page/login');
+          return;
+        }
 
-      try {
-        const tokenData = JSON.parse(atob(access.split('.')[1]));
-        const expirationTime = tokenData.exp * 1000; // Convert to milliseconds
-        const currentTime = new Date().getTime();
+        try {
+          const tokenData = JSON.parse(atob(access.split('.')[1]));
+          const expirationTime = tokenData.exp * 1000; // Convert to milliseconds
+          const currentTime = new Date().getTime();
 
-        if (currentTime >= expirationTime) {
+          if (currentTime >= expirationTime) {
+            store.clearToken();
+            router.replace('/page/login');
+          }
+        } catch (error) {
           store.clearToken();
           router.replace('/page/login');
         }
-      } catch (error) {
-        store.clearToken();
-        router.replace('/page/login');
       }
     };
 
