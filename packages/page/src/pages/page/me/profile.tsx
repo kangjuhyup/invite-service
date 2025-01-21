@@ -75,7 +75,7 @@ const ProfilePage = () => {
         </Group>
       </Paper>
       <Group justify="space-between" align="center">
-        <Title>My Letters</Title>
+        <Title>내 초대장</Title>
         <Button
           variant="subtle"
           onClick={() => setGridOpened((o) => !o)}

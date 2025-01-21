@@ -20,7 +20,8 @@ const Header = () => {
   const router = useRouter();
   const { isLogin, clearToken } = useLoginStore();
   const { signOut } = useAuthApi();
-  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
+  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
+    useDisclosure(false);
 
   const handleAuthClick = async () => {
     if (isLogin) {
@@ -39,8 +40,12 @@ const Header = () => {
     <Box>
       <Container size="lg">
         <Group h="56px" justify="space-between">
-          <Title order={3} onClick={() => router.replace('/page')} style={{ cursor: 'pointer' }}>
-            Invite Service
+          <Title
+            order={3}
+            onClick={() => router.replace('/page')}
+            style={{ cursor: 'pointer' }}
+          >
+            초대장
           </Title>
 
           <Group h="100%" gap={0} visibleFrom="sm">
@@ -74,7 +79,11 @@ const Header = () => {
             </Button>
           </Group>
 
-          <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
+          <Burger
+            opened={drawerOpened}
+            onClick={toggleDrawer}
+            hiddenFrom="sm"
+          />
         </Group>
       </Container>
 
