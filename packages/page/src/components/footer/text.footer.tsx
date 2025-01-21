@@ -15,7 +15,7 @@ import {
   IconMinus,
   IconPlus,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 interface TextControlFooterProps {
   onFontSizeChange: (size: number) => void;
@@ -38,7 +38,8 @@ const TextControlFooter = ({
   isBold,
   currentFont,
 }: TextControlFooterProps) => {
-  const [openPicker, SetOpenPicker] = useState(false);
+  const [openPicker, setOpenPicker] = useState(false);
+  const colorButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const fontOptions = [
     { value: 'Noto Sans KR', label: 'Noto Sans' },
@@ -75,9 +76,10 @@ const TextControlFooter = ({
     {
       icon: (
         <ActionIcon
-          variant={isBold ? 'filled' : 'light'}
+          variant="light"
           color="blue"
-          onClick={onBoldToggle}
+          onClick={() => setOpenPicker((prev) => !prev)}
+          ref={colorButtonRef}
         >
           <IconColorPicker style={{ width: '70%', height: '70%' }} />
         </ActionIcon>
@@ -121,6 +123,7 @@ const TextControlFooter = ({
       p="md"
       style={{
         borderTop: '1px solid var(--mantine-color-dark-4)',
+        position: 'relative',
       }}
     >
       <Grid>
@@ -133,28 +136,45 @@ const TextControlFooter = ({
           </Grid.Col>
         ))}
       </Grid>
-      {openPicker ? (
-        <ColorPicker
-          format="rgba"
-          swatches={[
-            '#25262b',
-            '#868e96',
-            '#fa5252',
-            '#e64980',
-            '#be4bdb',
-            '#7950f2',
-            '#4c6ef5',
-            '#228be6',
-            '#15aabf',
-            '#12b886',
-            '#40c057',
-            '#82c91e',
-            '#fab005',
-            '#fd7e14',
-          ]}
-          onChange={onColorSelect}
-        />
-      ) : null}
+      {openPicker && (
+        <div
+          style={{
+            position: 'absolute',
+            top: colorButtonRef.current
+              ? colorButtonRef.current.getBoundingClientRect().top - 200
+              : 0,
+            left: colorButtonRef.current
+              ? colorButtonRef.current.getBoundingClientRect().left
+              : 0,
+            zIndex: 10,
+            background: 'white',
+            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            padding: '10px',
+            borderRadius: '8px',
+          }}
+        >
+          <ColorPicker
+            format="rgba"
+            swatches={[
+              '#25262b',
+              '#868e96',
+              '#fa5252',
+              '#e64980',
+              '#be4bdb',
+              '#7950f2',
+              '#4c6ef5',
+              '#228be6',
+              '#15aabf',
+              '#12b886',
+              '#40c057',
+              '#82c91e',
+              '#fab005',
+              '#fd7e14',
+            ]}
+            onChange={onColorSelect}
+          />
+        </div>
+      )}
     </AppShell.Footer>
   );
 };
