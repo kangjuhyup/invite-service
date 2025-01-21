@@ -11,43 +11,34 @@ export const LoginProvider = ({ children }: { children: ReactNode }) => {
   const store = useLoginStore();
 
   const validateAccessToken = () => {
-    const { access } = store;
-
-    if (router.pathname === '/page/login' || router.query.isView === 'true') {
-      return;
+    if (
+      router.pathname === '/page/login' ||
+      router.pathname === '/page' ||
+      router.query.isView === 'true'
+    ) {
+      return true;
     }
 
-    if (!access) {
-      console.error('로그인되지 않았습니다.');
+    const isValid = store.checkLoginStatus();
+
+    if (!isValid) {
+      console.warn('로그인이 필요하거나 토큰이 만료되었습니다.');
       store.clearToken();
       router.replace('/page/login');
-      return;
+      return false;
     }
 
-    try {
-      const tokenData = JSON.parse(atob(access.split('.')[1]));
-      const expirationTime = tokenData.exp * 1000; // Convert to milliseconds
-      const currentTime = Date.now();
-
-      if (currentTime >= expirationTime) {
-        console.warn('토큰이 만료되었습니다.');
-        store.clearToken();
-        router.replace('/page/login');
-      }
-    } catch (error) {
-      console.error('토큰 파싱 중 오류 발생:', error);
-      store.clearToken();
-      router.replace('/page/login');
-    }
+    return true;
   };
 
   useEffect(() => {
     if (!router.isReady) return;
 
-    validateAccessToken();
-
-    // 30초마다 토큰 검증
-    const intervalId = setInterval(validateAccessToken, 30000);
+    if (store.access) {
+      validateAccessToken();
+    }
+    // 1초마다 토큰 검증
+    const intervalId = setInterval(validateAccessToken, 1000);
 
     return () => clearInterval(intervalId);
   }, [router.isReady, store.access]);
