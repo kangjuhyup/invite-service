@@ -8,6 +8,7 @@ import { Container } from '@mantine/core';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import useImageApi from '@/api/image.api';
+import { useDisablePullToRefresh } from '@/hooks/disable.refresh.hook';
 
 interface ComponentContent {
   type: string;
@@ -17,6 +18,7 @@ interface ComponentContent {
 }
 
 const ModifyLetterPage = () => {
+  useDisablePullToRefresh();
   const router = useRouter();
   const { id: letterId } = router.query;
   const { letterDetail, getLetterDetail } = useLetterApi();
