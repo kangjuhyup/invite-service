@@ -10,6 +10,7 @@ import {
   Stack,
   Button,
   Box,
+  NumberInput,
 } from '@mantine/core';
 import {
   IconBold,
@@ -59,25 +60,15 @@ const TextControlFooter = ({
   const footerActions = [
     {
       icon: (
-        <Group>
-          <ActionIcon
-            variant="light"
-            color="blue"
-            onClick={() => onFontSizeChange(fontSize - 1)}
-            disabled={fontSize <= 8}
-          >
-            <IconMinus style={{ width: '70%', height: '70%' }} />
-          </ActionIcon>
-          <Text size="sm">{fontSize}px</Text>
-          <ActionIcon
-            variant="light"
-            color="blue"
-            onClick={() => onFontSizeChange(fontSize + 1)}
-            disabled={fontSize >= 72}
-          >
-            <IconPlus style={{ width: '70%', height: '70%' }} />
-          </ActionIcon>
-        </Group>
+        <NumberInput
+          value={fontSize}
+          onChange={(value) => onFontSizeChange(value || 8)}
+          min={8}
+          max={72}
+          style={{ width: 70 }}
+          size="xs"
+          rightSection={<Text size="xs">px</Text>}
+        />
       ),
     },
     {
@@ -156,16 +147,38 @@ const TextControlFooter = ({
         p={0}
         style={{
           borderTop: '1px solid var(--mantine-color-dark-4)',
+          position: 'fixed',
+          bottom: 0,
+          width: '100%'
         }}
       >
-        <Box style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', padding: '8px 16px' }}>
-          <Group justify="flex-start" wrap="nowrap" style={{ minWidth: 'max-content' }}>
-            {footerActions.map((action, index) => (
-              <Box key={index} px="xs">
-                {action.icon}
-              </Box>
-            ))}
-          </Group>
+        <Box
+          style={{
+            overflowX: 'scroll',
+            WebkitOverflowScrolling: 'touch',
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none',
+            '&::-webkit-scrollbar': {
+              display: 'none'
+            }
+          }}
+        >
+          <Box style={{ padding: '8px 16px', width: '100%' }}>
+            <Group 
+              justify="space-between" 
+              wrap="nowrap" 
+              style={{ 
+                width: '100%',
+                gap: '16px'
+              }}
+            >
+              {footerActions.map((action, index) => (
+                <Box key={index} style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                  {action.icon}
+                </Box>
+              ))}
+            </Group>
+          </Box>
         </Box>
       </AppShell.Footer>
       <Modal
