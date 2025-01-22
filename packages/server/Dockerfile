@@ -27,7 +27,7 @@ COPY --from=builder /usr/src/app/packages/server/public packages/server/public
 COPY --from=builder /usr/src/app/packages/server/ecosystem.config.js packages/server/ecosystem.config.js
 
 RUN yarn workspaces focus server --production
-RUN yarn global add pm2
+RUN npm install -g pm2
 
 EXPOSE 3003
 
