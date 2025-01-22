@@ -15,7 +15,7 @@ import { LetterAttachmentService } from './service/letter.attachment.service';
 import { InsertLetterTransaction } from './transaction/insert.letter';
 import { v4 as uuidv4 } from 'uuid';
 import { randomString } from '@app/util/random';
-import { booleanToYN } from '@app/util/yn';
+import { booleanToYN, YN } from '@app/util/yn';
 import { LetterAttachmentCode } from '@app/util/attachment';
 import { CommentService } from '../comment/service/comment.service';
 
@@ -36,15 +36,30 @@ export class LetterFacade {
     request: GetLetterPageRequest,
     user: User,
   ): Promise<GetLetterPageResponse> {
-    return this.letterService.getLetters(request, user);
+    const [letters, count] = await this.letterService.getLetters(request, user);
+    return GetLetterPageResponse.of(count, letters);
   }
 
-  async getLetter(id: number): Promise<GetLetterResponse> {
-    return this.letterService.getLetter(id);
+  async getLetter(id: number, password?: string, user?: User): Promise<GetLetterResponse> {
+    const letter = await this.letterService.getLetter(id);
+    
+    if(letter.publicYn === YN.Y) {
+      return GetLetterResponse.of(letter, false);
+    }
+    
+    if(user && letter.userId === user.id) {
+      return GetLetterResponse.of(letter, true);
+    }
+    
+    if(password === letter.password) {
+      return GetLetterResponse.of(letter, false);
+    }
+    
+    throw new BadRequestException('비밀번호가 일치하지 않습니다.');
   }
 
   async getLetterDetail(id: number): Promise<GetLetterDetailResponse> {
-    return this.letterService.getLetterDetail(id);
+    return GetLetterDetailResponse.of(await this.letterService.getLetter(id));
   }
 
   async prepareAddLetter(
@@ -187,6 +202,13 @@ export class LetterFacade {
     return {
       letterId,
     };
+  }
+
+  async generateLetterPassword(letterId: number, user: User) {
+    await this.letterService.checkLetterAuthor(letterId, user);
+    return await this.letterService.generateLetterPassword(
+      letterId,
+    );
   }
 
   async deleteLetter(letterId: number, user: User) {

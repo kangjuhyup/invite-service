@@ -58,6 +58,10 @@ interface LetterPageItem {
   category: string;
 
   thumbnail: string;
+
+  publicYn: boolean;
+
+  password?: string;
 }
 
 export interface GetLetterPageResponse {
@@ -82,6 +86,8 @@ interface Comment {
 
 export interface GetLetterResponse {
   letterId: number;
+  publicYn: boolean;
+  password?: string;
   letter: Letter;
   comments: Comment[];
 }

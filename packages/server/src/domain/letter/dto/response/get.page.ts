@@ -1,13 +1,16 @@
 import { LetterEntity } from '@app/database/entity/letter';
 import { LetterAttachmentCode } from '@app/util/attachment';
 import { LetterCategoryCode } from '@app/util/category';
+import { YN, ynToBoolean } from '@app/util/yn';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsIn,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -46,17 +49,37 @@ export class LetterPageItem {
   @IsString()
   thumbnail: string;
 
+  @ApiProperty({
+    description: '공통 유효성',
+    example: YN.N,
+  })
+  @IsNotEmpty()
+  @IsBoolean()
+  publicYn: boolean;
+
+  @ApiProperty({
+    description: '초대장 비밀번호',
+    example: '1234',
+  })
+  @IsOptional()
+  @IsString()
+  password?: string;
+
   static of(
     id: number,
     title: string,
     category: LetterCategoryCode,
     thumbnail: string,
+    publicYn: boolean,
+    password?: string,
   ) {
     const item = new LetterPageItem();
     item.id = id;
     item.title = title;
     item.category = category;
     item.thumbnail = thumbnail;
+    item.publicYn = publicYn;
+    item.password = password;
     return item;
   }
 }
@@ -90,6 +113,8 @@ export class GetLetterPageResponse {
         l.letterAttachment.find(
           (la) => la.attachmentCode === LetterAttachmentCode.THUMBNAIL,
         )?.attachment.attachmentPath,
+        ynToBoolean(l.publicYn),
+        l.password,
       ),
     );
     return response;

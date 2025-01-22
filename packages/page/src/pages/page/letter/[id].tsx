@@ -28,6 +28,7 @@ import FloatingButton from '../../../components/button/floating/floating.button'
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import PresignedImage from '@/components/image/presigned/presigned.image';
+import { useShare } from '@/hooks/share.hook';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH
   ? `/${process.env.NEXT_PUBLIC_BASE_PATH}`
@@ -49,7 +50,7 @@ const LetterPage = () => {
     deleteComment,
   } = useLetterApi();
   const router = useRouter();
-  const { id: letterId } = router.query;
+  const { id: letterId, token } = router.query;
   const [opened, { open, close }] = useDisclosure(false);
   const [deleteModalOpened, setDeleteModalOpened] = useState(false);
   const [deletePassword, setDeletePassword] = useState('');
@@ -61,10 +62,11 @@ const LetterPage = () => {
     editor: '',
     password: '',
   });
+  const { handleKakaoShare } = useShare();
 
   useEffect(() => {
     if (!letterId) return;
-    getLetter(Number(letterId));
+    getLetter(Number(letterId), token as string);
     getLetterComments(Number(letterId));
   }, [letterId]);
 
@@ -83,27 +85,17 @@ const LetterPage = () => {
     initKakao();
   }, []);
 
-  const handleKakaoShare = () => {
-    window.Kakao.Share.sendDefault({
-      objectType: 'feed',
-      content: {
-        title: '초대장이 도착했습니다!',
-        description: letter?.letter.title,
-        imageUrl: letter?.letter?.path,
-        link: {
-          mobileWebUrl: window.location.href + '?isView=true',
-          webUrl: window.location.href + '?isView=true',
-        },
-      },
-      buttons: [
-        {
-          title: '초대장 보기',
-          link: {
-            mobileWebUrl: window.location.href + '?isView=true',
-            webUrl: window.location.href + '?isView=true',
-          },
-        },
-      ],
+  const handleShare = () => {
+    if (!letter?.letter) return;
+    handleKakaoShare({
+      title: '초대장이 도착했습니다!',
+      description: letter.letter.title,
+      imageUrl: letter.letter.path,
+      url:
+        window.location.href +
+        (letter.publicYn === false && letter.password
+          ? `?token=${letter.password}&isView=true`
+          : 'isView=true'),
     });
   };
 
@@ -120,7 +112,6 @@ const LetterPage = () => {
       password: '',
     });
     getLetterComments(Number(letterId));
-    // getLetter(Number(letterId));
   };
 
   const handleDelete = async () => {
@@ -174,7 +165,7 @@ const LetterPage = () => {
           </Box>
         )}
         <FloatingButton
-          onClick={handleKakaoShare}
+          onClick={handleShare}
           icon={<IconShare />}
           bottom={20}
           right={100}

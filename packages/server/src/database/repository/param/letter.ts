@@ -44,6 +44,16 @@ export class InsertLetter extends DefaultParameter {
   letter: Letter;
 }
 
+export class UpdateLetter extends DefaultParameter {
+  letterId: number;
+  updator : string;
+  title? : string;
+  body? : string;
+  commentYn? : boolean;
+  attendYn? : boolean;
+  password : string;
+}
+
 export class DeleteLetter extends DefaultParameter {
   letterId: number;
 }

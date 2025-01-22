@@ -25,9 +25,9 @@ const useLetterApi = () => {
   const [addLetter, setAddLetter] = useState<AddLetterResponse>();
   const [comments, setComments] = useState<GetLetterCommentResponse>();
 
-  const getLetter = async (letterId: number) => {
+  const getLetter = async (letterId: number, token?: string) => {
     const response = await apiClient.get<ApiResponse<GetLetterResponse>>(
-      `/letter/${letterId}`,
+      `/letter/${letterId}${token ? `/${token}` : ''}`,
     );
     if (!response.result) {
       setError(response.error);

@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
+import { ExceptionInterceptor } from './interceptor/exception';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -18,6 +19,7 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalInterceptors(new ExceptionInterceptor());
   const config = new DocumentBuilder()
     .setTitle('초대장 API')
     .setDescription('초대장 API Docs')

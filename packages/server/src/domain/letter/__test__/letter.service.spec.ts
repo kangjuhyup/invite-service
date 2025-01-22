@@ -1,14 +1,10 @@
-// src/letter/service/letter.service.spec.ts
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetLetterPageRequest } from '../dto/request/get.page';
-import { GetLetterPageResponse } from '../dto/response/get.page';
 import { LetterService } from '../service/letter.service';
 import { LetterRepository } from '@app/database/repository/letter';
 import { User } from '@app/jwt/user';
-import { GetLetterResponse } from '../dto/response/get.letter';
-import { GetLetterDetailResponse } from '../dto/response/get.detail';
 import { LetterAttachmentCode } from '@app/util/attachment';
+import { YN } from '@app/util/yn';
 
 describe('LetterService', () => {
   let service: LetterService;
@@ -23,6 +19,7 @@ describe('LetterService', () => {
           useValue: {
             selectLetterFromUser: jest.fn(),
             selectLetterFromId: jest.fn(),
+            updateLetterPassword: jest.fn(),
           },
         },
       ],
@@ -33,7 +30,7 @@ describe('LetterService', () => {
   });
 
   describe('getLetters', () => {
-    it('should return paginated letters', async () => {
+    it('should return letters array and count', async () => {
       const mockLetters = [
         {
           letterId: 1,
@@ -67,10 +64,7 @@ describe('LetterService', () => {
       const user: User = { id: 'mock' };
       const request: GetLetterPageRequest = { limit: 10, skip: 0 };
 
-      const response: GetLetterPageResponse = await service.getLetters(
-        request,
-        user,
-      );
+      const [letters, count] = await service.getLetters(request, user);
 
       expect(letterRepository.selectLetterFromUser).toHaveBeenCalledWith({
         userId: user.id,
@@ -78,30 +72,16 @@ describe('LetterService', () => {
         skip: request.skip,
       });
 
-      expect(response).toEqual({
-        totalCount: 2,
-        items: [
-          {
-            id: 1,
-            title: 'Test Letter 1',
-            category: 'CATEGORY1',
-            thumbnail: 'path/to/thumbnail1',
-          },
-          {
-            id: 2,
-            title: 'Test Letter 2',
-            category: 'CATEGORY2',
-            thumbnail: 'path/to/thumbnail2',
-          },
-        ],
-      });
+      expect(letters).toEqual(mockLetters);
+      expect(count).toBe(2);
     });
   });
 
   describe('getLetter', () => {
-    it('should return letter details', async () => {
+    it('should return letter entity', async () => {
       const mockLetter = {
         letterId: 1,
+        publicYn: YN.Y,
         letterAttachment: [
           {
             attachmentCode: LetterAttachmentCode.LETTER,
@@ -120,82 +100,29 @@ describe('LetterService', () => {
 
       (letterRepository.selectLetterFromId as jest.Mock).mockResolvedValue(mockLetter);
 
-      const response: GetLetterResponse = await service.getLetter(1);
+      const letter = await service.getLetter(1);
 
       expect(letterRepository.selectLetterFromId).toHaveBeenCalledWith({
         letterId: 1,
       });
 
-      expect(response).toEqual({
-        letterId: 1,
-        letter: {
-          path: 'path/to/letter',
-          width: 100,
-          height: 200,
-        },
-        comments: [
-          {
-            name: 'John',
-            body: 'Great letter!',
-          },
-        ],
-      });
+      expect(letter).toEqual(mockLetter);
     });
   });
 
-  describe('getLetterDetail', () => {
-    it('should return letter detail information', async () => {
-      const mockLetter = {
-        letterId: 1,
-        title: 'Test Letter',
-        body: 'Letter content',
-        letterAttachment: [
-          {
-            attachmentCode: LetterAttachmentCode.BACKGROUND,
-            attachment: { attachmentPath: 'path/to/background' },
-            width: 800,
-            height: 600,
-          },
-          {
-            attachmentCode: LetterAttachmentCode.COMPONENT,
-            attachment: { attachmentPath: 'path/to/component1' },
-            width: 100,
-            height: 100,
-            x: 10,
-            y: 20,
-            z: 1,
-            angle: 45,
-          },
-        ],
-      };
+  describe('generateLetterPassword', () => {
+    it('should generate and update letter password', async () => {
+      const letterId = 1;
+      const mockPassword = 'generatedPassword';
+      
+      jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
+      
+      await service.generateLetterPassword(letterId);
 
-      (letterRepository.selectLetterFromId as jest.Mock).mockResolvedValue(mockLetter);
-
-      const response: GetLetterDetailResponse = await service.getLetterDetail(1);
-
-      expect(letterRepository.selectLetterFromId).toHaveBeenCalledWith({
-        letterId: 1,
-      });
-
-      expect(response).toEqual({
-        title: 'Test Letter',
-        body: 'Letter content',
-        background: {
-          path: 'path/to/background',
-          width: 800,
-          height: 600,
-        },
-        components: [
-          {
-            path: 'path/to/component1',
-            width: 100,
-            height: 100,
-            x: 10,
-            y: 20,
-            z: 1,
-            ang: 45,
-          },
-        ],
+      expect(letterRepository.updateLetterPassword).toHaveBeenCalledWith({
+        letterId,
+        password: expect.any(String),
+        updator: 'generateLetterPassword',
       });
     });
   });

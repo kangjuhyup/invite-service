@@ -75,6 +75,23 @@ export class LetterEntity extends DefaultEntity {
   })
   attendYn: YN;
 
+  @Column({
+    name: LetterColumn.publicYn,
+    type: process.env.NODE_ENV === 'test' ? 'varchar' : 'char',
+    length: 1,
+    nullable: false,
+    default: YN.Y,
+  })
+  publicYn: YN;
+
+  @Column({
+    name: LetterColumn.password,
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
+  password?: string;
+
   @ManyToOne(() => UserEntity, { nullable: false })
   @JoinColumn({ name: UserColumn.userId })
   user: UserEntity;

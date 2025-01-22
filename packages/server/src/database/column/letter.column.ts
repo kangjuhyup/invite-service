@@ -5,6 +5,8 @@ export const LetterColumn = {
   body: 'body',
   commentYn: 'cmt_yn',
   attendYn: 'atd_yn',
+  publicYn : 'pub_yn',
+  password: 'pwd',
 } as const;
 
 export type LetterColumn = (typeof LetterColumn)[keyof typeof LetterColumn];

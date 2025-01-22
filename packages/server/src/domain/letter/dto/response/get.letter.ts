@@ -3,12 +3,15 @@ import { LetterCommentEntity } from '@app/database/entity/letter.comment';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsBoolean,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
 import { LetterAttachmentCode } from '@app/util/attachment';
+import { booleanToYN, ynToBoolean } from '@app/util/yn';
 
 export class Letter {
 
@@ -90,6 +93,21 @@ export class GetLetterResponse {
   @IsNotEmpty()
   @IsNumber()
   letterId: number;
+
+  @ApiProperty({
+    description: '공개여부',
+  })
+  @IsNotEmpty()
+  @IsBoolean()
+  publicYn: boolean;
+
+  @ApiProperty({
+    description: '패스워드(작성자가 조회했을 경우에만 표출)',
+  })
+  @IsOptional()
+  @IsString()
+  password?: string;
+
   @ApiProperty({
     description: '배경 이미지 정보',
     type: Letter,
@@ -108,11 +126,13 @@ export class GetLetterResponse {
   @IsNotEmpty()
   comments: Array<Comment>;
 
-  static of(letter: LetterEntity) {
+  static of(letter: LetterEntity, isRequestedEditor: boolean) {
     const response = new GetLetterResponse();
-    response.letterId = letter.letterId
-    response.letter = Letter.of(letter),
+    response.letterId = letter.letterId;
+    response.letter = Letter.of(letter);
     response.comments = letter.letterComment?.map((lc) => Comment.of(lc)) || [];
+    response.publicYn = ynToBoolean(letter.publicYn);
+    response.password = isRequestedEditor ? letter.password : undefined;
     return response;
   }
 }

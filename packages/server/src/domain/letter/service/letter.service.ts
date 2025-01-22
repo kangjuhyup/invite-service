@@ -6,6 +6,8 @@ import { LetterRepository } from '@app/database/repository/letter';
 import { User } from '@app/jwt/user';
 import { GetLetterResponse } from '../dto/response/get.letter';
 import { LetterAttachmentCode } from '@app/util/attachment';
+import { randomString } from '@app/util/random';
+import { LetterEntity } from '@app/database/entity/letter';
 
 @Injectable()
 export class LetterService {
@@ -16,31 +18,30 @@ export class LetterService {
   async getLetters(
     { limit, skip }: GetLetterPageRequest,
     user: User,
-  ): Promise<GetLetterPageResponse> {
-    const letters = await this.letterRepository.selectLetterFromUser({
+  ): Promise<[LetterEntity[], number]> {
+    return await this.letterRepository.selectLetterFromUser({
       userId: user.id,
       limit,
       skip,
     });
-    return GetLetterPageResponse.of(letters[1], letters[0]);
   }
 
-  async getLetter(id: number): Promise<GetLetterResponse> {
-    const letter = await this.letterRepository.selectLetterFromId({
+  async getLetter(id: number): Promise<LetterEntity> {
+    return await this.letterRepository.selectLetterFromId({
       letterId: id,
     });
-    const lt = letter.letterAttachment.find(
-      (la) => la.attachmentCode === LetterAttachmentCode.LETTER,
-    );
-
-    return GetLetterResponse.of(letter);
   }
 
-  async getLetterDetail(id: number): Promise<GetLetterDetailResponse> {
-    const letter = await this.letterRepository.selectLetterFromId({
-      letterId: id,
+  async generateLetterPassword(
+    letterId: number,
+  ) {
+    const password = randomString(10);
+    await this.letterRepository.updateLetterPassword({
+      letterId,
+      password,
+      updator: 'generateLetterPassword',
     });
-    return GetLetterDetailResponse.of(letter);
+    return password;
   }
 
   async deleteLetter(id: number) {

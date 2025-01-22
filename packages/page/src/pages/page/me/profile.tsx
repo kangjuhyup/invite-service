@@ -23,15 +23,18 @@ import {
   IconChevronUp,
   IconDotsVertical,
   IconEdit,
+  IconShare,
   IconTrash,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useShare } from '@/hooks/share.hook';
 
 const ProfilePage = () => {
   const router = useRouter();
   const { profile, getProfile } = useUserApi();
   const { letterPage, getLetterPage, deleteLetter } = useLetterApi();
+  const { handleKakaoShare } = useShare();
 
   useEffect(() => {
     getProfile();
@@ -55,6 +58,22 @@ const ProfilePage = () => {
   const handleDelete = async (letterId: number) => {
     await deleteLetter(letterId);
     await refreshLetters();
+  };
+
+  const handleShare = (letterId: number) => {
+    const letter = letterPage?.items.find((item) => item.id === letterId);
+    if (!letter) return;
+
+    handleKakaoShare({
+      title: '초대장이 도착했습니다!',
+      description: letter.title,
+      imageUrl: letter.thumbnail,
+      url:
+        `${window.location.origin}/page/letter/${letterId}` +
+        (letter.publicYn === false && letter.password
+          ? `?token=${letter.password}&isView=true`
+          : '?isView=true'),
+    });
   };
 
   return (
@@ -151,6 +170,18 @@ const ProfilePage = () => {
                             }
                           >
                             수정하기
+                          </Menu.Item>
+                          <Menu.Item
+                            leftSection={
+                              <IconShare
+                                style={{ width: '14px', height: '14px' }}
+                              />
+                            }
+                            onClick={() => {
+                              handleShare(letter.id);
+                            }}
+                          >
+                            공유하기
                           </Menu.Item>
                           <Menu.Item
                             color="red"

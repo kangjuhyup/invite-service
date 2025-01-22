@@ -9,6 +9,7 @@ import {
   InsertLetterAttachment,
   SelectComment,
   SelectLetter,
+  UpdateLetter,
 } from './param/letter';
 import { LetterAttachmentCode } from '@app/util/attachment';
 import { YN } from '@app/util/yn';
@@ -160,6 +161,17 @@ async selectComments({letterId,entityManager}:Omit<SelectComment,'letterCommentI
             letterId: letterId,
             useYn: YN.Y
         }
+    });
+}
+
+async updateLetterPassword({letterId,password,updator,entityManager}:Omit<UpdateLetter,'title'|'body'>) {
+    const repo = this._getRepository('letter', entityManager);
+    return await repo.update({
+        letterId
+    }, {
+        publicYn : YN.N,
+        updator,
+        password
     });
 }
 

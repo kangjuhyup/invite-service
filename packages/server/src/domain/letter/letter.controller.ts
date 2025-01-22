@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   Request,
@@ -24,6 +25,7 @@ import { ResponseValidationInterceptor } from '@app/interceptor/response.validat
 import { UserAccessGuard } from '@app/jwt/guard/user.access.guard';
 import { GetLetterResponse } from './dto/response/get.letter';
 import { LetterFacade } from './letter.facade';
+import { UserPublicGuard } from '@app/jwt/guard/user.public.guard';
 
 @Controller('letter')
 export class LetterController {
@@ -93,6 +95,25 @@ export class LetterController {
     };
   }
 
+  @Post('password/:id')
+  @ApiOperation({ summary: '초대장 패스워드 생성' })
+  @ApiOkResponse({
+    status: 200,
+    description: '성공',
+    type: 'string',
+  })
+  @ApiBearerAuth()
+  @UseGuards(UserAccessGuard)
+  async generateLetterPassword(
+    @Param() dto: GetLetterDetailRequest,
+    @Request() req,
+  ): Promise<HttpResponse<string>> {
+    return {
+      result: true,
+      data: await this.letterFacade.generateLetterPassword(dto.id, req.user),
+    };
+  }
+
   @Get('detail/:id')
   @ApiOperation({ summary: '초대장 상세 정보 조회' })
   @ApiOkResponse({
@@ -110,20 +131,22 @@ export class LetterController {
     };
   }
 
-  @Get(':id')
+  @Get(':id/:password')
   @ApiOperation({ summary: '공유된 초대장 페이지' })
   @ApiOkResponse({
     status: 200,
     description: '성공',
-    type: GetLetterPageResponse,
+    type: GetLetterResponse,
   })
+  @UseGuards(UserPublicGuard)
   @UseInterceptors(new ResponseValidationInterceptor(GetLetterResponse))
   async getLetter(
     @Param() dto: GetLetterDetailRequest,
+    @Request() req,
   ): Promise<HttpResponse<GetLetterResponse>> {
     return {
       result: true,
-      data: await this.letterFacade.getLetter(dto.id),
+      data: await this.letterFacade.getLetter(dto.id, dto.password, req.user),
     };
   }
 
