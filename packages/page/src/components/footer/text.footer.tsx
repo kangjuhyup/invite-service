@@ -9,6 +9,7 @@ import {
   Popover,
   Stack,
   Button,
+  Box,
 } from '@mantine/core';
 import {
   IconBold,
@@ -152,20 +153,20 @@ const TextControlFooter = ({
   return (
     <>
       <AppShell.Footer
-        p="md"
+        p={0}
         style={{
           borderTop: '1px solid var(--mantine-color-dark-4)',
         }}
       >
-        <Grid justify="center" align="center">
-          {footerActions.map((action, index) => (
-            <Grid.Col span={2} key={index}>
-              <Group justify="center" align="center" gap="xs" style={{ height: '100%' }}>
+        <Box style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', padding: '8px 16px' }}>
+          <Group justify="flex-start" wrap="nowrap" style={{ minWidth: 'max-content' }}>
+            {footerActions.map((action, index) => (
+              <Box key={index} px="xs">
                 {action.icon}
-              </Group>
-            </Grid.Col>
-          ))}
-        </Grid>
+              </Box>
+            ))}
+          </Group>
+        </Box>
       </AppShell.Footer>
       <Modal
         opened={openPicker}
