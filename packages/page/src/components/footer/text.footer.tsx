@@ -62,7 +62,7 @@ const TextControlFooter = ({
       icon: (
         <NumberInput
           value={fontSize}
-          onChange={(value) => onFontSizeChange(value || 8)}
+          onChange={(value) => onFontSizeChange(Number(value) || 8)}
           min={8}
           max={72}
           style={{ width: 70 }}
@@ -149,7 +149,7 @@ const TextControlFooter = ({
           borderTop: '1px solid var(--mantine-color-dark-4)',
           position: 'fixed',
           bottom: 0,
-          width: '100%'
+          width: '100%',
         }}
       >
         <Box
@@ -159,21 +159,24 @@ const TextControlFooter = ({
             msOverflowStyle: 'none',
             scrollbarWidth: 'none',
             '&::-webkit-scrollbar': {
-              display: 'none'
-            }
+              display: 'none',
+            },
           }}
         >
           <Box style={{ padding: '8px 16px', width: '100%' }}>
-            <Group 
-              justify="space-between" 
-              wrap="nowrap" 
-              style={{ 
+            <Group
+              justify="space-between"
+              wrap="nowrap"
+              style={{
                 width: '100%',
-                gap: '16px'
+                gap: '16px',
               }}
             >
               {footerActions.map((action, index) => (
-                <Box key={index} style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+                <Box
+                  key={index}
+                  style={{ flex: 1, display: 'flex', justifyContent: 'center' }}
+                >
                   {action.icon}
                 </Box>
               ))}
