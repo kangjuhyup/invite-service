@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'invite-service',
-      script: 'dist/main.js',
+      script: 'packages/server/dist/src/main.js',
       instances: 'max',
       exec_mode: 'cluster',
       autorestart: true,

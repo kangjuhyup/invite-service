@@ -2,11 +2,7 @@ FROM ghcr.io/kangjuhyup/invite-service/builder:latest AS builder
 
 WORKDIR /usr/src/app
 
-COPY .yarn/ .yarn/
-COPY .yarnrc.yml .yarnrc.yml
-COPY .env .env
-COPY package.json yarn.lock ./
-COPY packages/server packages/server
+COPY . .
 
 RUN yarn workspaces focus server --all
 RUN yarn workspace server build
@@ -31,4 +27,6 @@ RUN npm install -g pm2
 
 EXPOSE 3003
 
-CMD ["pm2-runtime", "packages/server/ecosystem.config.js"]
+CMD ["yarn", "workspace", "server", "start:prod"]
+
+# CMD ["pm2-runtime", "packages/server/ecosystem.config.js"]
