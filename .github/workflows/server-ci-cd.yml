@@ -88,5 +88,10 @@ jobs:
             docker pull ghcr.io/${{ github.repository }}/service:latest
             docker stop invite-api || true
             docker rm invite-api || true
-            docker run -d -p 3003:3003 --network my-network --name invite-api ghcr.io/${{ github.repository }}/service:latest
+            docker run -d \
+            -p 3003:3003 \
+            --network my-network \
+            --name invite-api \
+            --mount type=bind,source=/home/ubuntu/projects/logs,target=/app/logs \
+            ghcr.io/${{ github.repository }}/service:latest
           EOF

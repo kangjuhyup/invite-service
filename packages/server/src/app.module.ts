@@ -80,6 +80,9 @@ export const modules = [
                 },
               }
             : undefined,
+          options: {
+            destination: 'app/logs/app.log', // 로그 파일 경로
+          },
       },
     }),
   }),

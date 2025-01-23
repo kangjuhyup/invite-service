@@ -22,6 +22,8 @@ COPY --from=builder /usr/src/app/.env packages/server/.env
 COPY --from=builder /usr/src/app/packages/server/public packages/server/public
 COPY --from=builder /usr/src/app/packages/server/ecosystem.config.js packages/server/ecosystem.config.js
 
+RUN mkdir -p /app/logs
+
 RUN yarn workspaces focus server --production
 RUN npm install -g pm2
 
