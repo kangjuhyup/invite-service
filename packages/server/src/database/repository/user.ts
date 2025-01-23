@@ -4,11 +4,17 @@ import { EntityManager, Repository } from 'typeorm';
 import { InsertUser, SelectUser, UpdateUser } from './param/user';
 import { YN } from '@app/util/yn';
 import { UserEntity } from '../entity/user';
+import { UserAttachmentEntity } from '../entity/user.attachment';
+import { AttachmentEntity } from '../entity/attachment';
 
 @Injectable()
 export class UserRepository {
   constructor(
     @InjectRepository(UserEntity) private readonly user: Repository<UserEntity>,
+    @InjectRepository(UserAttachmentEntity)
+    private readonly userAttachment: Repository<UserAttachmentEntity>,
+    @InjectRepository(AttachmentEntity)
+    private readonly attachment: Repository<AttachmentEntity>,
   ) {}
 
   async selectUserFromEmail({
@@ -51,7 +57,10 @@ export class UserRepository {
     refreshToken,
     updator,
     entityManager,
-  }: UpdateUser) {
+  }: Pick<
+    UpdateUser,
+    'userId' | 'refreshToken' | 'updator' | 'entityManager'
+  >) {
     const repo = this._getRepository('user', entityManager);
     const set = {};
     if (refreshToken) set['refreshToken'] = refreshToken;
@@ -66,10 +75,43 @@ export class UserRepository {
     );
   }
 
-  private _getRepository(type: 'user', entityManager?: EntityManager) {
+  async updateUserProfile({
+    userId,
+    nickName,
+    introduce,
+    entityManager,
+  }: Pick<UpdateUser, 'userId' | 'nickName' | 'introduce' | 'entityManager'>) {
+    const repo = this._getRepository('user', entityManager);
+    const set = {};
+    if (nickName) set['nickName'] = nickName;
+    if (introduce) set['introduce'] = introduce;
+    return await repo.update(
+      {
+        userId,
+      },
+      set,
+    );
+  }
+
+  private _getRepository<T extends 'user' | 'userAttachment' | 'attachment'>(
+    type: T,
+    entityManager?: EntityManager,
+  ): T extends 'user'
+    ? Repository<UserEntity>
+    : T extends 'userAttachment'
+      ? Repository<UserAttachmentEntity>
+      : Repository<AttachmentEntity> {
     if (type === 'user')
       return entityManager
         ? entityManager.getRepository(UserEntity)
-        : this.user;
+        : (this.user as any);
+    if (type === 'userAttachment')
+      return entityManager
+        ? entityManager.getRepository(UserAttachmentEntity)
+        : (this.userAttachment as any);
+    if (type === 'attachment')
+      return entityManager
+        ? entityManager.getRepository(AttachmentEntity)
+        : (this.attachment as any);
   }
 }

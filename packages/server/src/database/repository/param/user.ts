@@ -14,6 +14,8 @@ export class InsertUser extends DefaultParameter {
 
 export class UpdateUser extends DefaultParameter {
   userId: string;
+  nickName?: string;
+  introduce?: string;
   refreshToken?: string;
   updator: string;
 }
