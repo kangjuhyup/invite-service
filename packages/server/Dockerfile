@@ -25,10 +25,10 @@ COPY --from=builder /usr/src/app/packages/server/ecosystem.config.js packages/se
 RUN mkdir -p /usr/src/app/logs
 
 RUN yarn workspaces focus server --production
-RUN npm install -g pm2
 
 EXPOSE 3003
 
-CMD ["yarn", "workspace", "server", "start:prod"]
 
-# CMD ["pm2-runtime", "packages/server/ecosystem.config.js"]
+# CMD ["yarn", "workspace", "server", "start:prod"]
+
+CMD ["yarn","workspace","server","pm2-runtime", "ecosystem.config.js"]
