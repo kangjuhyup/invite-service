@@ -40,21 +40,25 @@ export class LetterFacade {
     return GetLetterPageResponse.of(count, letters);
   }
 
-  async getLetter(id: number, password?: string, user?: User): Promise<GetLetterResponse> {
+  async getLetter(
+    id: number,
+    password?: string,
+    user?: User,
+  ): Promise<GetLetterResponse> {
     const letter = await this.letterService.getLetter(id);
-    
-    if(letter.publicYn === YN.Y) {
+
+    if (letter.publicYn === YN.Y) {
       return GetLetterResponse.of(letter, false);
     }
-    
-    if(user && letter.userId === user.id) {
+
+    if (user && letter.userId === user.id) {
       return GetLetterResponse.of(letter, true);
     }
-    
-    if(password === letter.password) {
+
+    if (password === letter.password) {
       return GetLetterResponse.of(letter, false);
     }
-    
+
     throw new BadRequestException('비밀번호가 일치하지 않습니다.');
   }
 
@@ -82,21 +86,21 @@ export class LetterFacade {
         session: sessionKey,
         ...thumbnailMeta,
       },
-      type : 'image',
+      type: 'image',
     });
     const letterUrl = await this.storage.generateUploadPresignedUrl({
       bucket: this.letterAttachmentService.letterBucket,
       key: uuid,
       expires: this.letterAttachmentService.urlExpires,
       meta: { session: sessionKey, ...letterMeta },
-      type : 'image',
+      type: 'image',
     });
     const backgroundUrl = await this.storage.generateUploadPresignedUrl({
       bucket: this.letterAttachmentService.backGroundBucket,
       key: uuid,
       expires: this.letterAttachmentService.urlExpires,
       meta: { session: sessionKey, ...backgroundMeta },
-      type : 'image',
+      type: 'image',
     });
     const componentUrls = await Promise.all(
       componentMetas.map(async (componentMeta, i) => {
@@ -114,7 +118,7 @@ export class LetterFacade {
       textMetas.map(async (textMeta, i) => {
         return await this.storage.generateUploadPresignedUrl({
           bucket: this.letterAttachmentService.componentBucket,
-          key: uuid + '-' + `${componentMetas.length+i}`,
+          key: uuid + '-' + `${componentMetas.length + i}`,
           expires: this.letterAttachmentService.urlExpires,
           meta: { session: sessionKey, ...textMeta },
           type: 'text',
@@ -206,9 +210,7 @@ export class LetterFacade {
 
   async generateLetterPassword(letterId: number, user: User) {
     await this.letterService.checkLetterAuthor(letterId, user);
-    return await this.letterService.generateLetterPassword(
-      letterId,
-    );
+    return await this.letterService.generateLetterPassword(letterId);
   }
 
   async deleteLetter(letterId: number, user: User) {

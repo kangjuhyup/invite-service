@@ -4,13 +4,9 @@ import { StorageModule } from '@app/storage/storage.module';
 import { BackgroundRemovalService } from './service/bg.removal.service';
 
 @Module({
-    imports : [
-        StorageModule,
-    ], 
+  imports: [StorageModule],
   controllers: [ImageController],
   providers: [BackgroundRemovalService],
-  exports : [
-    BackgroundRemovalService
-  ]
+  exports: [BackgroundRemovalService],
 })
 export class ImageModule {}

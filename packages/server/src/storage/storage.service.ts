@@ -26,7 +26,7 @@ export class StorageService {
   }
 
   async generateUploadPresignedUrl(param: {
-    type : 'image' | 'text'
+    type: 'image' | 'text';
     bucket: string;
     key: string;
     expires: number;
@@ -44,7 +44,6 @@ export class StorageService {
       expiresIn: param.expires,
     });
   }
-
 
   async generateDownloadPresignedUrl(param: {
     bucket: string;

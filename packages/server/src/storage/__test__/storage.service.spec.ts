@@ -84,8 +84,8 @@ describe('StorageService', () => {
         key: 'test-key',
         expires: 3600,
         meta: {
-          session: 'test'
-        }
+          session: 'test',
+        },
       });
 
       expect(getSignedUrl).toHaveBeenCalledWith(
@@ -107,8 +107,8 @@ describe('StorageService', () => {
         key: 'test-key',
         expires: 3600,
         meta: {
-          session: 'test'
-        }
+          session: 'test',
+        },
       });
 
       expect(getSignedUrl).toHaveBeenCalledWith(

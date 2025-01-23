@@ -9,7 +9,7 @@ import { MetricService } from './metric.service';
       defaultMetrics: {
         enabled: true, // 기본 메트릭 활성화
       },
-    })
+    }),
   ],
   providers: [MetricService],
   exports: [MetricService],

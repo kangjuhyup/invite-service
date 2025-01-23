@@ -37,9 +37,9 @@ describe('LetterService', () => {
           title: 'Test Letter 1',
           letterCategoryCode: 'CATEGORY1',
           letterAttachment: [
-            { 
+            {
               attachmentCode: LetterAttachmentCode.THUMBNAIL,
-              attachment: { attachmentPath: 'path/to/thumbnail1' } 
+              attachment: { attachmentPath: 'path/to/thumbnail1' },
             },
           ],
         },
@@ -48,9 +48,9 @@ describe('LetterService', () => {
           title: 'Test Letter 2',
           letterCategoryCode: 'CATEGORY2',
           letterAttachment: [
-            { 
+            {
               attachmentCode: LetterAttachmentCode.THUMBNAIL,
-              attachment: { attachmentPath: 'path/to/thumbnail2' } 
+              attachment: { attachmentPath: 'path/to/thumbnail2' },
             },
           ],
         },
@@ -98,7 +98,9 @@ describe('LetterService', () => {
         ],
       };
 
-      (letterRepository.selectLetterFromId as jest.Mock).mockResolvedValue(mockLetter);
+      (letterRepository.selectLetterFromId as jest.Mock).mockResolvedValue(
+        mockLetter,
+      );
 
       const letter = await service.getLetter(1);
 
@@ -114,9 +116,9 @@ describe('LetterService', () => {
     it('should generate and update letter password', async () => {
       const letterId = 1;
       const mockPassword = 'generatedPassword';
-      
+
       jest.spyOn(global.Math, 'random').mockReturnValue(0.5);
-      
+
       await service.generateLetterPassword(letterId);
 
       expect(letterRepository.updateLetterPassword).toHaveBeenCalledWith({

@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { UserEntity } from '@app/database/entity/user';
-import { UserService } from '@app/domain/user/user.service';
+import { UserService } from '@app/domain/user/service/user.service';
 import { ConfigService } from '@nestjs/config';
 
 describe('AuthService', () => {
@@ -71,12 +71,16 @@ describe('AuthService', () => {
       const mockRefreshToken = 'mock-refresh-token';
 
       jest.spyOn(userService, 'getUser').mockResolvedValue(mockUser);
-      jest.spyOn(jwtService, 'sign')
+      jest
+        .spyOn(jwtService, 'sign')
         .mockReturnValueOnce(mockAccessToken)
         .mockReturnValueOnce(mockRefreshToken);
       jest.spyOn(userService, 'updateRefresh').mockResolvedValue(undefined);
 
-      const result = await authService.signIn('test@example.com', 'password123');
+      const result = await authService.signIn(
+        'test@example.com',
+        'password123',
+      );
 
       expect(result).toEqual({
         userId: mockUser.userId,
@@ -116,12 +120,16 @@ describe('AuthService', () => {
       const mockRefreshToken = 'mock-refresh-token';
 
       jest.spyOn(userService, 'saveUser').mockResolvedValue(mockUser);
-      jest.spyOn(jwtService, 'sign')
+      jest
+        .spyOn(jwtService, 'sign')
         .mockReturnValueOnce(mockAccessToken)
         .mockReturnValueOnce(mockRefreshToken);
       jest.spyOn(userService, 'updateRefresh').mockResolvedValue(undefined);
 
-      const result = await authService.signUp('test@example.com', 'password123');
+      const result = await authService.signUp(
+        'test@example.com',
+        'password123',
+      );
 
       expect(result).toEqual({
         access: mockAccessToken,
@@ -144,7 +152,8 @@ describe('AuthService', () => {
       const mockAccessToken = 'new-access-token';
       const mockRefreshToken = 'new-refresh-token';
 
-      jest.spyOn(jwtService, 'sign')
+      jest
+        .spyOn(jwtService, 'sign')
         .mockReturnValueOnce(mockAccessToken)
         .mockReturnValueOnce(mockRefreshToken);
       jest.spyOn(userService, 'updateRefresh').mockResolvedValue(undefined);

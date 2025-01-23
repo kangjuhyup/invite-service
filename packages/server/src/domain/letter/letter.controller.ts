@@ -158,7 +158,7 @@ export class LetterController {
   async deleteLetter(@Param() dto: GetLetterDetailRequest, @Request() req) {
     await this.letterFacade.deleteLetter(dto.id, req.user);
     return {
-      result: true, 
+      result: true,
     };
   }
 }

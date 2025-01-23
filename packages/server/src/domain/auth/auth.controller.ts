@@ -110,9 +110,7 @@ export class AuthController {
   })
   @Post('signout')
   @UseGuards(UserAccessGuard)
-  async signOut(
-    @Headers('x-refresh-token') refreshToken: string,
-  ) {
+  async signOut(@Headers('x-refresh-token') refreshToken: string) {
     await this.auth.signOut(refreshToken);
     return {
       result: true,

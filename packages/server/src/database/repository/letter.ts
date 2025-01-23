@@ -101,7 +101,10 @@ export class LetterRepository {
     return await repo.insert(letter);
   }
 
-  async deleteLetter({ letterId, entityManager }: Pick<DeleteLetter, 'letterId'|'entityManager'>) {
+  async deleteLetter({
+    letterId,
+    entityManager,
+  }: Pick<DeleteLetter, 'letterId' | 'entityManager'>) {
     const repo = this._getRepository('letter', entityManager);
     return await repo.update(
       {
@@ -113,7 +116,10 @@ export class LetterRepository {
     );
   }
 
-  async deleteLetterAttachments({ letterId, entityManager }: Pick<DeleteLetterAttachment, 'letterId'|'entityManager'>) {
+  async deleteLetterAttachments({
+    letterId,
+    entityManager,
+  }: Pick<DeleteLetterAttachment, 'letterId' | 'entityManager'>) {
     const repo = this._getRepository('letterAttachment', entityManager);
     return await repo.update(
       {
@@ -137,82 +143,111 @@ export class LetterRepository {
       .execute();
   }
 
-  async insertComment({
-    comment,
-    entityManager,
-  }: InsertComment) {
+  async insertComment({ comment, entityManager }: InsertComment) {
     const repo = this._getRepository('letterComment', entityManager);
     return await repo.insert(comment);
   }
 
-async selectComment({letterCommentId, entityManager}: Omit<SelectComment, 'letterId'>) {
+  async selectComment({
+    letterCommentId,
+    entityManager,
+  }: Omit<SelectComment, 'letterId'>) {
     const repo = this._getRepository('letterComment', entityManager);
     return await repo.findOne({
-        where: {
-            letterCommentId: letterCommentId
-        }
+      where: {
+        letterCommentId: letterCommentId,
+      },
     });
-}
+  }
 
-async selectComments({letterId,entityManager}:Omit<SelectComment,'letterCommentId'>) {
+  async selectComments({
+    letterId,
+    entityManager,
+  }: Omit<SelectComment, 'letterCommentId'>) {
     const repo = this._getRepository('letterComment', entityManager);
     return await repo.find({
-        where: {
-            letterId: letterId,
-            useYn: YN.Y
-        }
+      where: {
+        letterId: letterId,
+        useYn: YN.Y,
+      },
     });
-}
+  }
 
-async updateLetterPassword({letterId,password,updator,entityManager}:Omit<UpdateLetter,'title'|'body'>) {
+  async updateLetterPassword({
+    letterId,
+    password,
+    updator,
+    entityManager,
+  }: Omit<UpdateLetter, 'title' | 'body'>) {
     const repo = this._getRepository('letter', entityManager);
-    return await repo.update({
-        letterId
-    }, {
-        publicYn : YN.N,
+    return await repo.update(
+      {
+        letterId,
+      },
+      {
+        publicYn: YN.N,
         updator,
-        password
-    });
-}
+        password,
+      },
+    );
+  }
 
-async deleteComment({letterCommentId,entityManager}:Omit<SelectComment,'letterId'>) {
+  async deleteComment({
+    letterCommentId,
+    entityManager,
+  }: Omit<SelectComment, 'letterId'>) {
     const repo = this._getRepository('letterComment', entityManager);
-    return await repo.update({
-        letterCommentId: letterCommentId
-    }, {
-        useYn: YN.N
-    });
-}
+    return await repo.update(
+      {
+        letterCommentId: letterCommentId,
+      },
+      {
+        useYn: YN.N,
+      },
+    );
+  }
 
-async deleteCommentFromLetter({letterId,entityManager}:Omit<SelectComment,'letterCommentId'>) {
+  async deleteCommentFromLetter({
+    letterId,
+    entityManager,
+  }: Omit<SelectComment, 'letterCommentId'>) {
     const repo = this._getRepository('letterComment', entityManager);
-    return await repo.update({
-        letterId: letterId
-    }, {
-        useYn: YN.N
-    });
-}
+    return await repo.update(
+      {
+        letterId: letterId,
+      },
+      {
+        useYn: YN.N,
+      },
+    );
+  }
 
-  private _getRepository<T extends 'letter' | 'letterAttachment' | 'letterComment'>(
+  private _getRepository<
+    T extends 'letter' | 'letterAttachment' | 'letterComment',
+  >(
     type: T,
     entityManager?: EntityManager,
   ): T extends 'letter'
     ? Repository<LetterEntity>
     : T extends 'letterAttachment'
-    ? Repository<LetterAttachmentEntity>
-    : Repository<LetterCommentEntity> {
+      ? Repository<LetterAttachmentEntity>
+      : Repository<LetterCommentEntity> {
     if (type === 'letter')
-      return (entityManager
-        ? entityManager.getRepository(LetterEntity)
-        : this.letter) as any;
+      return (
+        entityManager ? entityManager.getRepository(LetterEntity) : this.letter
+      ) as any;
     if (type === 'letterAttachment')
-      return (entityManager
-        ? entityManager.getRepository(LetterAttachmentEntity)
-        : this.letterAttachment) as any;
+      return (
+        entityManager
+          ? entityManager.getRepository(LetterAttachmentEntity)
+          : this.letterAttachment
+      ) as any;
     if (type === 'letterComment')
-      return (entityManager
-        ? entityManager.getRepository(LetterCommentEntity)
-        : this.letterComment) as any;
+      return (
+        entityManager
+          ? entityManager.getRepository(LetterCommentEntity)
+          : this.letterComment
+      ) as any;
     throw new Error('Invalid repository type');
   }
 }

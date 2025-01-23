@@ -14,23 +14,22 @@ import { LetterAttachmentCode } from '@app/util/attachment';
 import { booleanToYN, ynToBoolean } from '@app/util/yn';
 
 export class Letter {
-
   @ApiProperty({
     description: '초대장 제목',
     example: 'Sample Title',
   })
   @IsNotEmpty()
   @IsString()
-  title : string;
+  title: string;
 
   @ApiProperty({
     description: '초대장 내용',
     example: 'Sample Body',
-    required: false
+    required: false,
   })
   @IsNotEmpty()
   @IsString()
-  body? : string;
+  body?: string;
 
   @ApiProperty({
     description: '이미지 경로',

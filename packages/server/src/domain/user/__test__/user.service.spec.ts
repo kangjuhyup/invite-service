@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
-import { UserService } from '../user.service';
+import { UserService } from '../service/user.service';
 import { UserEntity } from '@app/database/entity/user';
 import { UserRepository } from '@app/database/repository/user';
 
@@ -90,7 +90,9 @@ describe('UserService', () => {
     };
 
     it('유효한 리프레시 토큰으로 검증이 성공해야 함', async () => {
-      jest.spyOn(userRepository, 'selectUserFromId').mockResolvedValue(mockUser);
+      jest
+        .spyOn(userRepository, 'selectUserFromId')
+        .mockResolvedValue(mockUser);
 
       const result = await userService.validateRefresh(
         'test-user-id',
@@ -100,7 +102,9 @@ describe('UserService', () => {
     });
 
     it('유효하지 않은 리프레시 토큰으로 검증 시 예외가 발생해야 함', async () => {
-      jest.spyOn(userRepository, 'selectUserFromId').mockResolvedValue(mockUser);
+      jest
+        .spyOn(userRepository, 'selectUserFromId')
+        .mockResolvedValue(mockUser);
 
       await expect(
         userService.validateRefresh('test-user-id', 'invalid-refresh-token'),
@@ -127,8 +131,11 @@ describe('UserService', () => {
         .spyOn(userRepository, 'selectUserFromEmail')
         .mockResolvedValue(mockUser);
 
-      const result = await userService.saveUser('test@example.com', 'password123');
-      
+      const result = await userService.saveUser(
+        'test@example.com',
+        'password123',
+      );
+
       expect(userRepository.insertUser).toHaveBeenCalledWith({
         user: {
           email: 'test@example.com',
@@ -146,7 +153,7 @@ describe('UserService', () => {
       jest.spyOn(userRepository, 'updateUser').mockResolvedValue(undefined);
 
       await userService.updateRefresh('test-user-id', 'new-refresh-token');
-      
+
       expect(userRepository.updateUser).toHaveBeenCalledWith({
         userId: 'test-user-id',
         refreshToken: 'new-refresh-token',

@@ -1,15 +1,13 @@
-import { Module } from "@nestjs/common";
-import { CommentController } from "./comment.controller";
-import { CommentService } from "./service/comment.service";
-import { CommentFacade } from "./comment.facade";
+import { Module } from '@nestjs/common';
+import { CommentController } from './comment.controller';
+import { CommentService } from './service/comment.service';
+import { CommentFacade } from './comment.facade';
 
-const services = [
-    CommentService,
-]
+const services = [CommentService];
 
 @Module({
-    controllers: [CommentController],
-    providers: [...services, CommentFacade],
-    exports: [...services]
+  controllers: [CommentController],
+  providers: [...services, CommentFacade],
+  exports: [...services],
 })
 export class CommentModule {}

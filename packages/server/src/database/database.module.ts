@@ -12,6 +12,7 @@ import { AttachmentEntity } from './entity/attachment';
 import { AttachmentRepository } from './repository/attachment';
 import { Enviroments } from '@app/domain/dto/env';
 import { LetterCommentEntity } from './entity/letter.comment';
+import { UserAttachmentEntity } from './entity/user.attachment';
 
 const repositories = [LetterRepository, AttachmentRepository, UserRepository];
 
@@ -40,6 +41,7 @@ const repositories = [LetterRepository, AttachmentRepository, UserRepository];
     }),
     TypeOrmModule.forFeature([
       UserEntity,
+      UserAttachmentEntity,
       LetterEntity,
       LetterAttachmentEntity,
       AttachmentEntity,

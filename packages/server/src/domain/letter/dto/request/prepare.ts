@@ -30,7 +30,6 @@ export class MetaDefault {
 }
 
 export class MetaDetail extends MetaDefault {
-
   @ApiProperty({
     description: 'X coordinate of the object',
     example: '100',
@@ -110,5 +109,5 @@ export class PrepareRequest {
   @ValidateNested({ each: true })
   @Type(() => MetaText)
   @IsArray()
-  textMetas?: MetaText[]
+  textMetas?: MetaText[];
 }

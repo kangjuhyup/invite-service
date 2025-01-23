@@ -46,12 +46,12 @@ export class InsertLetter extends DefaultParameter {
 
 export class UpdateLetter extends DefaultParameter {
   letterId: number;
-  updator : string;
-  title? : string;
-  body? : string;
-  commentYn? : boolean;
-  attendYn? : boolean;
-  password : string;
+  updator: string;
+  title?: string;
+  body?: string;
+  commentYn?: boolean;
+  attendYn?: boolean;
+  password: string;
 }
 
 export class DeleteLetter extends DefaultParameter {
@@ -67,7 +67,7 @@ export class DeleteLetterAttachment extends DefaultParameter {
   attachmentId: number;
 }
 
-export class InsertComment extends  DefaultParameter {
+export class InsertComment extends DefaultParameter {
   comment: LetterCommentEntity;
 }
 

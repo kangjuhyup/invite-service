@@ -2,6 +2,7 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { DefaultEntity } from './default';
 import { LetterAttachmentEntity } from './letter.attachment';
 import { AttachmentColumn } from '../column/attachment.column';
+import { UserAttachmentEntity } from './user.attachment';
 
 @Entity({
   name: AttachmentColumn.table,
@@ -24,4 +25,11 @@ export class AttachmentEntity extends DefaultEntity {
     { nullable: true },
   )
   letterAttachment?: LetterAttachmentEntity[];
+
+  @OneToMany(
+    () => UserAttachmentEntity,
+    (userAttachment) => userAttachment.attachment,
+    { nullable: true },
+  )
+  userAttachment?: UserAttachmentEntity[];
 }

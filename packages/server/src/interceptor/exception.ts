@@ -37,37 +37,33 @@ export class ExceptionInterceptor implements NestInterceptor {
             headers: {
               ...headers,
               authorization: headers.authorization ? '[REDACTED]' : undefined,
-            }
-          }
+            },
+          },
         };
 
         // HttpException이 아닌 경우 InternalServerErrorException으로 변환
         if (!(error instanceof HttpException)) {
-          this.logger.error(
-            { 
-              msg: '시스템 에러가 발생했습니다.',
-              ...errorLog
-            }
+          this.logger.error({
+            msg: '시스템 에러가 발생했습니다.',
+            ...errorLog,
+          });
+          return throwError(
+            () => new InternalServerErrorException('서버 에러가 발생했습니다.'),
           );
-          return throwError(() => new InternalServerErrorException('서버 에러가 발생했습니다.'));
         }
 
         // HttpException인 경우 로그 레벨 구분
         const status = error.getStatus();
         if (status >= 500) {
-          this.logger.error(
-            { 
-              msg: '서버 에러가 발생했습니다.',
-              ...errorLog
-            }
-          );
+          this.logger.error({
+            msg: '서버 에러가 발생했습니다.',
+            ...errorLog,
+          });
         } else if (status >= 400) {
-          this.logger.warn(
-            { 
-              msg: '클라이언트 에러가 발생했습니다.',
-              ...errorLog
-            }
-          );
+          this.logger.warn({
+            msg: '클라이언트 에러가 발생했습니다.',
+            ...errorLog,
+          });
         }
 
         return throwError(() => error);

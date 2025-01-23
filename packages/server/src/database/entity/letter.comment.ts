@@ -47,7 +47,13 @@ export class LetterCommentEntity extends DefaultEntity {
   @JoinColumn({ name: LetterColumn.letterId })
   letter: LetterEntity;
 
-  static of(letterId: number, password: string, editor: string, body: string, creator:string): LetterCommentEntity {
+  static of(
+    letterId: number,
+    password: string,
+    editor: string,
+    body: string,
+    creator: string,
+  ): LetterCommentEntity {
     const comment = new LetterCommentEntity();
     comment.letterId = letterId;
     comment.password = sha256Hash(password);

@@ -80,17 +80,17 @@ export const modules = [
                 },
               }
             : {
-              target: 'pino/file',
-              options: {
-                // destination: '/usr/src/app/logs/invite-api.log', // 로그 파일 경로
-          },
-            },
-          customLogLevel: (req, res, err) => {
-            if (req.url.includes('/metrics')) {
-              return 'silent';
-            }
-            return 'info';
-          },
+                target: 'pino/file',
+                options: {
+                  // destination: '/usr/src/app/logs/invite-api.log', // 로그 파일 경로
+                },
+              },
+        customLogLevel: (req, res, err) => {
+          if (req.url.includes('/metrics')) {
+            return 'silent';
+          }
+          return 'info';
+        },
       },
     }),
   }),
@@ -100,7 +100,7 @@ export const modules = [
 @Module({
   imports: [...routers, ...modules],
   controllers: [AppController],
-  providers: [  
+  providers: [
     {
       provide: APP_INTERCEPTOR,
       useClass: MetricInterceptor,

@@ -43,7 +43,8 @@ describe('LetterAttachmentService', () => {
     };
 
     it('유효한 세션키로 메타데이터를 성공적으로 조회해야 함', async () => {
-      jest.spyOn(storageService, 'getObjectMetadata')
+      jest
+        .spyOn(storageService, 'getObjectMetadata')
         .mockResolvedValueOnce(mockMetadata.thumbnailMeta)
         .mockResolvedValueOnce(mockMetadata.letterMeta)
         .mockResolvedValueOnce(mockMetadata.backgroundMeta)
@@ -66,7 +67,8 @@ describe('LetterAttachmentService', () => {
         thumbnailMeta: { Metadata: { session: 'invalid-session' } },
       };
 
-      jest.spyOn(storageService, 'getObjectMetadata')
+      jest
+        .spyOn(storageService, 'getObjectMetadata')
         .mockResolvedValueOnce(invalidMetadata.thumbnailMeta)
         .mockResolvedValueOnce(mockMetadata.letterMeta)
         .mockResolvedValueOnce(mockMetadata.backgroundMeta)

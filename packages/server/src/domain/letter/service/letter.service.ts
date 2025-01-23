@@ -32,9 +32,7 @@ export class LetterService {
     });
   }
 
-  async generateLetterPassword(
-    letterId: number,
-  ) {
+  async generateLetterPassword(letterId: number) {
     const password = randomString(10);
     await this.letterRepository.updateLetterPassword({
       letterId,
@@ -48,11 +46,11 @@ export class LetterService {
     await this.letterRepository.deleteLetter({ letterId: id });
   }
 
-  async checkLetterAuthor(letterId: number, user : User) {
+  async checkLetterAuthor(letterId: number, user: User) {
     const letter = await this.letterRepository.selectLetterFromId({
       letterId,
     });
-    if (letter.userId !== user.id) throw new Error('작성자가 아닙니다.');
-    
+    if (letter.userId !== user.id)
+      throw new Error('작성자가 아닙니다.');
   }
 }

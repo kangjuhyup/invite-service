@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './service/auth.service';
 import { SessionService } from './service/session.service';
-import { UserService } from '../user/user.service';
+import { UserService } from '../user/service/user.service';
 import { randomString } from '@app/util/random';
 import { GoogleService } from '../google/google.service';
 
