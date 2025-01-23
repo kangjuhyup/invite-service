@@ -79,10 +79,12 @@ export const modules = [
                   translateTime: 'SYS:standard',
                 },
               }
-            : undefined,
-          options: {
-            destination: '/usr/src/app/logs/app.log', // 로그 파일 경로
+            : {
+              target: 'pino/file',
+              options: {
+                destination: '/usr/src/app/logs/app.log', // 로그 파일 경로
           },
+            },
           customLogLevel: (req, res, err) => {
             if (req.url.includes('/metrics')) {
               return 'silent';
