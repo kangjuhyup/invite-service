@@ -83,6 +83,12 @@ export const modules = [
           options: {
             destination: 'app/logs/app.log', // 로그 파일 경로
           },
+          customLogLevel: (req, res, err) => {
+            if (req.url.includes('/metrics')) {
+              return 'silent';
+            }
+            return 'info';
+          },
       },
     }),
   }),
