@@ -92,6 +92,6 @@ jobs:
             -p 3003:3003 \
             --network my-network \
             --name invite-api \
-            --mount type=bind,source=/home/ubuntu/projects/logs,target=/app/logs \
+            --mount type=bind,source=/home/ubuntu/projects/logs,target=/usr/src/app/logs \
             ghcr.io/${{ github.repository }}/service:latest
           EOF

@@ -82,7 +82,7 @@ export const modules = [
             : {
               target: 'pino/file',
               options: {
-                destination: '/usr/src/app/logs/app.log', // 로그 파일 경로
+                destination: '/usr/src/app/logs/invite-api.log', // 로그 파일 경로
           },
             },
           customLogLevel: (req, res, err) => {
