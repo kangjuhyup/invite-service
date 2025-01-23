@@ -153,6 +153,23 @@ const useLetterApi = () => {
     }
   };
 
+  const generatePassword = async (letterId: number) => {
+    const response = await apiClient.post<ApiResponse<string>>(
+      `/letter/password/${letterId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${access ?? ''}`,
+        },
+      },
+    );
+    if (!response.result) {
+      setError(response.error);
+    } else {
+      return response.data;
+    }
+  };
+
   return {
     letter,
     getLetter,
@@ -169,6 +186,7 @@ const useLetterApi = () => {
     getLetterComments,
     addComment,
     deleteComment,
+    generatePassword,
   };
 };
 

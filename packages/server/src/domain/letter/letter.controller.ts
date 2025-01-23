@@ -131,7 +131,7 @@ export class LetterController {
     };
   }
 
-  @Get(':id/:password')
+  @Get(':id')
   @ApiOperation({ summary: '공유된 초대장 페이지' })
   @ApiOkResponse({
     status: 200,
@@ -142,11 +142,12 @@ export class LetterController {
   @UseInterceptors(new ResponseValidationInterceptor(GetLetterResponse))
   async getLetter(
     @Param() dto: GetLetterDetailRequest,
+    @Query('token') token: string,
     @Request() req,
   ): Promise<HttpResponse<GetLetterResponse>> {
     return {
       result: true,
-      data: await this.letterFacade.getLetter(dto.id, dto.password, req.user),
+      data: await this.letterFacade.getLetter(dto.id, token, req.user),
     };
   }
 

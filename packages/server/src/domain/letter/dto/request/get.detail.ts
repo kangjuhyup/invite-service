@@ -9,11 +9,4 @@ export class GetLetterDetailRequest {
   @IsNotEmpty()
   @IsNumber()
   id: number;
-
-  @ApiProperty({ description: '패스워드', example: '1234' })
-  @Transform(({ value }) => String(value))
-  @Type(() => String)
-  @IsOptional()
-  @IsString()
-  password?: string;
 }

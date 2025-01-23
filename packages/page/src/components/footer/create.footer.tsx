@@ -1,25 +1,36 @@
-import { Group, Button, ActionIcon, AppShell, Grid, Text } from '@mantine/core';
+import {
+  Group,
+  Button,
+  ActionIcon,
+  AppShell,
+  Grid,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import {
   IconTextGrammar,
   IconDeviceFloppy,
   IconPalette,
   IconPhoto,
+  IconRotate3d,
 } from '@tabler/icons-react';
 import { FileWithPath } from '@mantine/dropzone';
 
 interface CreatePageDefaultFooterProps {
   onImageDrop: (files: FileWithPath[]) => void;
   onTextAdd: () => void;
-  onSave: () => void;
   onBackgroundSelect: () => void;
+  onFlip: () => void;
+  isFlipped: boolean;
 }
 
 const CreatePageDefaultFooter = ({
   onImageDrop,
   onTextAdd,
-  onSave,
   onBackgroundSelect,
+  onFlip,
+  isFlipped,
 }: CreatePageDefaultFooterProps) => {
   const footerActions = [
     {
@@ -29,36 +40,44 @@ const CreatePageDefaultFooter = ({
           accept={['image/*']}
           style={{ border: 'none', background: 'none', padding: 0 }}
         >
-          <ActionIcon variant="light" color="blue">
-            <IconPhoto style={{ width: '70%', height: '70%' }} />
-          </ActionIcon>
+          <Tooltip label="이미지 추가">
+            <ActionIcon variant="light" color="blue">
+              <IconPhoto style={{ width: '70%', height: '70%' }} />
+            </ActionIcon>
+          </Tooltip>
         </Dropzone>
       ),
       label: '이미지',
     },
     {
       icon: (
-        <ActionIcon variant="light" color="blue" onClick={onTextAdd}>
-          <IconTextGrammar style={{ width: '70%', height: '70%' }} />
-        </ActionIcon>
+        <Tooltip label="텍스트 추가">
+          <ActionIcon variant="light" color="blue" onClick={onTextAdd}>
+            <IconTextGrammar style={{ width: '70%', height: '70%' }} />
+          </ActionIcon>
+        </Tooltip>
       ),
       label: '텍스트',
     },
     {
       icon: (
-        <ActionIcon variant="light" color="blue" onClick={onBackgroundSelect}>
-          <IconPalette style={{ width: '70%', height: '70%' }} />
-        </ActionIcon>
+        <Tooltip label="배경 선택">
+          <ActionIcon variant="light" color="blue" onClick={onBackgroundSelect}>
+            <IconPalette style={{ width: '70%', height: '70%' }} />
+          </ActionIcon>
+        </Tooltip>
       ),
       label: '배경',
     },
     {
       icon: (
-        <ActionIcon variant="light" color="green" onClick={onSave}>
-          <IconDeviceFloppy style={{ width: '70%', height: '70%' }} />
-        </ActionIcon>
+        <Tooltip label={isFlipped ? '앞면으로' : '뒷면으로'}>
+          <ActionIcon variant="light" color="blue" onClick={onFlip}>
+            <IconRotate3d style={{ width: '70%', height: '70%' }} />
+          </ActionIcon>
+        </Tooltip>
       ),
-      label: '저장',
+      label: isFlipped ? '앞면으로' : '뒷면으로',
     },
   ];
 

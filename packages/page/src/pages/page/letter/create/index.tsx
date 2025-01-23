@@ -1,7 +1,16 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Container, Modal } from '@mantine/core';
+import {
+  Container,
+  Modal,
+  TextInput,
+  Textarea,
+  Button,
+  Stack,
+  Box,
+  Group,
+} from '@mantine/core';
 import { FileWithPath } from '@mantine/dropzone';
 import MoveResizeImage, {
   FileInfo,
@@ -23,8 +32,13 @@ const CreatePage = () => {
   useDisablePullToRefresh();
   const router = useRouter();
   const backgroundRef = useRef<HTMLDivElement>(null);
-  const { prepareUrls, getPrepareUrls, addLetter, postAddLetter } =
-    useLetterApi();
+  const {
+    prepareUrls,
+    getPrepareUrls,
+    addLetter,
+    postAddLetter,
+    generatePassword,
+  } = useLetterApi();
   const { removeBackground } = useImageApi();
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [texts, setTexts] = useState<TextInfo[]>([]);
@@ -34,6 +48,10 @@ const CreatePage = () => {
   const [selectedTextIndex, setSelectedTextIndex] = useState<number>(-1);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(-1);
   const [opened, { open, close }] = useDisclosure(false);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [letterTitle, setLetterTitle] = useState('');
+  const [letterDescription, setLetterDescription] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
 
   const containerStyle = {
     position: 'absolute' as const,
@@ -42,6 +60,36 @@ const CreatePage = () => {
     transform: 'translate(-50%, -50%)',
     width: BACKGROUND_WIDTH,
     height: BACKGROUND_HEIGHT,
+    perspective: '1000px',
+  };
+
+  const cardStyle = {
+    position: 'relative' as const,
+    width: '100%',
+    height: '100%',
+    transformStyle: 'preserve-3d' as const,
+    transition: 'transform 0.8s',
+    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+  };
+
+  const frontStyle = {
+    position: 'absolute' as const,
+    width: '100%',
+    height: '100%',
+    backfaceVisibility: 'hidden' as const,
+  };
+
+  const backStyle = {
+    position: 'absolute' as const,
+    width: '100%',
+    height: '100%',
+    backfaceVisibility: 'hidden' as const,
+    transform: 'rotateY(180deg)',
+    backgroundColor: 'white',
+    padding: '20px',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    justifyContent: 'center',
   };
 
   const getBackgroundStyle = () => ({
@@ -151,8 +199,8 @@ const CreatePage = () => {
     );
     postAddLetter({
       category: 'LT001',
-      title: '테스트',
-      body: '테스트',
+      title: letterTitle,
+      body: letterDescription,
     });
   };
 
@@ -225,55 +273,118 @@ const CreatePage = () => {
   return (
     <>
       <Container style={containerStyle}>
-        <Modal opened={opened} onClose={close} title="배경 선택">
-          <BackgroundSelect
-            onColorSelect={(color) => {
-              setBackgroundColor(color);
-              setBackgroundImage(null);
-              close();
-            }}
-            onImageSelect={(image) => {
-              setBackgroundImage(image);
-              close();
-            }}
-          />
-        </Modal>
-        <div ref={backgroundRef} style={getBackgroundStyle()} />
-        {files.map((fileInfo, index) => (
-          <MoveResizeImage
-            key={index}
-            fileInfo={fileInfo}
-            onUpdate={(data) => {
-              setFiles((prevFiles) =>
-                prevFiles.map((f, i) => (i === index ? { ...f, ...data } : f)),
+        <div style={cardStyle}>
+          <div style={frontStyle}>
+            <Modal opened={opened} onClose={close} title="배경 선택">
+              <BackgroundSelect
+                onColorSelect={(color) => {
+                  setBackgroundColor(color);
+                  setBackgroundImage(null);
+                  close();
+                }}
+                onImageSelect={(image) => {
+                  setBackgroundImage(image);
+                  close();
+                }}
+              />
+            </Modal>
+            <div ref={backgroundRef} style={getBackgroundStyle()} />
+            {files.map((fileInfo, index) => (
+              <MoveResizeImage
+                key={index}
+                fileInfo={fileInfo}
+                onUpdate={(data) => {
+                  setFiles((prevFiles) =>
+                    prevFiles.map((f, i) =>
+                      i === index ? { ...f, ...data } : f,
+                    ),
+                  );
+                }}
+                onClick={() => {
+                  setSelectedImageIndex(index);
+                  setFooterType(2);
+                }}
+              />
+            ))}
+            {texts.map((text, index) => {
+              return (
+                <MoveText
+                  key={index}
+                  index={index}
+                  textInfo={text}
+                  onUpdate={(text) => {
+                    setTexts((prevTexts) =>
+                      prevTexts.map((t, i) =>
+                        i === index ? { ...t, ...text } : t,
+                      ),
+                    );
+                  }}
+                  onClick={() => {
+                    setSelectedTextIndex(index);
+                    setFooterType(1);
+                  }}
+                />
               );
-            }}
-            onClick={() => {
-              setSelectedImageIndex(index);
-              setFooterType(2);
-            }}
-          />
-        ))}
-        {texts.map((text, index) => {
-          return (
-            <MoveText
-              key={index}
-              index={index}
-              textInfo={text}
-              onUpdate={(text) => {
-                setTexts((prevTexts) =>
-                  prevTexts.map((t, i) =>
-                    i === index ? { ...t, ...text } : t,
-                  ),
-                );
-              }}
-              onClick={() => {
-                setSelectedTextIndex(index);
-                setFooterType(1);
-              }}
-            />
-          );
-        })}
+            })}
+          </div>
+          <div style={backStyle}>
+            <Stack>
+              <TextInput
+                label="초대장 제목"
+                value={letterTitle}
+                onChange={(e) => setLetterTitle(e.target.value)}
+                placeholder="초대장의 제목을 입력해주세요"
+                size="lg"
+              />
+              <Textarea
+                label="초대장 설명"
+                value={letterDescription}
+                onChange={(e) => setLetterDescription(e.target.value)}
+                placeholder="초대장에 대한 설명을 입력해주세요"
+                minRows={4}
+                size="lg"
+              />
+              <Group>
+                <Button
+                  variant={isPublic ? "filled" : "light"}
+                  color="blue"
+                  onClick={() => setIsPublic(true)}
+                >
+                  전체공개
+                </Button>
+                <Button
+                  variant={!isPublic ? "filled" : "light"}
+                  color="blue"
+                  onClick={() => setIsPublic(false)}
+                >
+                  링크공개
+                </Button>
+              </Group>
+              <Group justify="space-between">
+                <Button
+                  onClick={() => setIsFlipped(false)}
+                  variant="light"
+                  color="gray"
+                >
+                  수정하기
+                </Button>
+                <Button
+                  onClick={async () => {
+                    handlePrepare();
+                    handleSave();
+                    if (!isPublic && addLetter) {
+                      await generatePassword(addLetter.letterId);
+                    }
+                  }}
+                  variant="filled"
+                  color="blue"
+                >
+                  생성하기
+                </Button>
+              </Group>
+            </Stack>
+          </div>
+        </div>
       </Container>
       {footerType === 0 ? (
         <CreatePageDefaultFooter
@@ -294,7 +405,14 @@ const CreatePage = () => {
             setSelectedTextIndex(newIndex);
             setFooterType(1);
           }}
-          onSave={handlePrepare}
+          onFlip={() => {
+            if (isFlipped) {
+              setIsFlipped(false);
+            } else {
+              setIsFlipped(true);
+            }
+          }}
+          isFlipped={isFlipped}
           onBackgroundSelect={open}
         />
       ) : footerType === 1 && selectedTextIndex !== -1 ? (
