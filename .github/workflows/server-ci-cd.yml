@@ -46,6 +46,7 @@ jobs:
           echo "BACKGROUND_BUCKET=${{ vars.BACKGROUND_BUCKET }}" >> .env
           echo "COMPONENT_BUCKET=${{ vars.COMPONENT_BUCKET }}" >> .env
           echo "LETTER_BUCKET=${{ vars.LETTER_BUCKET }}" >> .env
+          echo "PROFILE_BUCKET=${{ vars.PROFILE_BUCKET }}" >> .env
           echo "DB_TYPE=${{ vars.DB_TYPE }}" >> .env
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env

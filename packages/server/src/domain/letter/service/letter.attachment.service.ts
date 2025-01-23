@@ -6,13 +6,13 @@ import {
   BadRequestException,
   Logger,
 } from '@nestjs/common';
-import { LetterBaseService } from './letter.base.service';
+import { AttachmentBaseService } from './letter.base.service';
 import { AttachmentDetail } from '../transaction/insert.letter';
 import { StorageService } from '@app/storage/storage.service';
 import { LetterAttachmentCode } from '@app/util/attachment';
 
 @Injectable()
-export class LetterAttachmentService extends LetterBaseService {
+export class LetterAttachmentService extends AttachmentBaseService {
   private readonly logger = new Logger(LetterAttachmentService.name);
   constructor(private readonly storage: StorageService) {
     super();

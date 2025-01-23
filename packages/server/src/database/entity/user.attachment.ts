@@ -8,8 +8,11 @@ import { UserAttachmentColumn } from '../column/user.attachment.column';
 
 @Entity({ name: UserAttachmentColumn.table })
 export class UserAttachmentEntity extends DefaultEntity {
-  @PrimaryColumn({ name: UserColumn.userId, type: 'int' })
-  userId: number;
+  @PrimaryColumn({
+    name: UserColumn.userId,
+    type: process.env.NODE_ENV === 'test' ? 'varchar' : 'char',
+  })
+  userId: string;
 
   @PrimaryColumn({
     name: UserAttachmentColumn.attachmentCode,
@@ -28,4 +31,20 @@ export class UserAttachmentEntity extends DefaultEntity {
   @ManyToOne(() => AttachmentEntity, { nullable: false })
   @JoinColumn({ name: AttachmentColumn.attachmentId })
   attachment: AttachmentEntity;
+
+  static of(
+    userId: string,
+    attachmentCode: string,
+    attachmentId: number,
+    creator: string,
+    updator?: string,
+  ) {
+    const entity = new UserAttachmentEntity();
+    entity.userId = userId;
+    entity.attachmentCode = attachmentCode;
+    entity.attachmentId = attachmentId;
+    entity.creator = creator;
+    entity.updator = updator ?? creator;
+    return entity;
+  }
 }

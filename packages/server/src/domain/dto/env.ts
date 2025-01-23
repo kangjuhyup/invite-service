@@ -42,6 +42,10 @@ export class Enviroments {
 
   @IsNotEmpty()
   @IsString()
+  PROFILE_BUCKET: string;
+
+  @IsNotEmpty()
+  @IsString()
   DB_TYPE: string;
 
   @IsNotEmpty()

@@ -1,7 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
-import { InsertUser, SelectUser, UpdateUser } from './param/user';
+import {
+  InsertUser,
+  SelectUser,
+  UpdateUser,
+  UpsertUserProfileImage,
+} from './param/user';
 import { YN } from '@app/util/yn';
 import { UserEntity } from '../entity/user';
 import { UserAttachmentEntity } from '../entity/user.attachment';
@@ -91,6 +96,19 @@ export class UserRepository {
       },
       set,
     );
+  }
+
+  async upsertUserProfileImage({
+    userAttachment,
+    entityManager,
+  }: UpsertUserProfileImage) {
+    const repo = this._getRepository('userAttachment', entityManager);
+    return await repo
+      .createQueryBuilder()
+      .insert()
+      .values(userAttachment)
+      .orUpdate(['userId', 'attachmentCode', 'attachmentId'])
+      .execute();
   }
 
   private _getRepository<T extends 'user' | 'userAttachment' | 'attachment'>(

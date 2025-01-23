@@ -1,5 +1,6 @@
 import { UserEntity } from '@app/database/entity/user';
 import { DefaultParameter } from './default';
+import { UserAttachmentEntity } from '@app/database/entity/user.attachment';
 
 export class SelectUser extends DefaultParameter {
   userId: string;
@@ -18,4 +19,8 @@ export class UpdateUser extends DefaultParameter {
   introduce?: string;
   refreshToken?: string;
   updator: string;
+}
+
+export class UpsertUserProfileImage extends DefaultParameter {
+  userAttachment: UserAttachmentEntity;
 }

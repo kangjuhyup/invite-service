@@ -1,7 +1,7 @@
 import { Enviroments } from '@app/domain/dto/env';
 import { plainToInstance } from 'class-transformer';
 
-export abstract class LetterBaseService {
+export abstract class AttachmentBaseService {
   private readonly _thumbnailBucket: string;
   public get thumbnailBucket() {
     return this._thumbnailBucket;
@@ -18,6 +18,10 @@ export abstract class LetterBaseService {
   public get letterBucket() {
     return this._letterBucket;
   }
+  private readonly _profileBucket: string;
+  public get profileBucket() {
+    return this._profileBucket;
+  }
   private readonly _urlExpires = 600;
   public get urlExpires() {
     return this._urlExpires;
@@ -32,6 +36,7 @@ export abstract class LetterBaseService {
       this._backGroundBucket = env.BACKGROUND_BUCKET;
       this._componentBucket = env.COMPONENT_BUCKET;
       this._letterBucket = env.LETTER_BUCKET;
+      this._profileBucket = env.PROFILE_BUCKET;
     }
   }
 }
