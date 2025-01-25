@@ -1,4 +1,4 @@
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 interface HttpClientOptions extends RequestInit {
   headers?: Record<string, string>;
@@ -101,6 +101,23 @@ class HttpClient {
     return this.request<T>(endpoint, 'PUT', {
       ...options,
       body: JSON.stringify(body),
+    });
+  }
+
+  patch<T>(endpoint: string, body: any, options?: HttpClientOptions): Promise<T> {
+    const headers = body instanceof FormData
+      ? { ...(options?.headers || {}) }
+      : {
+          'Content-Type': options?.headers?.['Content-Type'] || 'application/json',
+          ...(options?.headers || {}),
+        };
+
+    return this.request<T>(endpoint, 'PATCH', {
+      ...options,
+      headers,
+      body: body instanceof FormData ? body : JSON.stringify(body),
+    }).catch((err) => {
+      throw err;
     });
   }
 

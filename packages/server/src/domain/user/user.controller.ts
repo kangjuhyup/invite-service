@@ -5,17 +5,18 @@ import {
   Get,
   Patch,
   Put,
-  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Request } from 'express';
 import { HttpResponse } from '../dto/response';
 import { GetMyProfileResponse } from './dto/response/get.profile';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ResponseValidationInterceptor } from '@app/interceptor/response.validation';
 import { UpdateProfileRequest } from './dto/request/update.profile';
 import { UserFacade } from './user.facade';
+import { GetUser } from '@app/decorator/user.decorator';
+import { User } from '@app/jwt/user';
+import { UpsertUserProfileImage } from '../../database/repository/param/user';
 
 @Controller('user')
 export class UserController {
@@ -32,40 +33,41 @@ export class UserController {
   @UseInterceptors(new ResponseValidationInterceptor(GetMyProfileResponse))
   @Get()
   async getMyProfile(
-    @Req() request: Request,
+    @GetUser() user: User,
   ): Promise<HttpResponse<GetMyProfileResponse>> {
-    const user = request.user as { id: string };
     return {
       result: true,
       data: await this.userFacade.getMyProfile(user),
     };
   }
 
-  @Patch('profile')
+  @Patch()
   @UseGuards(UserAccessGuard)
   async updateProfile(
     @Body() dto: UpdateProfileRequest,
-    @Req() req: Record<string, any>,
+    @GetUser() user: User,
   ) {
     return {
       result: true,
-      data: await this.userFacade.updateProfile(dto, req.user),
+      data: await this.userFacade.updateProfile(dto, user),
     };
   }
 
   @Get('profile-image/prepare-add')
   @UseGuards(UserAccessGuard)
-  async prepareAddUser() {
+  async prepareAddUser(@GetUser() user: User) {
     return {
       result: true,
+      data: await this.userFacade.getProfilePresignedUrl(user),
     };
   }
 
   @Put('profile-image')
   @UseGuards(UserAccessGuard)
-  async updateProfileImage() {
+  async updateProfileImage(@GetUser() user: User) {
     return {
       result: true,
+      data : await this.userFacade.validateProfileImage(user),
     };
   }
 }

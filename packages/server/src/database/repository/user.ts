@@ -11,6 +11,9 @@ import { YN } from '@app/util/yn';
 import { UserEntity } from '../entity/user';
 import { UserAttachmentEntity } from '../entity/user.attachment';
 import { AttachmentEntity } from '../entity/attachment';
+import { UserColumn } from '../column/user.column';
+import { UserAttachmentColumn } from '../column/user.attachment.column';
+import { AttachmentColumn } from '../column/attachment.column';
 
 @Injectable()
 export class UserRepository {
@@ -32,6 +35,11 @@ export class UserRepository {
         email,
         useYn: YN.Y,
       },
+      relations : {
+        userAttachment: {
+          attachment: true
+        }
+      }
     });
   }
 
@@ -44,6 +52,11 @@ export class UserRepository {
       where: {
         userId,
         useYn: YN.Y,
+      },
+      relations: {
+        userAttachment: {
+          attachment: true,
+        },
       },
     });
   }
@@ -107,7 +120,7 @@ export class UserRepository {
       .createQueryBuilder()
       .insert()
       .values(userAttachment)
-      .orUpdate(['userId', 'attachmentCode', 'attachmentId'])
+      .orUpdate([UserColumn.userId, UserAttachmentColumn.attachmentCode, AttachmentColumn.attachmentId])
       .execute();
   }
 

@@ -30,7 +30,7 @@ export class InsertImageTransaction extends BaseTransaction<Input, number> {
   ): Promise<number> {
     const result = await this.attachmentRepository.insertAttachment({
       attachment: {
-        attachmentPath,
+        attachmentPath: `prf/${attachmentPath}`,
         creator: this.creator,
         updator: this.creator,
       },

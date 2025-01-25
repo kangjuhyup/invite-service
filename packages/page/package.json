@@ -13,6 +13,7 @@
     "@mantine/core": "7.14.3",
     "@mantine/dropzone": "7.14.3",
     "@mantine/hooks": "7.14.3",
+    "@mantine/notifications": "^7.16.1",
     "@react-oauth/google": "^0.12.1",
     "@tabler/icons-react": "^3.21.0",
     "html-to-image": "^1.11.11",

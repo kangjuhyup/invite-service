@@ -20,11 +20,18 @@ export class GetMyProfileResponse {
   @IsString()
   nickName?: string;
 
+  @IsOptional()
+  @IsString()
+  profileImage?: string;
+
   static of(user: UserEntity) {
     const response = new GetMyProfileResponse();
     response.id = user.userId;
     response.email = user.email;
     response.nickName = user.nickName;
+    response.profileImage =
+      user.userAttachment?.find((a) => a.attachmentCode === 'PF001')
+        .attachment.attachmentPath || undefined;
     return response;
   }
 }

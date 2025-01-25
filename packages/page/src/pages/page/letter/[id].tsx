@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Container,
@@ -15,24 +15,24 @@ import {
   Group,
   ActionIcon,
   Modal,
-} from '@mantine/core';
+} from "@mantine/core";
 import {
   IconBubbleText,
   IconShare,
   IconMessageCircle,
   IconTrash,
-} from '@tabler/icons-react';
-import useLetterApi from '../../../api/letter.api';
-import { useDisclosure } from '@mantine/hooks';
-import FloatingButton from '../../../components/button/floating/floating.button';
-import { useRouter } from 'next/router';
-import { useState, useEffect } from 'react';
-import PresignedImage from '@/components/image/presigned/presigned.image';
-import { useShare } from '@/hooks/share.hook';
+} from "@tabler/icons-react";
+import useLetterApi from "../../../api/letter.api";
+import { useDisclosure } from "@mantine/hooks";
+import FloatingButton from "../../../components/button/floating/floating.button";
+import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import PresignedImage from "@/components/image/presigned/presigned.image";
+import { useShare } from "@/hooks/share.hook";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH
   ? `/${process.env.NEXT_PUBLIC_BASE_PATH}`
-  : '';
+  : "";
 
 declare global {
   interface Window {
@@ -53,14 +53,14 @@ const LetterPage = () => {
   const { id: letterId, token } = router.query;
   const [opened, { open, close }] = useDisclosure(false);
   const [deleteModalOpened, setDeleteModalOpened] = useState(false);
-  const [deletePassword, setDeletePassword] = useState('');
+  const [deletePassword, setDeletePassword] = useState("");
   const [selectedCommentId, setSelectedCommentId] = useState<number | null>(
-    null,
+    null
   );
   const [commentForm, setCommentForm] = useState({
-    content: '',
-    editor: '',
-    password: '',
+    content: "",
+    editor: "",
+    password: "",
   });
   const { handleKakaoShare } = useShare();
 
@@ -79,7 +79,7 @@ const LetterPage = () => {
           window.Kakao.init(data.key);
         }
       } catch (error) {
-        console.error('Failed to initialize Kakao SDK:', error);
+        console.error("Failed to initialize Kakao SDK:", error);
       }
     };
     initKakao();
@@ -88,14 +88,14 @@ const LetterPage = () => {
   const handleShare = () => {
     if (!letter?.letter) return;
     handleKakaoShare({
-      title: '초대장이 도착했습니다!',
+      title: "초대장이 도착했습니다!",
       description: letter.letter.title,
       imageUrl: letter.letter.path,
       url:
         window.location.href +
         (letter.publicYn === false && letter.password
           ? `?token=${letter.password}&isView=true`
-          : 'isView=true'),
+          : "?isView=true"),
     });
   };
 
@@ -107,9 +107,9 @@ const LetterPage = () => {
       password: commentForm.password,
     });
     setCommentForm({
-      content: '',
-      editor: '',
-      password: '',
+      content: "",
+      editor: "",
+      password: "",
     });
     getLetterComments(Number(letterId));
   };
@@ -120,7 +120,7 @@ const LetterPage = () => {
     await deleteComment(selectedCommentId, deletePassword);
     await getLetterComments(Number(letterId));
     setDeleteModalOpened(false);
-    setDeletePassword('');
+    setDeletePassword("");
     setSelectedCommentId(null);
   };
 
@@ -136,20 +136,20 @@ const LetterPage = () => {
         h="100vh"
         p={0}
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          position: 'relative',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          position: "relative",
         }}
       >
         {letter?.letter?.path && (
           <Box
             style={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: '100%',
-              height: '100%',
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
             }}
           >
             <PresignedImage
@@ -157,9 +157,9 @@ const LetterPage = () => {
               height={`${letter?.letter?.height}px`}
               path={letter?.letter?.path}
               style={{
-                objectFit: 'contain',
-                maxWidth: '100%',
-                maxHeight: '100%',
+                objectFit: "contain",
+                maxWidth: "100%",
+                maxHeight: "100%",
               }}
             />
           </Box>
@@ -186,9 +186,9 @@ const LetterPage = () => {
           onClose={close}
           title="댓글"
         >
-          <Box display={'flex'} flexDirection={'column'} h={'100%'}>
+          <Box display={"flex"} flexDirection={"column"} h={"100%"}>
             <List
-              style={{ flexGrow: 1, overflowY: 'auto', marginBottom: '80px' }}
+              style={{ flexGrow: 1, overflowY: "auto", marginBottom: "80px" }}
               spacing="xs"
               icon={
                 <IconMessageCircle
@@ -199,12 +199,12 @@ const LetterPage = () => {
             >
               {comments
                 ? comments.comments.map((comment, idx) => (
-                    <List.Item key={idx} style={{ padding: '10px' }}>
+                    <List.Item key={idx} style={{ padding: "10px" }}>
                       <Box
                         style={{
-                          padding: '15px',
-                          backgroundColor: 'var(--mantine-color-gray-0)',
-                          borderRadius: 'var(--mantine-radius-sm)',
+                          padding: "15px",
+                          backgroundColor: "var(--mantine-color-gray-0)",
+                          borderRadius: "var(--mantine-radius-sm)",
                         }}
                       >
                         <Group justify="space-between" align="flex-start">
@@ -231,13 +231,13 @@ const LetterPage = () => {
             </List>
             <Box
               style={{
-                position: 'fixed',
+                position: "fixed",
                 bottom: 0,
                 left: 0,
                 right: 0,
-                padding: '10px',
-                background: 'var(--mantine-color-body)',
-                borderTop: '1px solid var(--mantine-color-gray-3)',
+                padding: "10px",
+                background: "var(--mantine-color-body)",
+                borderTop: "1px solid var(--mantine-color-gray-3)",
               }}
             >
               <Grid gutter="xs">
@@ -287,7 +287,7 @@ const LetterPage = () => {
           opened={deleteModalOpened}
           onClose={() => {
             setDeleteModalOpened(false);
-            setDeletePassword('');
+            setDeletePassword("");
             setSelectedCommentId(null);
           }}
           title="댓글 삭제"

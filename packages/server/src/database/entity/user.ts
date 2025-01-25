@@ -27,6 +27,10 @@ export class UserEntity extends DefaultEntity {
   @OneToMany(() => LetterEntity, (letter) => letter.user, { nullable: true })
   letter?: LetterEntity[];
 
-  @OneToMany(() => UserAttachmentEntity, (userAttachment) => userAttachment.user, { nullable: true })
+  @OneToMany(
+    () => UserAttachmentEntity,
+    (userAttachment) => userAttachment.user,
+    { nullable: true },
+  )
   userAttachment?: UserAttachmentEntity[];
 }

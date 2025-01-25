@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import {
   Container,
   Modal,
@@ -10,23 +10,23 @@ import {
   Stack,
   Box,
   Group,
-} from '@mantine/core';
-import { FileWithPath } from '@mantine/dropzone';
+} from "@mantine/core";
+import { FileWithPath } from "@mantine/dropzone";
 import MoveResizeImage, {
   FileInfo,
-} from '@/components/image/move/move.resize.image';
-import MoveText, { TextInfo } from '@/components/text/move/move.text';
-import useLetterApi from '@/api/letter.api';
-import useGenerateLetter from '@/hooks/generate.letter.hook';
-import { useRouter } from 'next/router';
-import CreatePageDefaultFooter from '@/components/footer/create.footer';
-import TextControlFooter from '@/components/footer/text.footer';
-import ImageControlFooter from '@/components/footer/image.footer';
-import { BACKGROUND_HEIGHT, BACKGROUND_WIDTH } from '@/const';
-import { useDisclosure } from '@mantine/hooks';
-import BackgroundSelect from '@/components/background/background.select';
-import useImageApi from '@/api/image.api';
-import { useDisablePullToRefresh } from '@/hooks/disable.refresh.hook';
+} from "@/components/image/move/move.resize.image";
+import MoveText, { TextInfo } from "@/components/text/move/move.text";
+import useLetterApi from "@/api/letter.api";
+import useGenerateLetter from "@/hooks/generate.letter.hook";
+import { useRouter } from "next/router";
+import CreatePageDefaultFooter from "@/components/footer/create.footer";
+import TextControlFooter from "@/components/footer/text.footer";
+import ImageControlFooter from "@/components/footer/image.footer";
+import { BACKGROUND_HEIGHT, BACKGROUND_WIDTH } from "@/const";
+import { useDisclosure } from "@mantine/hooks";
+import BackgroundSelect from "@/components/background/background.select";
+import useImageApi from "@/api/image.api";
+import { useDisablePullToRefresh } from "@/hooks/disable.refresh.hook";
 
 const CreatePage = () => {
   useDisablePullToRefresh();
@@ -39,71 +39,71 @@ const CreatePage = () => {
     postAddLetter,
     generatePassword,
   } = useLetterApi();
-  const { removeBackground } = useImageApi();
+  const { removeBackground, putImageToPresignedUrl } = useImageApi();
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [texts, setTexts] = useState<TextInfo[]>([]);
   const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
-  const [backgroundColor, setBackgroundColor] = useState<string>('white');
+  const [backgroundColor, setBackgroundColor] = useState<string>("white");
   const [footerType, setFooterType] = useState(0);
   const [selectedTextIndex, setSelectedTextIndex] = useState<number>(-1);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(-1);
   const [opened, { open, close }] = useDisclosure(false);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [letterTitle, setLetterTitle] = useState('');
-  const [letterDescription, setLetterDescription] = useState('');
+  const [letterTitle, setLetterTitle] = useState("");
+  const [letterDescription, setLetterDescription] = useState("");
   const [isPublic, setIsPublic] = useState(true);
 
   const containerStyle = {
-    position: 'absolute' as const,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    position: "absolute" as const,
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     width: BACKGROUND_WIDTH,
     height: BACKGROUND_HEIGHT,
-    perspective: '1000px',
+    perspective: "1000px",
   };
 
   const cardStyle = {
-    position: 'relative' as const,
-    width: '100%',
-    height: '100%',
-    transformStyle: 'preserve-3d' as const,
-    transition: 'transform 0.8s',
-    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+    position: "relative" as const,
+    width: "100%",
+    height: "100%",
+    transformStyle: "preserve-3d" as const,
+    transition: "transform 0.8s",
+    transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
   };
 
   const frontStyle = {
-    position: 'absolute' as const,
-    width: '100%',
-    height: '100%',
-    backfaceVisibility: 'hidden' as const,
+    position: "absolute" as const,
+    width: "100%",
+    height: "100%",
+    backfaceVisibility: "hidden" as const,
   };
 
   const backStyle = {
-    position: 'absolute' as const,
-    width: '100%',
-    height: '100%',
-    backfaceVisibility: 'hidden' as const,
-    transform: 'rotateY(180deg)',
-    backgroundColor: 'white',
-    padding: '20px',
-    display: 'flex',
-    flexDirection: 'column' as const,
-    justifyContent: 'center',
+    position: "absolute" as const,
+    width: "100%",
+    height: "100%",
+    backfaceVisibility: "hidden" as const,
+    transform: "rotateY(180deg)",
+    backgroundColor: "white",
+    padding: "20px",
+    display: "flex",
+    flexDirection: "column" as const,
+    justifyContent: "center",
   };
 
   const getBackgroundStyle = () => ({
-    position: 'absolute' as const,
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
+    position: "absolute" as const,
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
     width: BACKGROUND_WIDTH,
     height: BACKGROUND_HEIGHT,
-    border: '1px solid gray',
+    border: "1px solid gray",
     ...(backgroundImage
       ? {
           backgroundImage: `url(${backgroundImage})`,
-          backgroundSize: '100% 100%',
+          backgroundSize: "100% 100%",
         }
       : {
           backgroundColor,
@@ -126,79 +126,63 @@ const CreatePage = () => {
     if (!prepareUrls) return;
     const letterResult = await generateLetter();
     if (letterResult === undefined || letterResult === null) throw new Error();
-    const letterFile = dataURLToFile(letterResult.letter, 'letter');
-    const bgFile = dataURLToFile(letterResult.background, 'bg');
+    const letterFile = dataURLToFile(letterResult.letter, "letter");
+    const bgFile = dataURLToFile(letterResult.background, "bg");
     const thumbnail = await resizeToThumbnail(letterResult.letter);
-    const thumbnailFile = dataURLToFile(thumbnail, 'thumbnail');
-    await fetch(prepareUrls.letterUrl, {
-      method: 'PUT',
-      body: letterFile,
-      headers: {
-        'Content-Type': 'image/png', // 이미지 MIME 타입
-        'x-amz-meta-session': prepareUrls.sessionKey,
-        'x-amz-meta-height': '600',
-        'x-amz-meta-width': '400',
-      },
+    const thumbnailFile = dataURLToFile(thumbnail, "thumbnail");
+
+    await putImageToPresignedUrl(prepareUrls.letterUrl, letterFile, {
+      type: "image",
+      width: "400",
+      height: "600",
+      session: prepareUrls.sessionKey,
     });
-    await fetch(prepareUrls.thumbnailUrl, {
-      method: 'PUT',
-      body: thumbnailFile,
-      headers: {
-        'Content-Type': 'image/png', // 이미지 MIME 타입
-        'x-amz-meta-session': prepareUrls.sessionKey,
-        'x-amz-meta-height': '150',
-        'x-amz-meta-width': '100',
-      },
+
+    await putImageToPresignedUrl(prepareUrls.thumbnailUrl, thumbnailFile, {
+      type: "image",
+      width: "100",
+      height: "150",
+      session: prepareUrls.sessionKey,
     });
-    await fetch(prepareUrls.backgroundUrl, {
-      method: 'PUT',
-      body: bgFile,
-      headers: {
-        'Content-Type': 'image/png', // 이미지 MIME 타입
-        'x-amz-meta-session': prepareUrls.sessionKey,
-        'x-amz-meta-height': '600',
-        'x-amz-meta-width': '400',
-      },
+
+    await putImageToPresignedUrl(prepareUrls.backgroundUrl, bgFile, {
+      type: "image",
+      width: BACKGROUND_WIDTH.replace("px", ""),
+      height: BACKGROUND_HEIGHT.replace("px", ""),
+      session: prepareUrls.sessionKey,
     });
+
     await Promise.all(
       prepareUrls.componentUrls.map(async (componentUrl, idx) => {
-        await fetch(componentUrl, {
-          method: 'PUT',
-          body: files[idx].file,
-          headers: {
-            'Content-Type': 'image/png', // 이미지 MIME 타입
-            'x-amz-meta-session': prepareUrls.sessionKey,
-            'x-amz-meta-height': `${files[idx].size.height}`,
-            'x-amz-meta-width': `${files[idx].size.width}`,
-            'x-amz-meta-angle': '0',
-            'x-amz-meta-z': `${idx}`,
-            'x-amz-meta-x': `${files[idx].position.x}`,
-            'x-amz-meta-y': `${files[idx].position.y}`,
-          },
+        await putImageToPresignedUrl(componentUrl, files[idx].file, {
+          type: "image",
+          width: files[idx].size.width.toString(),
+          height: files[idx].size.height.toString(),
+          session: prepareUrls.sessionKey,
+          x: files[idx].position.x.toString(),
+          y: files[idx].position.y.toString(),
+          z: idx.toString(),
+          angle: "0",
         });
-      }),
+      })
     );
 
     await Promise.all(
       prepareUrls.textUrls.map(async (textUrl, idx) => {
-        await fetch(textUrl, {
-          method: 'PUT',
-          body: texts[idx].text,
-          headers: {
-            'Content-Type': 'text/plain',
-            'x-amz-meta-session': prepareUrls.sessionKey,
-            'x-amz-meta-height': `${texts[idx].size.height}`,
-            'x-amz-meta-width': `${texts[idx].size.width}`,
-            'x-amz-meta-angle': '0',
-            'x-amz-meta-z': `${idx}`,
-            'x-amz-meta-x': `${texts[idx].position.x}`,
-            'x-amz-meta-y': `${texts[idx].position.y}`,
-          },
+        await putImageToPresignedUrl(textUrl, texts[idx].text, {
+          type: "text",
+          width: texts[idx].size.width.toString(),
+          height: texts[idx].size.height.toString(),
+          session: prepareUrls.sessionKey,
+          x: texts[idx].position.x.toString(),
+          y: texts[idx].position.y.toString(),
+          z: idx.toString(),
+          angle: "0",
         });
-      }),
+      })
     );
     postAddLetter({
-      category: 'LT001',
+      category: "LT001",
       title: letterTitle,
       body: letterDescription,
     });
@@ -208,7 +192,7 @@ const CreatePage = () => {
     // 이미지 정보와 텍스트 정보를 반환
     const imageData = files.map((file) => ({
       fileName:
-        typeof file.file === 'string' ? file.file : file.file.name || 'unknown',
+        typeof file.file === "string" ? file.file : file.file.name || "unknown",
       size: file.size,
       position: file.position,
     }));
@@ -226,16 +210,16 @@ const CreatePage = () => {
 
     getPrepareUrls({
       thumbnailMeta: {
-        width: '100',
-        height: '150',
+        width: "100",
+        height: "150",
       },
       letterMeta: {
-        width: '400',
-        height: '600',
+        width: "400",
+        height: "600",
       },
       backgroundMeta: {
-        width: '400',
-        height: '600',
+        width: "400",
+        height: "600",
       },
       componentMetas: imageData.map((image, idx) => {
         return {
@@ -244,18 +228,18 @@ const CreatePage = () => {
           x: image.position.x.toString(),
           y: image.position.y.toString(),
           z: idx.toString(),
-          angle: '0',
+          angle: "0",
         };
       }),
       textMetas: textData.map((text, idx) => {
         return {
           width: text.size.width.toString(),
           height: text.size.height.toString(),
-          font: 'Noto Sans KR',
+          font: "Noto Sans KR",
           x: text.position.x.toString(),
           y: text.position.y.toString(),
           z: idx.toString(),
-          angle: '0',
+          angle: "0",
         };
       }),
     });
@@ -296,8 +280,8 @@ const CreatePage = () => {
                 onUpdate={(data) => {
                   setFiles((prevFiles) =>
                     prevFiles.map((f, i) =>
-                      i === index ? { ...f, ...data } : f,
-                    ),
+                      i === index ? { ...f, ...data } : f
+                    )
                   );
                 }}
                 onClick={() => {
@@ -315,8 +299,8 @@ const CreatePage = () => {
                   onUpdate={(text) => {
                     setTexts((prevTexts) =>
                       prevTexts.map((t, i) =>
-                        i === index ? { ...t, ...text } : t,
-                      ),
+                        i === index ? { ...t, ...text } : t
+                      )
                     );
                   }}
                   onClick={() => {
@@ -394,12 +378,12 @@ const CreatePage = () => {
             setTexts((prevTexts) => [
               ...prevTexts,
               {
-                text: 'Text...',
+                text: "Text...",
                 size: { width: 18, height: 18 },
                 position: { x: 100, y: 100 },
-                font: 'Noto Sans KR',
+                font: "Noto Sans KR",
                 bold: false,
-                color: 'black',
+                color: "black",
               },
             ]);
             setSelectedTextIndex(newIndex);
@@ -428,8 +412,8 @@ const CreatePage = () => {
                       ...text,
                       size: { width: size, height: size },
                     }
-                  : text,
-              ),
+                  : text
+              )
             );
           }}
           onBoldToggle={() => {
@@ -437,22 +421,22 @@ const CreatePage = () => {
               prevTexts.map((text, index) =>
                 index === selectedTextIndex
                   ? { ...text, bold: !text.bold }
-                  : text,
-              ),
+                  : text
+              )
             );
           }}
           onFontChange={(font: string) => {
             setTexts((prevTexts) =>
               prevTexts.map((text, index) =>
-                index === selectedTextIndex ? { ...text, font } : text,
-              ),
+                index === selectedTextIndex ? { ...text, font } : text
+              )
             );
           }}
           onColorSelect={(color: string) => {
             setTexts((prevTexts) =>
               prevTexts.map((text, index) =>
-                index === selectedTextIndex ? { ...text, color } : text,
-              ),
+                index === selectedTextIndex ? { ...text, color } : text
+              )
             );
           }}
           onComplete={() => {
@@ -472,8 +456,8 @@ const CreatePage = () => {
                       ...file,
                       size: { width, height },
                     }
-                  : file,
-              ),
+                  : file
+              )
             );
           }}
           onRotate={() => {
@@ -483,11 +467,11 @@ const CreatePage = () => {
             const currentFile = files[selectedImageIndex].file;
             if (!(currentFile instanceof File)) return;
             try {
-              console.log('배경 제거 시작 : ', currentFile);
+              console.log("배경 제거 시작 : ", currentFile);
               const arrayBuffer = await removeBackground(currentFile);
               if (arrayBuffer) {
                 const newFile = new File([arrayBuffer], currentFile.name, {
-                  type: 'image/png',
+                  type: "image/png",
                 });
                 setFiles((prevFiles) =>
                   prevFiles.map((file, index) =>
@@ -496,17 +480,17 @@ const CreatePage = () => {
                           ...file,
                           file: newFile,
                         }
-                      : file,
-                  ),
+                      : file
+                  )
                 );
               }
             } catch (error) {
-              console.error('배경 제거 중 오류 발생:', error);
+              console.error("배경 제거 중 오류 발생:", error);
             }
           }}
           onDelete={() => {
             setFiles((prevFiles) =>
-              prevFiles.filter((_, index) => index !== selectedImageIndex),
+              prevFiles.filter((_, index) => index !== selectedImageIndex)
             );
             setSelectedImageIndex(-1);
             setFooterType(0);
