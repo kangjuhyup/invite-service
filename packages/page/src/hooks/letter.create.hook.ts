@@ -11,7 +11,6 @@ import { BACKGROUND_HEIGHT, BACKGROUND_WIDTH } from "@/const";
 export const useLetterCreate = (
   backgroundRef: React.RefObject<HTMLDivElement>
 ) => {
-  const router = useRouter();
   const {
     prepareUrls,
     getPrepareUrls,
@@ -175,29 +174,57 @@ export const useLetterCreate = (
   };
 
   const handleBackgroundRemove = async () => {
-    const currentFile = files[selectedImageIndex].file;
-    if (!(currentFile instanceof File)) return;
-    try {
-      console.log("배경 제거 시작 : ", currentFile);
-      const arrayBuffer = await removeBackground(currentFile);
-      if (arrayBuffer) {
-        const newFile = new File([arrayBuffer], currentFile.name, {
-          type: "image/png",
-        });
+    if (selectedImageIndex === -1) return;
+    const file = files[selectedImageIndex].file;
+    if (file && typeof file !== "string") {
+      const response = await removeBackground(file);
+      if (!response) return;
+      const blob = new Blob([response], { type: "image/png" });
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target?.result as string;
         setFiles((prevFiles) =>
-          prevFiles.map((file, index) =>
+          prevFiles.map((f, index) =>
             index === selectedImageIndex
               ? {
-                  ...file,
-                  file: newFile,
+                  ...f,
+                  file: new File([blob], "removed.png", { type: "image/png" }),
+                  dataUrl,
                 }
-              : file
+              : f
           )
         );
-      }
-    } catch (error) {
-      console.error("배경 제거 중 오류 발생:", error);
+      };
+      reader.readAsDataURL(blob);
     }
+  };
+
+  const handleImageChange = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const dataUrl = e.target?.result as string;
+          setFiles((prevFiles) =>
+            prevFiles.map((f, index) =>
+              index === selectedImageIndex
+                ? {
+                    ...f,
+                    file,
+                    dataUrl,
+                  }
+                : f
+            )
+          );
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    input.click();
   };
 
   return {
@@ -228,6 +255,7 @@ export const useLetterCreate = (
     handlePrepare,
     handleTextAdd,
     handleBackgroundRemove,
+    handleImageChange,
     generatePassword,
   };
 };

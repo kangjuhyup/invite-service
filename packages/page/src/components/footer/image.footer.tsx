@@ -5,14 +5,14 @@ import {
   ActionIcon,
   Text,
   NumberInput,
-} from '@mantine/core';
+} from "@mantine/core";
 import {
   IconCheck,
   IconRotate,
-  IconResize,
   IconTrash,
   IconBackground,
-} from '@tabler/icons-react';
+  IconPhoto,
+} from "@tabler/icons-react";
 
 interface ImageControlFooterProps {
   onSizeChange: (width: number, height: number) => void;
@@ -20,6 +20,7 @@ interface ImageControlFooterProps {
   onDelete: () => void;
   onComplete: () => void;
   onRemoveBackground: () => void;
+  onChangeImage: () => void;
   width: number;
   height: number;
 }
@@ -30,6 +31,7 @@ const ImageControlFooter = ({
   onDelete,
   onComplete,
   onRemoveBackground,
+  onChangeImage,
   width,
   height,
 }: ImageControlFooterProps) => {
@@ -54,39 +56,47 @@ const ImageControlFooter = ({
           />
         </Group>
       ),
-      label: '크기',
+      label: "크기",
     },
     {
       icon: (
         <ActionIcon variant="light" color="blue" onClick={onRotate}>
-          <IconRotate style={{ width: '70%', height: '70%' }} />
+          <IconRotate style={{ width: "70%", height: "70%" }} />
         </ActionIcon>
       ),
-      label: '회전',
+      label: "회전",
+    },
+    {
+      icon: (
+        <ActionIcon variant="light" color="blue" onClick={onChangeImage}>
+          <IconPhoto style={{ width: "70%", height: "70%" }} />
+        </ActionIcon>
+      ),
+      label: "이미지 변경",
     },
     {
       icon: (
         <ActionIcon variant="light" color="blue" onClick={onRemoveBackground}>
-          <IconBackground style={{ width: '70%', height: '70%' }} />
+          <IconBackground style={{ width: "70%", height: "70%" }} />
         </ActionIcon>
       ),
-      label: '배경제거',
+      label: "배경제거",
     },
     {
       icon: (
         <ActionIcon variant="light" color="red" onClick={onDelete}>
-          <IconTrash style={{ width: '70%', height: '70%' }} />
+          <IconTrash style={{ width: "70%", height: "70%" }} />
         </ActionIcon>
       ),
-      label: '삭제',
+      label: "삭제",
     },
     {
       icon: (
         <ActionIcon variant="light" color="green" onClick={onComplete}>
-          <IconCheck style={{ width: '70%', height: '70%' }} />
+          <IconCheck style={{ width: "70%", height: "70%" }} />
         </ActionIcon>
       ),
-      label: '완료',
+      label: "완료",
     },
   ];
 
@@ -94,12 +104,12 @@ const ImageControlFooter = ({
     <AppShell.Footer
       p="md"
       style={{
-        borderTop: '1px solid var(--mantine-color-dark-4)',
+        borderTop: "1px solid var(--mantine-color-dark-4)",
       }}
     >
       <Grid>
         {footerActions.map((action, index) => (
-          <Grid.Col span={footerActions.length === 5 ? 2.4 : 3} key={index}>
+          <Grid.Col span={footerActions.length === 6 ? 2 : 3} key={index}>
             <Group justify="center" gap="xs">
               {action.icon}
               <Text size="sm">{action.label}</Text>

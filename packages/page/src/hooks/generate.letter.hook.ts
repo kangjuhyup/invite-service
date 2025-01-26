@@ -39,7 +39,7 @@ const useGenerateLetter = (
     return new Promise<{ letter: any; background: any }>((resolve, reject) => {
       bg.onload = async () => {
         // 배경 이미지 그리기
-        ctx.drawImage(bg, 0, 0, width + 20, height);
+        ctx.drawImage(bg, 0, 0, width + 20, height + 20);
 
         // 이미지 파일 그리기
         const imagePromises = files.map(({ file, size, position }) => {

@@ -58,6 +58,7 @@ const CreatePage = () => {
     handlePrepare,
     handleTextAdd,
     handleBackgroundRemove,
+    handleImageChange,
     generatePassword,
   } = useLetterCreate(backgroundRef);
 
@@ -309,6 +310,7 @@ const CreatePage = () => {
               )
             );
           }}
+          onChangeImage={handleImageChange}
           onRotate={() => {
             // 회전 기능은 추후 구현
           }}
