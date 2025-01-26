@@ -1,9 +1,9 @@
-type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 interface HttpClientOptions extends RequestInit {
   headers?: Record<string, string>;
   queryParams?: Record<string, string | number>;
-  responseType?: 'arraybuffer';
+  responseType?: "arraybuffer";
 }
 
 class HttpClient {
@@ -14,20 +14,20 @@ class HttpClient {
   constructor(baseUrl: string, defaultOptions?: HttpClientOptions) {
     this.baseUrl = baseUrl;
     this.defaultHeaders = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
     this.defaultOptions = defaultOptions || {};
   }
 
   #buildQueryParams(params?: Record<string, string | number>): string {
-    if (!params) return '';
+    if (!params) return "";
 
     const stringParams: Record<string, string> = Object.entries(params).reduce(
       (acc, [key, value]) => {
         acc[key] = String(value);
         return acc;
       },
-      {} as Record<string, string>,
+      {} as Record<string, string>
     );
 
     return `?${new URLSearchParams(stringParams).toString()}`;
@@ -36,12 +36,12 @@ class HttpClient {
   private async request<T>(
     endpoint: string,
     method: HttpMethod,
-    options: HttpClientOptions = {},
+    options: HttpClientOptions = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}${this.#buildQueryParams(
-      options.queryParams,
+      options.queryParams
     )}`;
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     const headers: Record<string, string> = {
       ...this.defaultHeaders,
@@ -49,7 +49,7 @@ class HttpClient {
     };
 
     if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
+      headers["Authorization"] = `Bearer ${token}`;
     }
 
     const response = await fetch(url, {
@@ -65,7 +65,7 @@ class HttpClient {
       throw new Error(errorData.message || `Error: ${response.status}`);
     }
 
-    if (options.responseType === 'arraybuffer') {
+    if (options.responseType === "arraybuffer") {
       return response.arrayBuffer() as Promise<T>;
     }
 
@@ -73,22 +73,24 @@ class HttpClient {
   }
 
   get<T>(endpoint: string, options?: HttpClientOptions): Promise<T> {
-    return this.request<T>(endpoint, 'GET', options);
+    return this.request<T>(endpoint, "GET", options);
   }
 
   post<T>(
     endpoint: string,
     body: any,
-    options?: HttpClientOptions,
+    options?: HttpClientOptions
   ): Promise<T> {
-    const headers = body instanceof FormData
-      ? { ...(options?.headers || {}) }
-      : {
-          'Content-Type': options?.headers?.['Content-Type'] || 'application/json',
-          ...(options?.headers || {}),
-        };
+    const headers =
+      body instanceof FormData
+        ? { ...(options?.headers || {}) }
+        : {
+            "Content-Type":
+              options?.headers?.["Content-Type"] || "application/json",
+            ...(options?.headers || {}),
+          };
 
-    return this.request<T>(endpoint, 'POST', {
+    return this.request<T>(endpoint, "POST", {
       ...options,
       headers,
       body: body instanceof FormData ? body : JSON.stringify(body),
@@ -98,21 +100,27 @@ class HttpClient {
   }
 
   put<T>(endpoint: string, body: any, options?: HttpClientOptions): Promise<T> {
-    return this.request<T>(endpoint, 'PUT', {
+    return this.request<T>(endpoint, "PUT", {
       ...options,
       body: JSON.stringify(body),
     });
   }
 
-  patch<T>(endpoint: string, body: any, options?: HttpClientOptions): Promise<T> {
-    const headers = body instanceof FormData
-      ? { ...(options?.headers || {}) }
-      : {
-          'Content-Type': options?.headers?.['Content-Type'] || 'application/json',
-          ...(options?.headers || {}),
-        };
+  patch<T>(
+    endpoint: string,
+    body: any,
+    options?: HttpClientOptions
+  ): Promise<T> {
+    const headers =
+      body instanceof FormData
+        ? { ...(options?.headers || {}) }
+        : {
+            "Content-Type":
+              options?.headers?.["Content-Type"] || "application/json",
+            ...(options?.headers || {}),
+          };
 
-    return this.request<T>(endpoint, 'PATCH', {
+    return this.request<T>(endpoint, "PATCH", {
       ...options,
       headers,
       body: body instanceof FormData ? body : JSON.stringify(body),
@@ -122,10 +130,10 @@ class HttpClient {
   }
 
   delete<T>(endpoint: string, options?: HttpClientOptions): Promise<T> {
-    return this.request<T>(endpoint, 'DELETE', options);
+    return this.request<T>(endpoint, "DELETE", options);
   }
 }
 
-const apiClient = new HttpClient(process.env.NEXT_PUBLIC_API_URL || '');
+const apiClient = new HttpClient(process.env.NEXT_PUBLIC_API_URL || "");
 
 export default apiClient;
