@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { UserRepository } from '../user';
 import { UserEntity } from '../../entity/user';
 import { YN } from '@app/util/yn';
+import { UserAttachmentEntity } from '@app/database/entity/user.attachment';
+import { AttachmentEntity } from '@app/database/entity/attachment';
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
@@ -21,6 +23,14 @@ describe('UserRepository', () => {
         UserRepository,
         {
           provide: getRepositoryToken(UserEntity),
+          useValue: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(UserAttachmentEntity),
+          useValue: mockRepository,
+        },
+        {
+          provide: getRepositoryToken(AttachmentEntity),
           useValue: mockRepository,
         },
       ],
@@ -56,6 +66,11 @@ describe('UserRepository', () => {
           email: 'test@example.com',
           useYn: YN.Y,
         },
+        relations : {
+          userAttachment: {
+            attachment: true
+          }
+        }
       });
     });
 
@@ -97,6 +112,11 @@ describe('UserRepository', () => {
           userId: 'test-user-id',
           useYn: YN.Y,
         },
+        relations : {
+          userAttachment: {
+            attachment: true
+          }
+        }
       });
     });
 

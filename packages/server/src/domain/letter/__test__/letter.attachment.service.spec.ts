@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException, BadRequestException } from '@nestjs/common';
-import { AttachmentDetail } from '../transaction/insert.letter';
 import { StorageService } from '@app/storage/storage.service';
 import { LetterAttachmentCode } from '@app/util/attachment';
 import { LetterAttachmentService } from '../service/letter.attachment.service';
+import { AttachmentDetail } from '../transaction/letter.transaction.base';
+import { LetterRepository } from '@app/database/repository/letter';
 
 describe('LetterAttachmentService', () => {
   let service: LetterAttachmentService;
@@ -18,6 +19,12 @@ describe('LetterAttachmentService', () => {
           useValue: {
             getObjectMetadata: jest.fn(),
             deleteObject: jest.fn(),
+          },
+        },
+        {
+          provide: LetterRepository,
+          useValue: {
+            deleteLetterAttachments: jest.fn(),
           },
         },
       ],
