@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   Container,
   Modal,
@@ -8,50 +8,58 @@ import {
   Textarea,
   Button,
   Stack,
-  Box,
   Group,
 } from "@mantine/core";
-import { FileWithPath } from "@mantine/dropzone";
-import MoveResizeImage, {
-  FileInfo,
-} from "@/components/image/move/move.resize.image";
-import MoveText, { TextInfo } from "@/components/text/move/move.text";
-import useLetterApi from "@/api/letter.api";
-import useGenerateLetter from "@/hooks/generate.letter.hook";
-import { useRouter } from "next/router";
+import MoveResizeImage from "@/components/image/move/move.resize.image";
+import MoveText from "@/components/text/move/move.text";
 import CreatePageDefaultFooter from "@/components/footer/create.footer";
 import TextControlFooter from "@/components/footer/text.footer";
 import ImageControlFooter from "@/components/footer/image.footer";
 import { BACKGROUND_HEIGHT, BACKGROUND_WIDTH } from "@/const";
 import { useDisclosure } from "@mantine/hooks";
 import BackgroundSelect from "@/components/background/background.select";
-import useImageApi from "@/api/image.api";
 import { useDisablePullToRefresh } from "@/hooks/disable.refresh.hook";
+import { useLetterCreate } from "@/hooks/letter.create.hook";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 const CreatePage = () => {
   useDisablePullToRefresh();
   const router = useRouter();
   const backgroundRef = useRef<HTMLDivElement>(null);
-  const {
-    prepareUrls,
-    getPrepareUrls,
-    addLetter,
-    postAddLetter,
-    generatePassword,
-  } = useLetterApi();
-  const { removeBackground, putImageToPresignedUrl } = useImageApi();
-  const [files, setFiles] = useState<FileInfo[]>([]);
-  const [texts, setTexts] = useState<TextInfo[]>([]);
-  const [backgroundImage, setBackgroundImage] = useState<string | null>(null);
-  const [backgroundColor, setBackgroundColor] = useState<string>("white");
-  const [footerType, setFooterType] = useState(0);
-  const [selectedTextIndex, setSelectedTextIndex] = useState<number>(-1);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(-1);
   const [opened, { open, close }] = useDisclosure(false);
   const [isFlipped, setIsFlipped] = useState(false);
-  const [letterTitle, setLetterTitle] = useState("");
-  const [letterDescription, setLetterDescription] = useState("");
-  const [isPublic, setIsPublic] = useState(true);
+
+  const {
+    files,
+    texts,
+    backgroundImage,
+    backgroundColor,
+    footerType,
+    selectedTextIndex,
+    selectedImageIndex,
+    letterTitle,
+    letterDescription,
+    isPublic,
+    prepareUrls,
+    addLetter,
+    setFiles,
+    setTexts,
+    setBackgroundImage,
+    setBackgroundColor,
+    setFooterType,
+    setSelectedTextIndex,
+    setSelectedImageIndex,
+    setLetterTitle,
+    setLetterDescription,
+    setIsPublic,
+    handleDrop,
+    handleSave,
+    handlePrepare,
+    handleTextAdd,
+    handleBackgroundRemove,
+    generatePassword,
+  } = useLetterCreate(backgroundRef);
 
   const containerStyle = {
     position: "absolute" as const,
@@ -110,142 +118,6 @@ const CreatePage = () => {
         }),
   });
 
-  const handleDrop = (newFiles: FileWithPath[]) => {
-    const newer = newFiles.map((f) => ({
-      file: f,
-      size: { width: 200, height: 200 },
-      position: { x: 0, y: 0 },
-    }));
-    setFiles((prevFiles) => [...prevFiles, ...newer]); // 이전 상태에 새로운 파일 추가
-  };
-
-  const { generateLetter, resizeToThumbnail, dataURLToFile } =
-    useGenerateLetter(backgroundRef, files, texts);
-
-  const handleSave = async () => {
-    if (!prepareUrls) return;
-    const letterResult = await generateLetter();
-    if (letterResult === undefined || letterResult === null) throw new Error();
-    const letterFile = dataURLToFile(letterResult.letter, "letter");
-    const bgFile = dataURLToFile(letterResult.background, "bg");
-    const thumbnail = await resizeToThumbnail(letterResult.letter);
-    const thumbnailFile = dataURLToFile(thumbnail, "thumbnail");
-
-    await putImageToPresignedUrl(prepareUrls.letterUrl, letterFile, {
-      type: "image",
-      width: "400",
-      height: "600",
-      session: prepareUrls.sessionKey,
-    });
-
-    await putImageToPresignedUrl(prepareUrls.thumbnailUrl, thumbnailFile, {
-      type: "image",
-      width: "100",
-      height: "150",
-      session: prepareUrls.sessionKey,
-    });
-
-    await putImageToPresignedUrl(prepareUrls.backgroundUrl, bgFile, {
-      type: "image",
-      width: BACKGROUND_WIDTH.replace("px", ""),
-      height: BACKGROUND_HEIGHT.replace("px", ""),
-      session: prepareUrls.sessionKey,
-    });
-
-    await Promise.all(
-      prepareUrls.componentUrls.map(async (componentUrl, idx) => {
-        await putImageToPresignedUrl(componentUrl, files[idx].file, {
-          type: "image",
-          width: files[idx].size.width.toString(),
-          height: files[idx].size.height.toString(),
-          session: prepareUrls.sessionKey,
-          x: files[idx].position.x.toString(),
-          y: files[idx].position.y.toString(),
-          z: idx.toString(),
-          angle: "0",
-        });
-      })
-    );
-
-    await Promise.all(
-      prepareUrls.textUrls.map(async (textUrl, idx) => {
-        await putImageToPresignedUrl(textUrl, texts[idx].text, {
-          type: "text",
-          width: texts[idx].size.width.toString(),
-          height: texts[idx].size.height.toString(),
-          session: prepareUrls.sessionKey,
-          x: texts[idx].position.x.toString(),
-          y: texts[idx].position.y.toString(),
-          z: idx.toString(),
-          angle: "0",
-        });
-      })
-    );
-    postAddLetter({
-      category: "LT001",
-      title: letterTitle,
-      body: letterDescription,
-    });
-  };
-
-  const handlePrepare = async () => {
-    // 이미지 정보와 텍스트 정보를 반환
-    const imageData = files.map((file) => ({
-      fileName:
-        typeof file.file === "string" ? file.file : file.file.name || "unknown",
-      size: file.size,
-      position: file.position,
-    }));
-
-    const textData = texts.map((text) => ({
-      text: text.text,
-      size: text.size,
-      position: text.position,
-    }));
-
-    const result = {
-      images: imageData,
-      texts: textData,
-    };
-
-    getPrepareUrls({
-      thumbnailMeta: {
-        width: "100",
-        height: "150",
-      },
-      letterMeta: {
-        width: "400",
-        height: "600",
-      },
-      backgroundMeta: {
-        width: "400",
-        height: "600",
-      },
-      componentMetas: imageData.map((image, idx) => {
-        return {
-          width: image.size.width.toString(),
-          height: image.size.height.toString(),
-          x: image.position.x.toString(),
-          y: image.position.y.toString(),
-          z: idx.toString(),
-          angle: "0",
-        };
-      }),
-      textMetas: textData.map((text, idx) => {
-        return {
-          width: text.size.width.toString(),
-          height: text.size.height.toString(),
-          font: "Noto Sans KR",
-          x: text.position.x.toString(),
-          y: text.position.y.toString(),
-          z: idx.toString(),
-          angle: "0",
-        };
-      }),
-    });
-    return result;
-  };
-
   useEffect(() => {
     handleSave();
   }, [prepareUrls]);
@@ -290,26 +162,24 @@ const CreatePage = () => {
                 }}
               />
             ))}
-            {texts.map((text, index) => {
-              return (
-                <MoveText
-                  key={index}
-                  index={index}
-                  textInfo={text}
-                  onUpdate={(text) => {
-                    setTexts((prevTexts) =>
-                      prevTexts.map((t, i) =>
-                        i === index ? { ...t, ...text } : t
-                      )
-                    );
-                  }}
-                  onClick={() => {
-                    setSelectedTextIndex(index);
-                    setFooterType(1);
-                  }}
-                />
-              );
-            })}
+            {texts.map((text, index) => (
+              <MoveText
+                key={index}
+                index={index}
+                textInfo={text}
+                onUpdate={(text) => {
+                  setTexts((prevTexts) =>
+                    prevTexts.map((t, i) =>
+                      i === index ? { ...t, ...text } : t
+                    )
+                  );
+                }}
+                onClick={() => {
+                  setSelectedTextIndex(index);
+                  setFooterType(1);
+                }}
+              />
+            ))}
           </div>
           <div style={backStyle}>
             <Stack>
@@ -373,29 +243,8 @@ const CreatePage = () => {
       {footerType === 0 ? (
         <CreatePageDefaultFooter
           onImageDrop={handleDrop}
-          onTextAdd={() => {
-            const newIndex = texts.length;
-            setTexts((prevTexts) => [
-              ...prevTexts,
-              {
-                text: "Text...",
-                size: { width: 18, height: 18 },
-                position: { x: 100, y: 100 },
-                font: "Noto Sans KR",
-                bold: false,
-                color: "black",
-              },
-            ]);
-            setSelectedTextIndex(newIndex);
-            setFooterType(1);
-          }}
-          onFlip={() => {
-            if (isFlipped) {
-              setIsFlipped(false);
-            } else {
-              setIsFlipped(true);
-            }
-          }}
+          onTextAdd={handleTextAdd}
+          onFlip={() => setIsFlipped(!isFlipped)}
           isFlipped={isFlipped}
           onBackgroundSelect={open}
         />
@@ -463,31 +312,7 @@ const CreatePage = () => {
           onRotate={() => {
             // 회전 기능은 추후 구현
           }}
-          onRemoveBackground={async () => {
-            const currentFile = files[selectedImageIndex].file;
-            if (!(currentFile instanceof File)) return;
-            try {
-              console.log("배경 제거 시작 : ", currentFile);
-              const arrayBuffer = await removeBackground(currentFile);
-              if (arrayBuffer) {
-                const newFile = new File([arrayBuffer], currentFile.name, {
-                  type: "image/png",
-                });
-                setFiles((prevFiles) =>
-                  prevFiles.map((file, index) =>
-                    index === selectedImageIndex
-                      ? {
-                          ...file,
-                          file: newFile,
-                        }
-                      : file
-                  )
-                );
-              }
-            } catch (error) {
-              console.error("배경 제거 중 오류 발생:", error);
-            }
-          }}
+          onRemoveBackground={handleBackgroundRemove}
           onDelete={() => {
             setFiles((prevFiles) =>
               prevFiles.filter((_, index) => index !== selectedImageIndex)
