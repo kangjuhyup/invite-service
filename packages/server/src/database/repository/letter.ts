@@ -101,6 +101,23 @@ export class LetterRepository {
     return await repo.insert(letter);
   }
 
+  async updateLetter({ letterId,title,body,commentYn,attendYn,publicYn, updator , entityManager }: Omit<UpdateLetter,'password'>) {
+    const repo = this._getRepository('letter', entityManager);
+    const set = {
+      updator,
+    };
+    if(title) set['title'] = title;
+    if(body) set['body'] = body;
+    if(commentYn) set['commentYn'] = commentYn;
+    if(attendYn) set['attendYn'] = attendYn;
+    if(publicYn) set['publicYn'] = publicYn;
+    return await repo.update({
+      letterId
+    }, {
+      ...set
+    });
+  }
+
   async deleteLetter({
     letterId,
     entityManager,

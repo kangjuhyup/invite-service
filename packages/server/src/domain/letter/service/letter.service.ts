@@ -53,4 +53,15 @@ export class LetterService {
     if (letter.userId !== user.id)
       throw new Error('작성자가 아닙니다.');
   }
+
+  async updateLetter(param : {
+    letterId: number;
+    title?: string;
+    body?: string;
+    commentYn?: boolean;
+    attendYn?: boolean;
+    updator: string;
+  }) {
+    await this.letterRepository.updateLetter(param);
+  }
 }

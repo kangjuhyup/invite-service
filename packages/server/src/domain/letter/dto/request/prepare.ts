@@ -7,6 +7,7 @@ import {
   ValidateNested,
   IsNumberString,
   IsString,
+  IsBoolean,
 } from 'class-validator';
 
 export class MetaDefault {
@@ -76,6 +77,16 @@ class MetaText extends MetaDetail {
   @IsNotEmpty()
   @IsString()
   font: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  color: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsBoolean()
+  bold: boolean;
 }
 
 export class PrepareRequest {

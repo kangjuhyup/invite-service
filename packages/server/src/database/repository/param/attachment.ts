@@ -17,3 +17,8 @@ export class InsertAttachment extends DefaultParameter {
   attachments: Array<Attachment>;
   attachment: Attachment;
 }
+
+export class DeleteAttachment extends DefaultParameter {
+  attachmentId: number;
+  attachmentIds: number[];
+}

@@ -7,14 +7,15 @@ import {
   Logger,
 } from '@nestjs/common';
 import { AttachmentBaseService } from './letter.base.service';
-import { AttachmentDetail } from '../transaction/insert.letter';
 import { StorageService } from '@app/storage/storage.service';
 import { LetterAttachmentCode } from '@app/util/attachment';
+import { LetterRepository } from '@app/database/repository/letter';
+import { AttachmentDetail } from '../transaction/letter.transaction.base';
 
 @Injectable()
 export class LetterAttachmentService extends AttachmentBaseService {
   private readonly logger = new Logger(LetterAttachmentService.name);
-  constructor(private readonly storage: StorageService) {
+  constructor(private readonly storage: StorageService, private readonly letterRepository : LetterRepository) {
     super();
   }
 
@@ -127,5 +128,15 @@ export class LetterAttachmentService extends AttachmentBaseService {
       angle: Number(meta.Metadata.angle) || 0,
     };
     return detail;
+  }
+
+  async deleteLetterAttachments({
+    letterId,
+  }: {
+    letterId: number;
+  }) {
+    return await this.letterRepository.deleteLetterAttachments({
+      letterId,
+    });
   }
 }

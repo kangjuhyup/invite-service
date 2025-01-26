@@ -1,12 +1,22 @@
+import { AttachmentEntity } from '@app/database/entity/attachment';
+import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
 import { AttachmentRepository } from '@app/database/repository/attachment';
 import { LetterRepository } from '@app/database/repository/letter';
-import { Letter } from '@app/database/repository/param/letter';
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { LetterTransactionBase, AttachmentDetail } from './letter.transaction.base';
 
+interface UpdateLetter {
+    letterId: number;
+    title?: string;
+    content?: string;
+    commentYn?: boolean;
+    attendYn?: boolean;
+    publicYn?: boolean;
+}
+
 interface Input {
-  letter: Omit<Letter,'creator'|'updator'>;
+  letter: UpdateLetter;
   thumbnailAttachment: AttachmentDetail;
   backgroundAttachment: AttachmentDetail;
   letterAttachment: AttachmentDetail;
@@ -14,13 +24,13 @@ interface Input {
 }
 
 @Injectable()
-export class InsertLetterTransaction extends LetterTransactionBase<Input, number> {
+export class UpdateLetterTransaction extends LetterTransactionBase<Input, number> {
   constructor(
     ds: DataSource,
     letterRepository: LetterRepository,
     attachmentRepository: AttachmentRepository,
   ) {
-    super(ds, letterRepository, attachmentRepository, InsertLetterTransaction.name);
+    super(ds, letterRepository, attachmentRepository, UpdateLetterTransaction.name);
   }
 
   protected async execute(
@@ -33,13 +43,9 @@ export class InsertLetterTransaction extends LetterTransactionBase<Input, number
     }: Input,
     entityManager: EntityManager,
   ): Promise<number> {
-    // 1. 레터 삽입
-    const letterId = await this.#insertLetter(
-      {
-        ...letter,
-        creator: this.transactionName,
-        updator: this.transactionName,
-      },
+    // 1. 레터 업데이트
+    const letterId = await this.#updateLetter(
+      letter,
       entityManager,
     );
 
@@ -80,20 +86,17 @@ export class InsertLetterTransaction extends LetterTransactionBase<Input, number
   }
 
   /**
-   * 레터를 삽입하고, 삽입된 레터의 ID를 반환합니다.
+   * 레터를 업데이트하고, 업데이트된 레터의 ID를 반환합니다.
    */
-  async #insertLetter(
-    letter: Letter,
+  async #updateLetter(
+    letter : UpdateLetter,
     entityManager: EntityManager,
   ): Promise<number> {
-    const result = await this.letterRepository.insertLetter({
-      letter: {
-        ...letter,
-        creator: this.transactionName,
-        updator: this.transactionName,
-      },
+    await this.letterRepository.updateLetter({
+      ...letter,
+      updator: this.transactionName,
       entityManager,
     });
-    return result.identifiers[0].letterId;
+    return letter.letterId;
   }
 }

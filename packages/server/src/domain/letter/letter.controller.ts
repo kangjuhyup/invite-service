@@ -26,6 +26,9 @@ import { UserAccessGuard } from '@app/jwt/guard/user.access.guard';
 import { GetLetterResponse } from './dto/response/get.letter';
 import { LetterFacade } from './letter.facade';
 import { UserPublicGuard } from '@app/jwt/guard/user.public.guard';
+import { GetUser } from '@app/decorator/user.decorator';
+import { User } from '@app/jwt/user';
+import { ModifyLetterRequest } from './dto/request/modify.letter';
 
 @Controller('letter')
 export class LetterController {
@@ -43,11 +46,11 @@ export class LetterController {
   @UseInterceptors(new ResponseValidationInterceptor(GetLetterPageResponse))
   async getLetters(
     @Query() dto: GetLetterPageRequest,
-    @Request() req,
+    @GetUser() user: User,
   ): Promise<HttpResponse<GetLetterPageResponse>> {
     return {
       result: true,
-      data: await this.letterFacade.getLetters(dto, req.user),
+      data: await this.letterFacade.getLetters(dto, user),
     };
   }
 
@@ -67,11 +70,11 @@ export class LetterController {
   @UseInterceptors(new ResponseValidationInterceptor(PrepareResponse))
   async prepareAddLetter(
     @Body() dto: PrepareRequest,
-    @Request() req,
+    @GetUser() user: User,
   ): Promise<HttpResponse<PrepareResponse>> {
     return {
       result: true,
-      data: await this.letterFacade.prepareAddLetter(dto, req.user),
+      data: await this.letterFacade.prepareAddLetter(dto, user),
     };
   }
 
@@ -87,11 +90,52 @@ export class LetterController {
   @UseInterceptors(new ResponseValidationInterceptor(AddLetterResponse))
   async addLetter(
     @Body() dto: AddLetterRequest,
-    @Request() req,
+    @GetUser() user: User,
   ): Promise<HttpResponse<AddLetterResponse>> {
     return {
       result: true,
-      data: await this.letterFacade.addLetter(dto, req.user),
+      data: await this.letterFacade.addLetter(dto, user),
+    };
+  }
+
+  @ApiOperation({ summary: '초대장 수정 전 처리' })
+  @ApiOkResponse({
+    status: 200,
+    description: '성공',
+    type: PrepareResponse,
+  })
+  @ApiBearerAuth()
+  @Post('prepare-modify/:id')
+  @UseGuards(UserAccessGuard)
+  @UseInterceptors(new ResponseValidationInterceptor(PrepareResponse))
+  async prepareModifyLetter(
+    @Param('id') id: string,
+    @Body() dto: PrepareRequest,
+    @GetUser() user: User,
+  ): Promise<HttpResponse<PrepareResponse>> {
+    return {
+      result: true,
+      data: await this.letterFacade.prepareModifyLetter(Number(id), dto, user),
+    };
+  }
+
+  @ApiOperation({ summary: '초대장 수정' })
+  @ApiOkResponse({
+    status: 200,
+    description: '성공',
+    type: AddLetterResponse,
+  })
+  @ApiBearerAuth()
+  @Patch(':id')
+  @UseGuards(UserAccessGuard)
+  async modifyLetter(
+    @Param() dto: GetLetterDetailRequest,
+    @Body() body: ModifyLetterRequest,
+    @GetUser() user: User,
+  ): Promise<HttpResponse<AddLetterResponse>> {
+    return {
+      result: true,
+      data: await this.letterFacade.modifyLetter(dto.id, body, user),
     };
   }
 

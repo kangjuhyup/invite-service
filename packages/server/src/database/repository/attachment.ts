@@ -1,7 +1,8 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
-import { InsertAttachment, SelectAttachment } from './param/attachment';
+import { DeleteAttachment, InsertAttachment, SelectAttachment } from './param/attachment';
 import { AttachmentEntity } from '../entity/attachment';
+import { YN } from '@app/util/yn';
 
 export class AttachmentRepository {
   constructor(
@@ -43,6 +44,18 @@ export class AttachmentRepository {
       .insert()
       .values(attachments)
       .execute();
+  }
+
+  async deleteAttachments({
+    attachmentIds,
+    entityManager,
+  }: Omit<DeleteAttachment, 'attachmentId'>) {
+    const repo = this._getRepository('attachment', entityManager);
+    return await repo.update({
+      attachmentId: In(attachmentIds),
+    }, {
+      useYn: YN.N
+    })
   }
 
   private _getRepository(type: 'attachment', entityManager?: EntityManager) {

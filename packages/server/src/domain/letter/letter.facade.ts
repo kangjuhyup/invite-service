@@ -18,6 +18,8 @@ import { randomString } from '@app/util/random';
 import { booleanToYN, YN } from '@app/util/yn';
 import { LetterAttachmentCode } from '@app/util/attachment';
 import { CommentService } from '../comment/service/comment.service';
+import { ModifyLetterRequest } from './dto/request/modify.letter';
+import { UpdateLetterTransaction } from './transaction/update.letter';
 
 @Injectable()
 export class LetterFacade {
@@ -30,6 +32,7 @@ export class LetterFacade {
     private readonly redis: RedisClientService,
     private readonly letterAttachmentService: LetterAttachmentService,
     private readonly insertLetterTransaction: InsertLetterTransaction,
+    private readonly updateLetterTransaction: UpdateLetterTransaction,
   ) {}
 
   async getLetters(
@@ -206,6 +209,83 @@ export class LetterFacade {
     return {
       letterId,
     };
+  }
+
+  async prepareModifyLetter(
+    letterId: number,
+    dto : PrepareRequest,
+    user: User,
+  ): Promise<PrepareResponse> {
+    await this.letterService.checkLetterAuthor(letterId, user);
+    const letter = await this.letterService.getLetter(letterId);
+    const sessionKey = randomString(5);
+    letter.letterAttachment.forEach((attachment) => {
+      const [bucket, key] = attachment.attachment.attachmentPath.split('-');
+      this.storage.deleteObject({
+        bucket,
+        key,
+      });
+    });
+    await this.letterAttachmentService.deleteLetterAttachments({
+      letterId,
+    });
+    return await this.prepareAddLetter(dto, user);
+  }
+
+  async modifyLetter(
+    letterId: number,
+    request: ModifyLetterRequest,
+    user: User,
+  ) {
+    await this.letterService.checkLetterAuthor(letterId, user);
+    //1. 세션키 획득
+    const session = await this.redis.get<{
+      sessionKey: string;
+      objectKey: string;
+      componentCount: number;
+    }>(this.redis.generateKey(LetterFacade.name, `add-${user.id}`));
+    if (!session) throw new BadRequestException('필수 요청이 누락되었습니다.');
+    //2. 메타데이터 조회
+    const { sessionKey, objectKey, componentCount } = session;
+    const { thumbnailMeta, letterMeta, backgroundMeta, componentMetas } =
+      await this.letterAttachmentService.validateSessionAndRetrieveMetadata(
+        sessionKey,
+        objectKey,
+        componentCount,
+      );
+    await this.updateLetterTransaction.run({
+      letter: {
+        letterId,
+        ...request
+      },
+      thumbnailAttachment : this.letterAttachmentService.createAttachmentDetail(
+        thumbnailMeta,
+        this.letterAttachmentService.thumbnailBucket,
+        LetterAttachmentCode.THUMBNAIL,
+        objectKey,
+      ),
+      letterAttachment: this.letterAttachmentService.createAttachmentDetail(
+        letterMeta,
+        this.letterAttachmentService.letterBucket,
+        LetterAttachmentCode.LETTER,
+        objectKey,
+      ),
+      backgroundAttachment: this.letterAttachmentService.createAttachmentDetail(
+        backgroundMeta,
+        this.letterAttachmentService.backGroundBucket,
+        LetterAttachmentCode.BACKGROUND,
+        objectKey,
+      ),
+      componentAttachments: componentMetas.map((component, idx) =>
+        this.letterAttachmentService.createAttachmentDetail(
+          component,
+          this.letterAttachmentService.componentBucket,
+          LetterAttachmentCode.COMPONENT,
+          objectKey,
+        ),
+      ),
+    });
+    return { letterId };
   }
 
   async generateLetterPassword(letterId: number, user: User) {

@@ -51,6 +51,7 @@ export class UpdateLetter extends DefaultParameter {
   body?: string;
   commentYn?: boolean;
   attendYn?: boolean;
+  publicYn?: boolean;
   password: string;
 }
 
