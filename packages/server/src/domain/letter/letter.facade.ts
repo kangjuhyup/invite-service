@@ -40,6 +40,7 @@ export class LetterFacade {
     user: User,
   ): Promise<GetLetterPageResponse> {
     const [letters, count] = await this.letterService.getLetters(request, user);
+    console.log(letters);
     return GetLetterPageResponse.of(count, letters);
   }
 
@@ -218,14 +219,15 @@ export class LetterFacade {
   ): Promise<PrepareResponse> {
     await this.letterService.checkLetterAuthor(letterId, user);
     const letter = await this.letterService.getLetter(letterId);
-    const sessionKey = randomString(5);
-    letter.letterAttachment.forEach((attachment) => {
-      const [bucket, key] = attachment.attachment.attachmentPath.split('-');
-      this.storage.deleteObject({
-        bucket,
-        key,
+    if(letter.letterAttachment){
+      letter.letterAttachment.forEach((attachment) => {
+        const [bucket, key] = attachment.attachment.attachmentPath.split('/');
+        this.storage.deleteObject({
+          bucket,
+          key,
+        });
       });
-    });
+    }
     await this.letterAttachmentService.deleteLetterAttachments({
       letterId,
     });
@@ -281,7 +283,7 @@ export class LetterFacade {
           component,
           this.letterAttachmentService.componentBucket,
           LetterAttachmentCode.COMPONENT,
-          objectKey,
+          `${objectKey}-${idx}`,
         ),
       ),
     });

@@ -53,6 +53,29 @@ export class LetterAttachmentEntity extends DefaultEntity {
   })
   z: number;
 
+  @Column({
+    name: LetterAttachmentColumn.font,
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  font?: string;
+
+  @Column({
+    name: LetterAttachmentColumn.color,
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  color?: string;
+
+  @Column({
+    name: LetterAttachmentColumn.bold,
+    type: 'boolean',
+    nullable: true,
+  })
+  bold?: boolean;
+
   @PrimaryColumn({ name: AttachmentColumn.attachmentId, type: 'int' })
   attachmentId: number;
 

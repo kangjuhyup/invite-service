@@ -10,7 +10,7 @@ import { DataSource, EntityManager } from 'typeorm';
 export type AttachmentDetail = Pick<AttachmentEntity, 'attachmentPath'> &
   Pick<
     LetterAttachmentEntity,
-    'attachmentCode' | 'angle' | 'width' | 'height' | 'x' | 'y' | 'z'
+    'attachmentCode' | 'angle' | 'width' | 'height' | 'x' | 'y' | 'z' | 'font' | 'color' | 'bold'
   >;
 
 export abstract class LetterTransactionBase<I, O> extends BaseTransaction<I, O> {
@@ -59,6 +59,9 @@ export abstract class LetterTransactionBase<I, O> extends BaseTransaction<I, O> 
       x: a.x,
       y: a.y,
       z: a.z,
+      font: a.font,
+      color: a.color,
+      bold: a.bold,
       creator: this.transactionName,
       updator: this.transactionName,
     }));

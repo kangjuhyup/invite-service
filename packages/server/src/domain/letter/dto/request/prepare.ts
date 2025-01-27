@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsOptional,
@@ -84,9 +84,10 @@ class MetaText extends MetaDetail {
   color: string;
 
   @ApiProperty()
+  @Transform(({ value }) => value ? 'true' : 'false')
   @IsNotEmpty()
-  @IsBoolean()
-  bold: boolean;
+  @IsString()
+  bold: string;
 }
 
 export class PrepareRequest {

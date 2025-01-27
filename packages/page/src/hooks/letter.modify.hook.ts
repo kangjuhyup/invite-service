@@ -5,13 +5,14 @@ import { useLetterControl } from "./letter.control.hook";
 import { usePrepareLetter } from "./prepare.letter.hook";
 
 /**
- * 레터 생성을 총괄하는 훅
+ * 레터 변경을 총괄하는 훅
  * @param backgroundRef - 배경 이미지 참조
  */
-export const useLetterCreate = (
+export const useLetterModify = (
+  letterId: number,
   backgroundRef: React.RefObject<HTMLDivElement>
 ) => {
-  const { addLetter, postAddLetter, generatePassword } = useLetterApi();
+  const { modifyLetter, patchmModifyLetter, generatePassword } = useLetterApi();
 
   // 레터 정보 상태
   const [letterTitle, setLetterTitle] = useState("");
@@ -41,7 +42,7 @@ export const useLetterCreate = (
   } = useLetterControl();
 
   // 준비 훅
-  const { prepareUrls, handlePrepare, handleUpload } = usePrepareLetter(
+  const { prepareUrls, handleModifyPrepare, handleUpload } = usePrepareLetter(
     files,
     texts
   );
@@ -54,7 +55,7 @@ export const useLetterCreate = (
    * 레터를 저장하고 서버에 생성 요청을 보냅니다.
    */
   const handleSave = async () => {
-    await handlePrepare();
+    await handleModifyPrepare(letterId);
   };
 
   const upload = async () => {
@@ -67,8 +68,7 @@ export const useLetterCreate = (
     const thumbnailFile = dataURLToFile(thumbnail, "thumbnail");
     await handleUpload(letterFile, bgFile, thumbnailFile);
     // 레터 생성 요청
-    await postAddLetter({
-      category: "LT001",
+    await patchmModifyLetter(letterId, {
       title: letterTitle,
       body: letterDescription,
     });
@@ -106,13 +106,13 @@ export const useLetterCreate = (
 
     // 핸들러
     handleDrop,
-    handlePrepare,
+    handleSave,
     handleTextAdd,
     handleBackgroundRemove,
     handleImageChange,
     generatePassword,
 
     // 응답값
-    addLetter,
+    modifyLetter,
   };
 };

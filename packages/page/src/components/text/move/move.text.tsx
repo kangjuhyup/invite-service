@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import { TextInput } from '@mantine/core';
-import useMoveResize from '../../image/move/move.resize.hook';
+import React, { useEffect } from "react";
+import { TextInput } from "@mantine/core";
+import useMoveResize from "../../image/move/move.resize.hook";
 
 export interface TextInfo {
   text: string;
@@ -24,7 +24,12 @@ const MoveText = ({
   onUpdate,
   onClick,
 }: MoveResizeTextProps) => {
-  const { position, handleMouseDown } = useMoveResize();
+  const { position, init, handleMouseDown } = useMoveResize();
+
+  useEffect(() => {
+    if (!textInfo) return;
+    init(textInfo.position, textInfo.size);
+  }, []);
 
   useEffect(() => {
     onUpdate({
@@ -38,13 +43,13 @@ const MoveText = ({
   return (
     <div
       style={{
-        position: 'absolute',
+        position: "absolute",
         left: position.x,
         top: position.y,
-        cursor: 'move',
-        userSelect: 'none',
+        cursor: "move",
+        userSelect: "none",
         zIndex: 1000 + index,
-        padding: '10px',
+        padding: "10px",
       }}
       onClick={onClick}
       onTouchStart={handleMouseDown}
@@ -55,18 +60,18 @@ const MoveText = ({
         onChange={(e) => onUpdate({ text: e.target.value })}
         styles={{
           root: {
-            width: 'auto',
+            width: "auto",
           },
           input: {
             fontSize: `${textInfo.size.width}px`,
             fontFamily: textInfo.font,
-            fontWeight: textInfo.bold ? 'bold' : 'normal',
-            background: 'transparent',
-            border: 'none',
+            fontWeight: textInfo.bold ? "bold" : "normal",
+            background: "transparent",
+            border: "none",
             color: textInfo.color,
             padding: 0,
-            '&:focus': {
-              border: '1px dashed #228be6',
+            "&:focus": {
+              border: "1px dashed #228be6",
             },
           },
         }}

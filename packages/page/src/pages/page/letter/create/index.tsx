@@ -41,8 +41,6 @@ const CreatePage = () => {
     letterTitle,
     letterDescription,
     isPublic,
-    prepareUrls,
-    addLetter,
     setFiles,
     setTexts,
     setBackgroundImage,
@@ -54,12 +52,12 @@ const CreatePage = () => {
     setLetterDescription,
     setIsPublic,
     handleDrop,
-    handleSave,
     handlePrepare,
     handleTextAdd,
     handleBackgroundRemove,
     handleImageChange,
     generatePassword,
+    addLetter,
   } = useLetterCreate(backgroundRef);
 
   const containerStyle = {
@@ -118,10 +116,6 @@ const CreatePage = () => {
           backgroundColor,
         }),
   });
-
-  useEffect(() => {
-    handleSave();
-  }, [prepareUrls]);
 
   useEffect(() => {
     if (addLetter) router.replace(`/page/letter/${addLetter.letterId}`);
@@ -225,11 +219,7 @@ const CreatePage = () => {
                 </Button>
                 <Button
                   onClick={async () => {
-                    handlePrepare();
-                    handleSave();
-                    if (!isPublic && addLetter) {
-                      await generatePassword(addLetter.letterId);
-                    }
+                    await handlePrepare();
                   }}
                   variant="filled"
                   color="blue"

@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import apiClient from '../common/http.client';
-import ApiResponse from '../common/response';
-import useErrorStore from '../store/error.store';
+import { useState } from "react";
+import apiClient from "../common/http.client";
+import ApiResponse from "../common/response";
+import useErrorStore from "../store/error.store";
 import {
   PrepareRequest,
   PrepareResponse,
@@ -12,8 +12,9 @@ import {
   GetLetterDetailResponse,
   AddLetterCommentRequest,
   GetLetterCommentResponse,
-} from './dto/letter.dto';
-import useLoginStore from '@/store/login.store';
+  ModifyLetterRequest,
+} from "./dto/letter.dto";
+import useLoginStore from "@/store/login.store";
 
 const useLetterApi = () => {
   const { setError } = useErrorStore();
@@ -24,10 +25,11 @@ const useLetterApi = () => {
   const [prepareUrls, setPrepareUrls] = useState<PrepareResponse>();
   const [addLetter, setAddLetter] = useState<AddLetterResponse>();
   const [comments, setComments] = useState<GetLetterCommentResponse>();
+  const [modifyLetter, setModifyLetter] = useState<AddLetterResponse>();
 
   const getLetter = async (letterId: number, token?: string) => {
     const response = await apiClient.get<ApiResponse<GetLetterResponse>>(
-      `/letter/${letterId}${token ? `/${token}` : ''}`,
+      `/letter/${letterId}${token ? `/${token}` : ""}`
     );
     if (!response.result) {
       setError(response.error);
@@ -41,9 +43,9 @@ const useLetterApi = () => {
       request,
       {
         headers: {
-          Authorization: `Bearer ${access ?? ''}`,
+          Authorization: `Bearer ${access ?? ""}`,
         },
-      },
+      }
     );
     if (!response.result) {
       setError(response.error);
@@ -57,9 +59,9 @@ const useLetterApi = () => {
       request,
       {
         headers: {
-          Authorization: `Bearer ${access ?? ''}`,
+          Authorization: `Bearer ${access ?? ""}`,
         },
-      },
+      }
     );
     if (!response.result) {
       setError(response.error);
@@ -73,9 +75,9 @@ const useLetterApi = () => {
       `/letter/${letterId}`,
       {
         headers: {
-          Authorization: `Bearer ${access ?? ''}`,
+          Authorization: `Bearer ${access ?? ""}`,
         },
-      },
+      }
     );
     if (!response.result) {
       setError(response.error);
@@ -87,13 +89,13 @@ const useLetterApi = () => {
       `/letter`,
       {
         headers: {
-          Authorization: `Bearer ${access ?? ''}`,
+          Authorization: `Bearer ${access ?? ""}`,
         },
         queryParams: {
           limit,
           skip,
         },
-      },
+      }
     );
     if (!response.result) {
       setError(response.error);
@@ -104,7 +106,7 @@ const useLetterApi = () => {
 
   const getLetterDetail = async (letterId: number) => {
     const response = await apiClient.get<ApiResponse<GetLetterDetailResponse>>(
-      `/letter/detail/${letterId}`,
+      `/letter/detail/${letterId}`
     );
     if (!response.result) {
       setError(response.error);
@@ -115,7 +117,7 @@ const useLetterApi = () => {
 
   const getLetterComments = async (letterId: number) => {
     const response = await apiClient.get<ApiResponse<GetLetterCommentResponse>>(
-      `/comment/letter/${letterId}`,
+      `/comment/letter/${letterId}`
     );
     if (!response.result) {
       setError(response.error);
@@ -130,9 +132,9 @@ const useLetterApi = () => {
       dto,
       {
         headers: {
-          Authorization: `Bearer ${access ?? ''}`,
+          Authorization: `Bearer ${access ?? ""}`,
         },
-      },
+      }
     );
     if (!response.result) {
       setError(response.error);
@@ -144,8 +146,8 @@ const useLetterApi = () => {
       ApiResponse<GetLetterDetailResponse>
     >(`/comment/${commentId}`, {
       headers: {
-        Authorization: `Bearer ${access ?? ''}`,
-        'x-comment-password': password,
+        Authorization: `Bearer ${access ?? ""}`,
+        "x-comment-password": password,
       },
     });
     if (!response.result) {
@@ -159,14 +161,52 @@ const useLetterApi = () => {
       {},
       {
         headers: {
-          Authorization: `Bearer ${access ?? ''}`,
+          Authorization: `Bearer ${access ?? ""}`,
         },
-      },
+      }
     );
     if (!response.result) {
       setError(response.error);
     } else {
       return response.data;
+    }
+  };
+
+  const getModifyPrepareUrls = async (
+    letterId: number,
+    request: PrepareRequest
+  ) => {
+    const response = await apiClient.post<ApiResponse<PrepareResponse>>(
+      `/letter/prepare-modify/${letterId}`,
+      request,
+      {
+        headers: {
+          Authorization: `Bearer ${access ?? ""}`,
+        },
+      }
+    );
+    if (!response.result) {
+      setError(response.error);
+    } else {
+      setPrepareUrls(response.data);
+    }
+  };
+
+  const patchmModifyLetter = async (
+    letterId: number,
+    dto: ModifyLetterRequest
+  ) => {
+    const response = await apiClient.patch<ApiResponse<AddLetterResponse>>(
+      `/letter/${letterId}`,
+      dto,
+      {
+        headers: {
+          Authorization: `Bearer ${access ?? ""}`,
+        },
+      }
+    );
+    if (!response.result) {
+      setError(response.error);
     }
   };
 
@@ -187,6 +227,9 @@ const useLetterApi = () => {
     addComment,
     deleteComment,
     generatePassword,
+    modifyLetter,
+    patchmModifyLetter,
+    getModifyPrepareUrls,
   };
 };
 

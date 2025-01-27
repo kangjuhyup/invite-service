@@ -126,6 +126,9 @@ export class LetterAttachmentService extends AttachmentBaseService {
       y: Number(meta.Metadata.y) || 0,
       z: Number(meta.Metadata.z) || 0,
       angle: Number(meta.Metadata.angle) || 0,
+      font: meta.Metadata.font,
+      color: meta.Metadata.color,
+      bold: meta.Metadata.bold ? meta.Metadata.bold === 'true' : undefined,
     };
     return detail;
   }

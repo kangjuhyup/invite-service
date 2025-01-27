@@ -14,6 +14,8 @@ export interface MetaDetail extends MetaDefault {
 
 export interface MetaText extends MetaDefault {
   font: string;
+  color: string;
+  bold: boolean;
 }
 
 export interface PrepareRequest {
@@ -113,6 +115,12 @@ interface Image {
   z: number;
 
   ang: number;
+
+  font?: string;
+
+  color?: string;
+
+  bold?: boolean;
 }
 
 export interface GetLetterDetailResponse {
@@ -138,4 +146,12 @@ export interface AddLetterCommentRequest {
   password: string;
   content: string;
   editor: string;
+}
+
+export interface ModifyLetterRequest {
+  title?: string;
+  body?: string;
+  commentYn?: boolean;
+  attendYn?: boolean;
+  publicYn?: boolean;
 }

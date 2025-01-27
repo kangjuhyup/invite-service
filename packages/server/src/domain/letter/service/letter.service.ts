@@ -47,9 +47,10 @@ export class LetterService {
   }
 
   async checkLetterAuthor(letterId: number, user: User) {
-    const letter = await this.letterRepository.selectLetterFromId({
+    const letter = await this.letterRepository.selectLetterFromIdWithoutRelations({
       letterId,
     });
+    this.logger.debug(`letter : ${JSON.stringify(letter)}`);
     if (letter.userId !== user.id)
       throw new Error('작성자가 아닙니다.');
   }

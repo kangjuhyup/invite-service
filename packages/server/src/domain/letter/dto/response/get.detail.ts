@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsNotEmpty,
   IsOptional,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -103,6 +104,32 @@ class Image {
   @IsNumber()
   ang: number;
 
+  @ApiProperty({
+    description: '텍스트 폰트 종류',
+    example: 'Arial',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  font?: string;
+  @ApiProperty({
+    description: '텍스트 색상',
+    example: 'rgb(255, 0, 0)',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  color?: string;
+
+  @ApiProperty({
+    description: '텍스트 볼드 여부',
+    example: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  bold?: boolean;
+
   static of(letterAttachment: LetterAttachmentEntity) {
     const img = new Image();
     img.path = letterAttachment.attachment.attachmentPath;
@@ -112,6 +139,9 @@ class Image {
     img.y = letterAttachment.y;
     img.z = letterAttachment.z;
     img.ang = letterAttachment.angle;
+    img.font = letterAttachment.font ? decodeURIComponent(letterAttachment.font) : undefined;
+    img.color = letterAttachment.color;
+    img.bold = letterAttachment.bold;
     return img;
   }
 }

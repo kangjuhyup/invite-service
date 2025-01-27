@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import {
@@ -21,6 +21,7 @@ import { LetterCommentEntity } from '../entity/letter.comment';
 
 @Injectable()
 export class LetterRepository {
+  private readonly logger = new Logger(LetterRepository.name);
   constructor(
     @InjectRepository(LetterEntity)
     private readonly letter: Repository<LetterEntity>,
@@ -48,8 +49,8 @@ export class LetterRepository {
       .leftJoinAndSelect(
         'letter.letterAttachment',
         'letterAttachment',
-        `letterAttachment.${LetterAttachmentColumn.attachmentCode} = :code`,
-        { code: LetterAttachmentCode.THUMBNAIL },
+        `letterAttachment.${LetterAttachmentColumn.attachmentCode} = :code AND letterAttachment.${DefaultColumn.useYn} = :useYn`,
+        { code: LetterAttachmentCode.THUMBNAIL, useYn: YN.Y },
       )
       .leftJoinAndSelect(
         'letterAttachment.attachment',
@@ -64,6 +65,19 @@ export class LetterRepository {
       .getManyAndCount();
   }
 
+  async selectLetterFromIdWithoutRelations({
+    letterId,
+    entityManager,
+  }: Pick<SelectLetter, 'letterId' | 'entityManager'>): Promise<LetterEntity> {
+    const repo = this._getRepository(
+      'letter',
+      entityManager,
+    ) as Repository<LetterEntity>;
+    return await repo.findOne({
+      where: { letterId },
+    });
+  }
+
   async selectLetterFromId({
     letterId,
     entityManager,
@@ -74,13 +88,13 @@ export class LetterRepository {
     ) as Repository<LetterEntity>;
     const qb = repo
       .createQueryBuilder('letter')
-      .innerJoinAndSelect(
+      .leftJoinAndSelect(
         'letter.letterAttachment',
         'letterAttachment',
         `letterAttachment.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
-      .innerJoinAndSelect(
+      .leftJoinAndSelect(
         'letterAttachment.attachment',
         'attachment',
         `attachment.${DefaultColumn.useYn} = :useYn`,
@@ -93,6 +107,7 @@ export class LetterRepository {
         { useYn: YN.Y },
       )
       .where({ letterId, useYn: YN.Y });
+    this.logger.debug(`qb : ${JSON.stringify(qb.getSql())}`);
     return await qb.getOne();
   }
 

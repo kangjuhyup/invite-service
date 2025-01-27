@@ -19,10 +19,10 @@ import { BACKGROUND_HEIGHT, BACKGROUND_WIDTH } from "@/const";
 import { useDisclosure } from "@mantine/hooks";
 import BackgroundSelect from "@/components/background/background.select";
 import { useDisablePullToRefresh } from "@/hooks/disable.refresh.hook";
-import { useLetterCreate } from "@/hooks/letter.create.hook";
 import { useRouter } from "next/router";
 import useLetterApi from "@/api/letter.api";
 import useImageApi from "@/api/image.api";
+import { useLetterModify } from "../../../../hooks/letter.modify.hook";
 
 interface ComponentContent {
   type: string;
@@ -55,8 +55,6 @@ const ModifyLetterPage = () => {
     letterTitle,
     letterDescription,
     isPublic,
-    prepareUrls,
-    addLetter,
     setFiles,
     setTexts,
     setBackgroundImage,
@@ -69,12 +67,11 @@ const ModifyLetterPage = () => {
     setIsPublic,
     handleDrop,
     handleSave,
-    handlePrepare,
     handleTextAdd,
     handleBackgroundRemove,
-    generatePassword,
     handleImageChange,
-  } = useLetterCreate(backgroundRef);
+    generatePassword,
+  } = useLetterModify(Number(letterId), backgroundRef);
 
   useEffect(() => {
     if (!letterId) return;
@@ -106,18 +103,15 @@ const ModifyLetterPage = () => {
   };
 
   const setLetter = async () => {
-    // 배경 이미지 설정
     if (!letterDetail || !letterDetail.background) return;
     const backgroundUrl = await getPresignedUrl(letterDetail.background.path);
     if (backgroundUrl) {
       setBackgroundImage(backgroundUrl);
     }
 
-    // 제목과 설명 설정
     setLetterTitle(letterDetail.title);
     setLetterDescription(letterDetail.body || "");
 
-    // 컴포넌트 설정
     const newFiles: any[] = [];
     const newTexts: any[] = [];
 
@@ -135,9 +129,9 @@ const ModifyLetterPage = () => {
             height: detailComponent.height,
           },
           position: { x: detailComponent.x, y: detailComponent.y },
-          font: "Noto Sans KR",
-          bold: false,
-          color: "black",
+          font: detailComponent.font,
+          bold: detailComponent.bold,
+          color: detailComponent.color,
         });
       } else {
         newFiles.push({
@@ -150,7 +144,6 @@ const ModifyLetterPage = () => {
         });
       }
     });
-    console.log(newFiles, newTexts);
     setFiles(newFiles);
     setTexts(newTexts);
   };
@@ -160,7 +153,14 @@ const ModifyLetterPage = () => {
     path: string
   ): Promise<ComponentContent> => {
     try {
-      const response = await fetch(url, { method: "GET" });
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Accept: "*/*",
+        },
+        credentials: "omit",
+      });
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -168,13 +168,12 @@ const ModifyLetterPage = () => {
       const type = response.headers.get("Content-Type") || "";
       if (type === "text/plain") {
         const text = await response.text();
-        console.log(text);
         return { type, text, url, path };
       }
       return { type, url, path };
     } catch (error) {
       console.error("Error fetching content:", error);
-      return { type: "", path };
+      throw error;
     }
   };
 
@@ -234,14 +233,6 @@ const ModifyLetterPage = () => {
           backgroundColor,
         }),
   });
-
-  useEffect(() => {
-    handleSave();
-  }, [prepareUrls]);
-
-  useEffect(() => {
-    if (addLetter) router.replace(`/page/letter/${addLetter.letterId}`);
-  }, [addLetter]);
 
   return (
     <>
@@ -341,10 +332,9 @@ const ModifyLetterPage = () => {
                 </Button>
                 <Button
                   onClick={async () => {
-                    handlePrepare();
-                    handleSave();
-                    if (!isPublic && addLetter) {
-                      await generatePassword(addLetter.letterId);
+                    await handleSave();
+                    if (!isPublic) {
+                      await generatePassword(Number(letterId));
                     }
                   }}
                   variant="filled"

@@ -7,6 +7,9 @@ export const LetterAttachmentColumn = {
   x: 'x',
   y: 'y',
   z: 'z',
+  font: 'font',
+  color: 'clr',
+  bold: 'bld',
 } as const;
 
 export type LetterAttachmentColumn =

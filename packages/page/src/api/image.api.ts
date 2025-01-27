@@ -12,6 +12,9 @@ export interface ImageMetaData {
   z?: string;
   angle?: string;
   session?: string;
+  font?: string;
+  color?: string;
+  bold?: string;
 }
 
 const useImageApi = () => {
@@ -36,6 +39,7 @@ const useImageApi = () => {
     file: File | string,
     metadata: ImageMetaData
   ) => {
+    console.log("putImageToPresignedUrl", url, file, metadata);
     try {
       const response = await fetch(url, {
         method: "PUT",
@@ -50,6 +54,9 @@ const useImageApi = () => {
           ...(metadata.y && { "x-amz-meta-y": metadata.y }),
           ...(metadata.z && { "x-amz-meta-z": metadata.z }),
           ...(metadata.angle && { "x-amz-meta-angle": metadata.angle }),
+          ...(metadata.font && { "x-amz-meta-font": metadata.font }),
+          ...(metadata.color && { "x-amz-meta-color": metadata.color }),
+          ...(metadata.bold && { "x-amz-meta-bold": metadata.bold }),
         },
       });
 
