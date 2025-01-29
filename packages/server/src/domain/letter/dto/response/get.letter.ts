@@ -63,8 +63,8 @@ export class Letter {
     response.title = letter.title;
     response.body = letter.body;
     response.path = attachment.attachment.attachmentPath;
-    response.width = attachment.width;
-    response.height = attachment.height;
+    response.width = attachment.attachment.metadata.width;
+    response.height = attachment.attachment.metadata.height;
     return response;
   }
 }
