@@ -1,7 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LetterDataSource } from './datasource/letter.datasource';
 import { plainToInstance } from 'class-transformer';
 import { LetterRepository } from './repository/letter';
 import { UserRepository } from './repository/user';
@@ -17,6 +16,7 @@ import { TemplateEntity } from './entity/template/template';
 import { TemplateAttachmentEntity } from './entity/template/template.attachment';
 import { MetadataEntity } from './entity/attachment/metadata';
 import { TemplateRepository } from './repository/template';
+import { LetterDataSource } from './datasource/letter.datasource';
 
 const repositories = [LetterRepository, AttachmentRepository, UserRepository, TemplateRepository];
 

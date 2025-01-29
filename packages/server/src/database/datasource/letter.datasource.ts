@@ -1,4 +1,5 @@
 import { DataSource } from 'typeorm';
+import { join } from 'path';
 
 export const LetterDataSource = (param: {
   type: any;
@@ -11,6 +12,6 @@ export const LetterDataSource = (param: {
 }) =>
   new DataSource({
     ...param,
-    entities: [__dirname + '/../entity/*.{ts,js}'],
-    migrations: [__dirname + '/../migration/*.{ts,js}'],
+    entities: [join(__dirname, '../entity/**/*.{ts,js}')],
+    migrations: [join(__dirname, '../migrations/*.{ts,js}')],
   });

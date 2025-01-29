@@ -26,6 +26,8 @@ RUN mkdir -p /usr/src/app/logs
 
 RUN yarn workspaces focus server --production
 
+RUN yarn workspace server run-migrations
+
 EXPOSE 3003
 
 
