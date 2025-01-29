@@ -16,8 +16,9 @@ import { UserAttachmentEntity } from './entity/user/user.attachment';
 import { TemplateEntity } from './entity/template/template';
 import { TemplateAttachmentEntity } from './entity/template/template.attachment';
 import { MetadataEntity } from './entity/attachment/metadata';
+import { TemplateRepository } from './repository/template';
 
-const repositories = [LetterRepository, AttachmentRepository, UserRepository];
+const repositories = [LetterRepository, AttachmentRepository, UserRepository, TemplateRepository];
 
 @Global()
 @Module({

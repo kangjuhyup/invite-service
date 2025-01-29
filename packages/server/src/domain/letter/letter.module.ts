@@ -14,6 +14,6 @@ const services = [LetterService, LetterAttachmentService];
   imports: [CommentModule],
   controllers: [LetterController],
   providers: [LetterFacade, ...services, ...transactions],
-  exports: [LetterFacade],
+  exports: [...services],
 })
 export class LetterModule {}
