@@ -16,6 +16,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { MetricInterceptor } from './interceptor/http.metric';
 import { ImageModule } from './domain/image/image.module';
 import { CommentModule } from './domain/comment/comment.module';
+import { TemplateModule } from './domain/template/template.module';
 
 export const routers = [
   AuthModule.forRootAsync({
@@ -30,6 +31,7 @@ export const routers = [
   LetterModule,
   ImageModule,
   CommentModule,
+  TemplateModule,
 ];
 
 export const modules = [

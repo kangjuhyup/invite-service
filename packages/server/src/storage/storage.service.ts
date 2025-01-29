@@ -6,6 +6,7 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
+  CopyObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
@@ -89,6 +90,26 @@ export class StorageService {
       if (err.name !== 'NotFound') {
         throw err;
       }
+    }
+  }
+
+  async copyObject(param: {
+    sourceBucket: string;
+    sourceKey: string;
+    destinationBucket: string;
+    destinationKey: string;
+  }): Promise<void> {
+    const command = new CopyObjectCommand({
+      Bucket: param.destinationBucket,
+      CopySource: `/${param.sourceBucket}/${param.sourceKey}`,
+      Key: param.destinationKey,
+    });
+
+    try {
+      await this.s3Client.send(command);
+    } catch (error) {
+      console.error('Error copying object:', error);
+      throw error;
     }
   }
 }

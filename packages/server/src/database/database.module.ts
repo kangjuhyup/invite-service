@@ -5,14 +5,17 @@ import { LetterDataSource } from './datasource/letter.datasource';
 import { plainToInstance } from 'class-transformer';
 import { LetterRepository } from './repository/letter';
 import { UserRepository } from './repository/user';
-import { LetterEntity } from './entity/letter';
-import { UserEntity } from './entity/user';
-import { LetterAttachmentEntity } from './entity/letter.attachment';
-import { AttachmentEntity } from './entity/attachment';
+import { LetterEntity } from './entity/letter/letter';
+import { UserEntity } from './entity/user/user';
+import { LetterAttachmentEntity } from './entity/letter/letter.attachment';
+import { AttachmentEntity } from './entity/attachment/attachment';
 import { AttachmentRepository } from './repository/attachment';
 import { Enviroments } from '@app/domain/dto/env';
-import { LetterCommentEntity } from './entity/letter.comment';
-import { UserAttachmentEntity } from './entity/user.attachment';
+import { LetterCommentEntity } from './entity/letter/letter.comment';
+import { UserAttachmentEntity } from './entity/user/user.attachment';
+import { TemplateEntity } from './entity/template/template';
+import { TemplateAttachmentEntity } from './entity/template/template.attachment';
+import { MetadataEntity } from './entity/attachment/metadata';
 
 const repositories = [LetterRepository, AttachmentRepository, UserRepository];
 
@@ -40,12 +43,15 @@ const repositories = [LetterRepository, AttachmentRepository, UserRepository];
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([
+      AttachmentEntity,
+      MetadataEntity,
       UserEntity,
       UserAttachmentEntity,
       LetterEntity,
       LetterAttachmentEntity,
-      AttachmentEntity,
       LetterCommentEntity,
+      TemplateEntity,
+      TemplateAttachmentEntity,
     ]),
   ],
   providers: [...repositories],
