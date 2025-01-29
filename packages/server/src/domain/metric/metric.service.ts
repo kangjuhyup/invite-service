@@ -70,7 +70,12 @@ export class MetricService {
     this.endpointRequestsCounter.inc({ endpoint, method, status });
   }
 
-  incrementHttpError(method: string, path: string, status: number, errorType: string) {
+  incrementHttpError(
+    method: string,
+    path: string,
+    status: number,
+    errorType: string,
+  ) {
     this.httpErrorsCounter.inc({ method, path, status, error_type: errorType });
   }
 
@@ -82,7 +87,12 @@ export class MetricService {
     this.memoryGauge.set({ type: 'external' }, memoryUsage.external);
   }
 
-  recordHttpRequestDuration(path: string, method: string, status: number, duration: number) {
+  recordHttpRequestDuration(
+    path: string,
+    method: string,
+    status: number,
+    duration: number,
+  ) {
     this.httpRequestHistogram.observe({ path, method, status }, duration);
   }
 
