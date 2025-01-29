@@ -1,6 +1,6 @@
-import { UserEntity } from '@app/database/entity/user';
+import { UserEntity } from '@app/database/entity/user/user';
 import { DefaultParameter } from './default';
-import { UserAttachmentEntity } from '@app/database/entity/user.attachment';
+import { UserAttachmentEntity } from '@app/database/entity/user/user.attachment';
 
 export class SelectUser extends DefaultParameter {
   userId: string;

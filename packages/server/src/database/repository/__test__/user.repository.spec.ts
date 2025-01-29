@@ -2,10 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserRepository } from '../user';
-import { UserEntity } from '../../entity/user';
+import { UserEntity } from '../../entity/user/user';
 import { YN } from '@app/util/yn';
-import { UserAttachmentEntity } from '@app/database/entity/user.attachment';
-import { AttachmentEntity } from '@app/database/entity/attachment';
+import { UserAttachmentEntity } from '@app/database/entity/user/user.attachment';
+import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
 
 describe('UserRepository', () => {
   let userRepository: UserRepository;
@@ -66,11 +66,11 @@ describe('UserRepository', () => {
           email: 'test@example.com',
           useYn: YN.Y,
         },
-        relations : {
+        relations: {
           userAttachment: {
-            attachment: true
-          }
-        }
+            attachment: true,
+          },
+        },
       });
     });
 
@@ -112,11 +112,11 @@ describe('UserRepository', () => {
           userId: 'test-user-id',
           useYn: YN.Y,
         },
-        relations : {
+        relations: {
           userAttachment: {
-            attachment: true
-          }
-        }
+            attachment: true,
+          },
+        },
       });
     });
 

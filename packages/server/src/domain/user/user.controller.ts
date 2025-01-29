@@ -67,7 +67,7 @@ export class UserController {
   async updateProfileImage(@GetUser() user: User) {
     return {
       result: true,
-      data : await this.userFacade.validateProfileImage(user),
+      data: await this.userFacade.validateProfileImage(user),
     };
   }
 }

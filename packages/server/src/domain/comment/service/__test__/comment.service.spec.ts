@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CommentService } from '../comment.service';
 import { LetterRepository } from '@app/database/repository/letter';
 import { mock, instance, when, verify, anything, deepEqual } from 'ts-mockito';
-import { LetterCommentEntity } from '@app/database/entity/letter.comment';
+import { LetterCommentEntity } from '@app/database/entity/letter/letter.comment';
 import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InsertResult } from 'typeorm';
 

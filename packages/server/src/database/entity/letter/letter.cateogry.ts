@@ -1,8 +1,8 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from 'typeorm';
-import { DefaultEntity } from './default';
+import { DefaultEntity } from '../default';
 import { LetterEntity } from './letter';
 import { LetterCategoryCode, LetterCategory } from '@app/util/category';
-import { LetterCategoryColumn } from '../column/letter.category.column';
+import { LetterCategoryColumn } from '../../column/letter.category.column';
 
 @Entity({ name: LetterCategoryColumn.table })
 export class LetterCategoryEntity extends DefaultEntity {

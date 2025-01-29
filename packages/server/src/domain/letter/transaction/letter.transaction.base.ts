@@ -1,19 +1,22 @@
-import { AttachmentEntity } from '@app/database/entity/attachment';
-import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
+import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
+import { MetadataEntity } from '@app/database/entity/attachment/metadata';
+import { LetterAttachmentEntity } from '@app/database/entity/letter/letter.attachment';
 import { AttachmentRepository } from '@app/database/repository/attachment';
 import { LetterRepository } from '@app/database/repository/letter';
-import { Attachment } from '@app/database/repository/param/attachment';
-import { LetterAttachment } from '@app/database/repository/param/letter';
 import { BaseTransaction } from '@app/database/transaction.base';
 import { DataSource, EntityManager } from 'typeorm';
 
 export type AttachmentDetail = Pick<AttachmentEntity, 'attachmentPath'> &
+  Pick<LetterAttachmentEntity, 'attachmentCode'> &
   Pick<
-    LetterAttachmentEntity,
-    'attachmentCode' | 'angle' | 'width' | 'height' | 'x' | 'y' | 'z' | 'font' | 'color' | 'bold'
+    MetadataEntity,
+    'angle' | 'width' | 'height' | 'x' | 'y' | 'z' | 'font' | 'color' | 'bold'
   >;
 
-export abstract class LetterTransactionBase<I, O> extends BaseTransaction<I, O> {
+export abstract class LetterTransactionBase<I, O> extends BaseTransaction<
+  I,
+  O
+> {
   constructor(
     protected readonly ds: DataSource,
     protected readonly letterRepository: LetterRepository,
@@ -27,17 +30,33 @@ export abstract class LetterTransactionBase<I, O> extends BaseTransaction<I, O> 
     attachmentDetail: AttachmentDetail,
     entityManager: EntityManager,
   ): Promise<number> {
-    const attachment: Attachment = {
-      attachmentPath: attachmentDetail.attachmentPath,
-      creator: this.transactionName,
-      updator: this.transactionName,
-    };
-
+    const attachment = AttachmentEntity.of(
+      attachmentDetail.attachmentPath,
+      this.transactionName,
+    );
     const result = await this.attachmentRepository.insertAttachment({
       attachment,
       entityManager,
     });
-    return result.identifiers[0].attachmentId;
+    const attachmentId = result.identifiers[0].attachmentId;
+    const metadata = MetadataEntity.of(
+      this.transactionName,
+      attachmentId,
+      attachmentDetail.angle,
+      attachmentDetail.width,
+      attachmentDetail.height,
+      attachmentDetail.x,
+      attachmentDetail.y,
+      attachmentDetail.z,
+      attachmentDetail.font,
+      attachmentDetail.color,
+      attachmentDetail.bold,
+    );
+    await this.attachmentRepository.insertMetadata({
+      metadata,
+      entityManager,
+    });
+    return attachmentId;
   }
 
   protected async insertLetterAttachments(
@@ -49,22 +68,14 @@ export abstract class LetterTransactionBase<I, O> extends BaseTransaction<I, O> 
     >,
     entityManager: EntityManager,
   ): Promise<void> {
-    const letterAttachments: LetterAttachment[] = attachments.map((a) => ({
-      letterId,
-      attachmentId: a.attachmentId,
-      attachmentCode: a.attachmentCode,
-      angle: a.angle,
-      width: a.width,
-      height: a.height,
-      x: a.x,
-      y: a.y,
-      z: a.z,
-      font: a.font,
-      color: a.color,
-      bold: a.bold,
-      creator: this.transactionName,
-      updator: this.transactionName,
-    }));
+    const letterAttachments = attachments.map((a) =>
+      LetterAttachmentEntity.of(
+        letterId,
+        a.attachmentCode,
+        a.attachmentId,
+        this.transactionName,
+      ),
+    );
 
     await this.letterRepository.insertLetterAttachment({
       letterAttachments,

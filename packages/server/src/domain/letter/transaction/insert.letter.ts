@@ -1,12 +1,27 @@
 import { AttachmentRepository } from '@app/database/repository/attachment';
 import { LetterRepository } from '@app/database/repository/letter';
-import { Letter } from '@app/database/repository/param/letter';
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
-import { LetterTransactionBase, AttachmentDetail } from './letter.transaction.base';
+import {
+  LetterTransactionBase,
+  AttachmentDetail,
+} from './letter.transaction.base';
+import { LetterEntity } from '@app/database/entity/letter/letter';
+import { LetterCategoryCode } from '@app/util/category';
+import { booleanToYN } from '../../../util/yn';
+
+interface LetterDetail {
+  userId: string;
+  letterCategoryCode: LetterCategoryCode;
+  title: string;
+  body?: string;
+  comment?: boolean;
+  attend?: boolean;
+  public?: boolean;
+}
 
 interface Input {
-  letter: Omit<Letter,'creator'|'updator'>;
+  letter: LetterDetail;
   thumbnailAttachment: AttachmentDetail;
   backgroundAttachment: AttachmentDetail;
   letterAttachment: AttachmentDetail;
@@ -14,13 +29,21 @@ interface Input {
 }
 
 @Injectable()
-export class InsertLetterTransaction extends LetterTransactionBase<Input, number> {
+export class InsertLetterTransaction extends LetterTransactionBase<
+  Input,
+  number
+> {
   constructor(
     ds: DataSource,
     letterRepository: LetterRepository,
     attachmentRepository: AttachmentRepository,
   ) {
-    super(ds, letterRepository, attachmentRepository, InsertLetterTransaction.name);
+    super(
+      ds,
+      letterRepository,
+      attachmentRepository,
+      InsertLetterTransaction.name,
+    );
   }
 
   protected async execute(
@@ -34,14 +57,7 @@ export class InsertLetterTransaction extends LetterTransactionBase<Input, number
     entityManager: EntityManager,
   ): Promise<number> {
     // 1. 레터 삽입
-    const letterId = await this.#insertLetter(
-      {
-        ...letter,
-        creator: this.transactionName,
-        updator: this.transactionName,
-      },
-      entityManager,
-    );
+    const letterId = await this.#insertLetter(letter, entityManager);
 
     // 2. 첨부 파일 삽입 (병렬 처리)
     const [
@@ -70,11 +86,7 @@ export class InsertLetterTransaction extends LetterTransactionBase<Input, number
     ];
 
     // 4. 레터 첨부 파일 관계 삽입
-    await this.insertLetterAttachments(
-      letterId,
-      allAttachments,
-      entityManager,
-    );
+    await this.insertLetterAttachments(letterId, allAttachments, entityManager);
 
     return letterId;
   }
@@ -83,15 +95,21 @@ export class InsertLetterTransaction extends LetterTransactionBase<Input, number
    * 레터를 삽입하고, 삽입된 레터의 ID를 반환합니다.
    */
   async #insertLetter(
-    letter: Letter,
+    letter: LetterDetail,
     entityManager: EntityManager,
   ): Promise<number> {
+    const letterEntity = LetterEntity.of({
+      userId: letter.userId,
+      letterCategoryCode: letter.letterCategoryCode,
+      title: letter.title,
+      body: letter.body,
+      commentYn: booleanToYN(letter.comment),
+      attendYn: booleanToYN(letter.attend),
+      publicYn: booleanToYN(letter.public),
+      creator: this.transactionName,
+    });
     const result = await this.letterRepository.insertLetter({
-      letter: {
-        ...letter,
-        creator: this.transactionName,
-        updator: this.transactionName,
-      },
+      letter: letterEntity,
       entityManager,
     });
     return result.identifiers[0].letterId;

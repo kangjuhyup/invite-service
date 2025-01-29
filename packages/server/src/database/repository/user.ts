@@ -8,9 +8,9 @@ import {
   UpsertUserProfileImage,
 } from './param/user';
 import { YN } from '@app/util/yn';
-import { UserEntity } from '../entity/user';
-import { UserAttachmentEntity } from '../entity/user.attachment';
-import { AttachmentEntity } from '../entity/attachment';
+import { UserEntity } from '../entity/user/user';
+import { UserAttachmentEntity } from '../entity/user/user.attachment';
+import { AttachmentEntity } from '../entity/attachment/attachment';
 import { UserColumn } from '../column/user.column';
 import { UserAttachmentColumn } from '../column/user.attachment.column';
 import { AttachmentColumn } from '../column/attachment.column';
@@ -35,11 +35,11 @@ export class UserRepository {
         email,
         useYn: YN.Y,
       },
-      relations : {
+      relations: {
         userAttachment: {
-          attachment: true
-        }
-      }
+          attachment: true,
+        },
+      },
     });
   }
 
@@ -120,7 +120,11 @@ export class UserRepository {
       .createQueryBuilder()
       .insert()
       .values(userAttachment)
-      .orUpdate([UserColumn.userId, UserAttachmentColumn.attachmentCode, AttachmentColumn.attachmentId])
+      .orUpdate([
+        UserColumn.userId,
+        UserAttachmentColumn.attachmentCode,
+        AttachmentColumn.attachmentId,
+      ])
       .execute();
   }
 

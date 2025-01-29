@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
-import { UserEntity } from '@app/database/entity/user';
+import { UserEntity } from '@app/database/entity/user/user';
 import { UserRepository } from '@app/database/repository/user';
 import { UserService } from '../service/user.service';
 

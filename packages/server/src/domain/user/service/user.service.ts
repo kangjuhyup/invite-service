@@ -1,4 +1,4 @@
-import { UserEntity } from '@app/database/entity/user';
+import { UserEntity } from '@app/database/entity/user/user';
 import { UserRepository } from '@app/database/repository/user';
 import { randomString } from '@app/util/random';
 import { Injectable, UnauthorizedException } from '@nestjs/common';

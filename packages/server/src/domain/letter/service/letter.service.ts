@@ -1,13 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GetLetterPageRequest } from '../dto/request/get.page';
-import { GetLetterPageResponse } from '../dto/response/get.page';
-import { GetLetterDetailResponse } from '../dto/response/get.detail';
 import { LetterRepository } from '@app/database/repository/letter';
 import { User } from '@app/jwt/user';
-import { GetLetterResponse } from '../dto/response/get.letter';
-import { LetterAttachmentCode } from '@app/util/attachment';
 import { randomString } from '@app/util/random';
-import { LetterEntity } from '@app/database/entity/letter';
+import { LetterEntity } from '@app/database/entity/letter/letter';
 
 @Injectable()
 export class LetterService {
@@ -47,15 +43,16 @@ export class LetterService {
   }
 
   async checkLetterAuthor(letterId: number, user: User) {
-    const letter = await this.letterRepository.selectLetterFromIdWithoutRelations({
-      letterId,
-    });
+    const letter =
+      await this.letterRepository.selectLetterFromIdWithoutRelations({
+        letterId,
+      });
     this.logger.debug(`letter : ${JSON.stringify(letter)}`);
     if (letter.userId !== user.id)
       throw new Error('작성자가 아닙니다.');
   }
 
-  async updateLetter(param : {
+  async updateLetter(param: {
     letterId: number;
     title?: string;
     body?: string;

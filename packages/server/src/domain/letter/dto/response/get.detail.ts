@@ -9,11 +9,12 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { LetterEntity } from '@app/database/entity/letter';
-import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
+import { LetterEntity } from '@app/database/entity/letter/letter';
+import { LetterAttachmentEntity } from '@app/database/entity/letter/letter.attachment';
 import { LetterAttachmentCode } from '@app/util/attachment';
+import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
 
-class Background {
+export class Background {
   @ApiProperty({
     description: '배경 이미지 경로',
     example: 'https://example.com/bg.png',
@@ -38,16 +39,16 @@ class Background {
   @IsNumber()
   height: number;
 
-  static of(letterAttachment: LetterAttachmentEntity) {
+  static of(attachment: AttachmentEntity) {
     const bg = new Background();
-    bg.path = letterAttachment.attachment.attachmentPath;
-    bg.width = letterAttachment.width;
-    bg.height = letterAttachment.height;
+    bg.path = attachment.attachmentPath;
+    bg.width = attachment.metadata.width;
+    bg.height = attachment.metadata.height;
     return bg;
   }
 }
 
-class Image {
+export class Component {
   @ApiProperty({
     description: '이미지 경로',
     example: 'https://example.com/img.png',
@@ -130,18 +131,20 @@ class Image {
   @IsBoolean()
   bold?: boolean;
 
-  static of(letterAttachment: LetterAttachmentEntity) {
-    const img = new Image();
-    img.path = letterAttachment.attachment.attachmentPath;
-    img.width = letterAttachment.width;
-    img.height = letterAttachment.height;
-    img.x = letterAttachment.x;
-    img.y = letterAttachment.y;
-    img.z = letterAttachment.z;
-    img.ang = letterAttachment.angle;
-    img.font = letterAttachment.font ? decodeURIComponent(letterAttachment.font) : undefined;
-    img.color = letterAttachment.color;
-    img.bold = letterAttachment.bold;
+  static of(attachment: AttachmentEntity) {
+    const img = new Component();
+    img.path = attachment.attachmentPath;
+    img.width = attachment.metadata.width;
+    img.height = attachment.metadata.height;
+    img.x = attachment.metadata.x;
+    img.y = attachment.metadata.y;
+    img.z = attachment.metadata.z;
+    img.ang = attachment.metadata.angle;
+    img.font = attachment.metadata.font
+      ? decodeURIComponent(attachment.metadata.font)
+      : undefined;
+    img.color = attachment.metadata.color;
+    img.bold = attachment.metadata.bold;
     return img;
   }
 }
@@ -166,13 +169,13 @@ export class GetLetterDetailResponse {
 
   @ApiPropertyOptional({
     description: '이미지 정보 배열',
-    type: [Image],
+    type: [Component],
   })
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => Image)
-  components?: Image[];
+  @Type(() => Component)
+  components?: Component[];
 
   static of(letter: LetterEntity) {
     const response = new GetLetterDetailResponse();
@@ -181,11 +184,11 @@ export class GetLetterDetailResponse {
     response.background = Background.of(
       letter.letterAttachment.find(
         (la) => la.attachmentCode === LetterAttachmentCode.BACKGROUND,
-      ),
+      )?.attachment,
     );
     response.components = letter.letterAttachment
       .filter((la) => la.attachmentCode === LetterAttachmentCode.COMPONENT)
-      .map((la) => Image.of(la));
+      .map((la) => Component.of(la.attachment));
     return response;
   }
 }

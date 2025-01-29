@@ -1,4 +1,4 @@
-import { LetterCommentEntity } from '@app/database/entity/letter.comment';
+import { LetterCommentEntity } from '@app/database/entity/letter/letter.comment';
 
 class Comment {
   id: number;

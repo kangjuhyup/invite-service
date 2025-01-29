@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LetterCommentEntity } from '../entity/letter.comment';
+import { LetterCommentEntity } from '../entity/letter/letter.comment';
 import { Repository } from 'typeorm';
 import { YN } from '@app/util/yn';
 

@@ -1,35 +1,8 @@
-import { LetterEntity } from '@app/database/entity/letter';
-import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
+import { LetterEntity } from '@app/database/entity/letter/letter';
+import { LetterAttachmentEntity } from '@app/database/entity/letter/letter.attachment';
 import { LetterCategoryCode } from '@app/util/category';
 import { DefaultParameter } from './default';
-import { LetterCommentEntity } from '@app/database/entity/letter.comment';
-
-export type Letter = Pick<
-  LetterEntity,
-  | 'userId'
-  | 'letterCategoryCode'
-  | 'title'
-  | 'body'
-  | 'commentYn'
-  | 'attendYn'
-  | 'creator'
-  | 'updator'
->;
-
-export type LetterAttachment = Pick<
-  LetterAttachmentEntity,
-  | 'letterId'
-  | 'attachmentId'
-  | 'attachmentCode'
-  | 'angle'
-  | 'width'
-  | 'height'
-  | 'x'
-  | 'y'
-  | 'z'
-  | 'creator'
-  | 'updator'
->;
+import { LetterCommentEntity } from '@app/database/entity/letter/letter.comment';
 
 export class SelectLetter extends DefaultParameter {
   userId: string;
@@ -41,7 +14,7 @@ export class SelectLetter extends DefaultParameter {
 }
 
 export class InsertLetter extends DefaultParameter {
-  letter: Letter;
+  letter: LetterEntity;
 }
 
 export class UpdateLetter extends DefaultParameter {
@@ -60,7 +33,7 @@ export class DeleteLetter extends DefaultParameter {
 }
 
 export class InsertLetterAttachment extends DefaultParameter {
-  letterAttachments: Array<LetterAttachment>;
+  letterAttachments: Array<LetterAttachmentEntity>;
 }
 
 export class DeleteLetterAttachment extends DefaultParameter {

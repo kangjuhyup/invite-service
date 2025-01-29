@@ -84,12 +84,12 @@ describe('ModifyLetterRequest', () => {
     it('boolean 필드가 boolean이 아닐 때 에러가 발생해야 합니다', async () => {
       const testDto = plainToInstance(ModifyLetterRequest, {
         commentYn: 'true', // 문자열로 전달
-        attendYn: 1,      // 숫자로 전달
-        publicYn: {},     // 객체로 전달
+        attendYn: 1, // 숫자로 전달
+        publicYn: {}, // 객체로 전달
       });
       const errors = await validate(testDto);
       expect(errors.length).toBe(3);
-      errors.forEach(error => {
+      errors.forEach((error) => {
         expect(error.constraints).toHaveProperty('isBoolean');
       });
     });

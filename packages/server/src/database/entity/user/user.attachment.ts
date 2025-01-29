@@ -1,10 +1,10 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { DefaultEntity } from './default';
-import { AttachmentColumn } from '../column/attachment.column';
+import { DefaultEntity } from '../default';
+import { AttachmentColumn } from '../../column/attachment.column';
 import { UserEntity } from './user';
-import { UserColumn } from '../column/user.column';
-import { AttachmentEntity } from './attachment';
-import { UserAttachmentColumn } from '../column/user.attachment.column';
+import { UserColumn } from '../../column/user.column';
+import { AttachmentEntity } from '../attachment/attachment';
+import { UserAttachmentColumn } from '../../column/user.attachment.column';
 
 @Entity({ name: UserAttachmentColumn.table })
 export class UserAttachmentEntity extends DefaultEntity {
@@ -37,14 +37,13 @@ export class UserAttachmentEntity extends DefaultEntity {
     attachmentCode: string,
     attachmentId: number,
     creator: string,
-    updator?: string,
   ) {
     const entity = new UserAttachmentEntity();
     entity.userId = userId;
     entity.attachmentCode = attachmentCode;
     entity.attachmentId = attachmentId;
     entity.creator = creator;
-    entity.updator = updator ?? creator;
+    entity.updator = creator;
     return entity;
   }
 }

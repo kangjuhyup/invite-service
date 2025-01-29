@@ -5,6 +5,9 @@ import { LetterRepository } from '@app/database/repository/letter';
 import { AttachmentRepository } from '@app/database/repository/attachment';
 import { mock, instance, when, verify, anything, deepEqual } from 'ts-mockito';
 import { LetterAttachmentCode } from '@app/util/attachment';
+import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
+import { MetadataEntity } from '@app/database/entity/attachment/metadata';
+import { LetterAttachmentEntity } from '@app/database/entity/letter/letter.attachment';
 
 describe('UpdateLetterTransaction', () => {
   let transaction: UpdateLetterTransaction;
@@ -33,23 +36,24 @@ describe('UpdateLetterTransaction', () => {
     when(mockDataSource.createQueryRunner()).thenReturn(mockQueryRunner);
 
     // Mock 레터 업데이트 설정
-    when(
-      mockLetterRepository.updateLetter(anything()),
-    ).thenResolve();
+    when(mockLetterRepository.updateLetter(anything())).thenResolve();
 
     // Mock 첨부파일 삽입 설정
-    when(
-      mockAttachmentRepository.insertAttachment(anything()),
-    ).thenResolve({
+    when(mockAttachmentRepository.insertAttachment(anything())).thenResolve({
       identifiers: [{ attachmentId: 1 }],
       generatedMaps: [{ attachmentId: 1 }],
       raw: [{ attachmentId: 1 }],
     });
 
+    // Mock 메타데이터 삽입 설정
+    when(mockAttachmentRepository.insertMetadata(anything())).thenResolve({
+      identifiers: [{ metadataId: 1 }],
+      generatedMaps: [{ metadataId: 1 }],
+      raw: [{ metadataId: 1 }],
+    });
+
     // Mock 레터 첨부파일 관계 설정
-    when(
-      mockLetterRepository.insertLetterAttachment(anything()),
-    ).thenResolve();
+    when(mockLetterRepository.insertLetterAttachment(anything())).thenResolve();
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -136,7 +140,9 @@ describe('UpdateLetterTransaction', () => {
 
       // QueryRunner 검증
       expect(mockQueryRunner.connect).toHaveBeenCalled();
-      expect(mockQueryRunner.startTransaction).toHaveBeenCalledWith('REPEATABLE READ');
+      expect(mockQueryRunner.startTransaction).toHaveBeenCalledWith(
+        'REPEATABLE READ',
+      );
       expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
       expect(mockQueryRunner.release).toHaveBeenCalled();
 
@@ -155,11 +161,29 @@ describe('UpdateLetterTransaction', () => {
       verify(
         mockAttachmentRepository.insertAttachment(
           deepEqual({
-            attachment: {
-              attachmentPath: input.thumbnailAttachment.attachmentPath,
-              creator: UpdateLetterTransaction.name,
-              updator: UpdateLetterTransaction.name,
-            },
+            attachment: AttachmentEntity.of(
+              input.thumbnailAttachment.attachmentPath,
+              UpdateLetterTransaction.name,
+            ),
+            entityManager: instance(mockEntityManager),
+          }),
+        ),
+      ).called();
+
+      // 메타데이터 삽입 검증
+      verify(
+        mockAttachmentRepository.insertMetadata(
+          deepEqual({
+            metadata: MetadataEntity.of(
+              UpdateLetterTransaction.name,
+              1,
+              input.thumbnailAttachment.angle,
+              input.thumbnailAttachment.width,
+              input.thumbnailAttachment.height,
+              input.thumbnailAttachment.x,
+              input.thumbnailAttachment.y,
+              input.thumbnailAttachment.z,
+            ),
             entityManager: instance(mockEntityManager),
           }),
         ),
@@ -170,58 +194,30 @@ describe('UpdateLetterTransaction', () => {
         mockLetterRepository.insertLetterAttachment(
           deepEqual({
             letterAttachments: [
-              {
-                letterId: 1,
-                attachmentId: 1,
-                attachmentCode: input.thumbnailAttachment.attachmentCode,
-                width: input.thumbnailAttachment.width,
-                height: input.thumbnailAttachment.height,
-                x: input.thumbnailAttachment.x,
-                y: input.thumbnailAttachment.y,
-                z: input.thumbnailAttachment.z,
-                angle: input.thumbnailAttachment.angle,
-                creator: UpdateLetterTransaction.name,
-                updator: UpdateLetterTransaction.name,
-              },
-              {
-                letterId: 1,
-                attachmentId: 1,
-                attachmentCode: input.letterAttachment.attachmentCode,
-                width: input.letterAttachment.width,
-                height: input.letterAttachment.height,
-                x: input.letterAttachment.x,
-                y: input.letterAttachment.y,
-                z: input.letterAttachment.z,
-                angle: input.letterAttachment.angle,
-                creator: UpdateLetterTransaction.name,
-                updator: UpdateLetterTransaction.name,
-              },
-              {
-                letterId: 1,
-                attachmentId: 1,
-                attachmentCode: input.backgroundAttachment.attachmentCode,
-                width: input.backgroundAttachment.width,
-                height: input.backgroundAttachment.height,
-                x: input.backgroundAttachment.x,
-                y: input.backgroundAttachment.y,
-                z: input.backgroundAttachment.z,
-                angle: input.backgroundAttachment.angle,
-                creator: UpdateLetterTransaction.name,
-                updator: UpdateLetterTransaction.name,
-              },
-              {
-                letterId: 1,
-                attachmentId: 1,
-                attachmentCode: input.componentAttachments[0].attachmentCode,
-                width: input.componentAttachments[0].width,
-                height: input.componentAttachments[0].height,
-                x: input.componentAttachments[0].x,
-                y: input.componentAttachments[0].y,
-                z: input.componentAttachments[0].z,
-                angle: input.componentAttachments[0].angle,
-                creator: UpdateLetterTransaction.name,
-                updator: UpdateLetterTransaction.name,
-              },
+              LetterAttachmentEntity.of(
+                1,
+                input.thumbnailAttachment.attachmentCode,
+                1,
+                UpdateLetterTransaction.name,
+              ),
+              LetterAttachmentEntity.of(
+                1,
+                input.letterAttachment.attachmentCode,
+                1,
+                UpdateLetterTransaction.name,
+              ),
+              LetterAttachmentEntity.of(
+                1,
+                input.backgroundAttachment.attachmentCode,
+                1,
+                UpdateLetterTransaction.name,
+              ),
+              LetterAttachmentEntity.of(
+                1,
+                input.componentAttachments[0].attachmentCode,
+                1,
+                UpdateLetterTransaction.name,
+              ),
             ],
             entityManager: instance(mockEntityManager),
           }),
@@ -277,14 +273,15 @@ describe('UpdateLetterTransaction', () => {
 
       // QueryRunner 검증
       expect(mockQueryRunner.connect).toHaveBeenCalled();
-      expect(mockQueryRunner.startTransaction).toHaveBeenCalledWith('REPEATABLE READ');
+      expect(mockQueryRunner.startTransaction).toHaveBeenCalledWith(
+        'REPEATABLE READ',
+      );
       expect(mockQueryRunner.rollbackTransaction).toHaveBeenCalled();
       expect(mockQueryRunner.release).toHaveBeenCalled();
 
       // 첨부파일 삽입이 호출되지 않았는지 검증
-      verify(
-        mockAttachmentRepository.insertAttachment(anything()),
-      ).never();
+      verify(mockAttachmentRepository.insertAttachment(anything())).never();
+      verify(mockAttachmentRepository.insertMetadata(anything())).never();
     });
   });
 });

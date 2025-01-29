@@ -6,9 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { LetterEntity } from './letter';
-import { LetterColumn } from '../column/letter.column';
-import { LetterCommentColumn } from '../column/letter.comment.column';
-import { DefaultEntity } from './default';
+import { LetterColumn } from '../../column/letter.column';
+import { LetterCommentColumn } from '../../column/letter.comment.column';
+import { DefaultEntity } from '../default';
 import { sha256Hash } from '@app/util/crypto';
 
 @Entity({ name: LetterCommentColumn.table })

@@ -15,7 +15,10 @@ import { AttachmentDetail } from '../transaction/letter.transaction.base';
 @Injectable()
 export class LetterAttachmentService extends AttachmentBaseService {
   private readonly logger = new Logger(LetterAttachmentService.name);
-  constructor(private readonly storage: StorageService, private readonly letterRepository : LetterRepository) {
+  constructor(
+    private readonly storage: StorageService,
+    private readonly letterRepository: LetterRepository,
+  ) {
     super();
   }
 
@@ -133,11 +136,7 @@ export class LetterAttachmentService extends AttachmentBaseService {
     return detail;
   }
 
-  async deleteLetterAttachments({
-    letterId,
-  }: {
-    letterId: number;
-  }) {
+  async deleteLetterAttachments({ letterId }: { letterId: number }) {
     return await this.letterRepository.deleteLetterAttachments({
       letterId,
     });

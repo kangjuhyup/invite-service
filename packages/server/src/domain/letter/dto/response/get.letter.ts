@@ -1,5 +1,5 @@
-import { LetterEntity } from '@app/database/entity/letter';
-import { LetterCommentEntity } from '@app/database/entity/letter.comment';
+import { LetterEntity } from '@app/database/entity/letter/letter';
+import { LetterCommentEntity } from '@app/database/entity/letter/letter.comment';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {

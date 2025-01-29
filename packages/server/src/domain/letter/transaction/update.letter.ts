@@ -1,18 +1,21 @@
-import { AttachmentEntity } from '@app/database/entity/attachment';
-import { LetterAttachmentEntity } from '@app/database/entity/letter.attachment';
+import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
+import { LetterAttachmentEntity } from '@app/database/entity/letter/letter.attachment';
 import { AttachmentRepository } from '@app/database/repository/attachment';
 import { LetterRepository } from '@app/database/repository/letter';
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
-import { LetterTransactionBase, AttachmentDetail } from './letter.transaction.base';
+import {
+  LetterTransactionBase,
+  AttachmentDetail,
+} from './letter.transaction.base';
 
 interface UpdateLetter {
-    letterId: number;
-    title?: string;
-    content?: string;
-    commentYn?: boolean;
-    attendYn?: boolean;
-    publicYn?: boolean;
+  letterId: number;
+  title?: string;
+  content?: string;
+  commentYn?: boolean;
+  attendYn?: boolean;
+  publicYn?: boolean;
 }
 
 interface Input {
@@ -24,13 +27,21 @@ interface Input {
 }
 
 @Injectable()
-export class UpdateLetterTransaction extends LetterTransactionBase<Input, number> {
+export class UpdateLetterTransaction extends LetterTransactionBase<
+  Input,
+  number
+> {
   constructor(
     ds: DataSource,
     letterRepository: LetterRepository,
     attachmentRepository: AttachmentRepository,
   ) {
-    super(ds, letterRepository, attachmentRepository, UpdateLetterTransaction.name);
+    super(
+      ds,
+      letterRepository,
+      attachmentRepository,
+      UpdateLetterTransaction.name,
+    );
   }
 
   protected async execute(
@@ -44,10 +55,7 @@ export class UpdateLetterTransaction extends LetterTransactionBase<Input, number
     entityManager: EntityManager,
   ): Promise<number> {
     // 1. 레터 업데이트
-    const letterId = await this.#updateLetter(
-      letter,
-      entityManager,
-    );
+    const letterId = await this.#updateLetter(letter, entityManager);
 
     // 2. 첨부 파일 삽입 (병렬 처리)
     const [
@@ -76,11 +84,7 @@ export class UpdateLetterTransaction extends LetterTransactionBase<Input, number
     ];
 
     // 4. 레터 첨부 파일 관계 삽입
-    await this.insertLetterAttachments(
-      letterId,
-      allAttachments,
-      entityManager,
-    );
+    await this.insertLetterAttachments(letterId, allAttachments, entityManager);
 
     return letterId;
   }
@@ -89,7 +93,7 @@ export class UpdateLetterTransaction extends LetterTransactionBase<Input, number
    * 레터를 업데이트하고, 업데이트된 레터의 ID를 반환합니다.
    */
   async #updateLetter(
-    letter : UpdateLetter,
+    letter: UpdateLetter,
     entityManager: EntityManager,
   ): Promise<number> {
     await this.letterRepository.updateLetter({

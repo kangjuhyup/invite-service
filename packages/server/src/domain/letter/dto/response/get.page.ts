@@ -1,4 +1,4 @@
-import { LetterEntity } from '@app/database/entity/letter';
+import { LetterEntity } from '@app/database/entity/letter/letter';
 import { LetterAttachmentCode } from '@app/util/attachment';
 import { LetterCategoryCode } from '@app/util/category';
 import { YN, ynToBoolean } from '@app/util/yn';

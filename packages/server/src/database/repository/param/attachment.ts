@@ -1,10 +1,6 @@
-import { AttachmentEntity } from '@app/database/entity/attachment';
+import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
 import { DefaultParameter } from './default';
-
-export type Attachment = Pick<
-  AttachmentEntity,
-  'attachmentPath' | 'creator' | 'updator'
->;
+import { MetadataEntity } from '@app/database/entity/attachment/metadata';
 
 export class SelectAttachment extends DefaultParameter {
   attachmentId: number;
@@ -14,8 +10,13 @@ export class SelectAttachment extends DefaultParameter {
 }
 
 export class InsertAttachment extends DefaultParameter {
-  attachments: Array<Attachment>;
-  attachment: Attachment;
+  attachments: Array<AttachmentEntity>;
+  attachment: AttachmentEntity;
+}
+
+export class InsertMetadata extends DefaultParameter {
+  metadatas: Array<MetadataEntity>;
+  metadata: MetadataEntity;
 }
 
 export class DeleteAttachment extends DefaultParameter {

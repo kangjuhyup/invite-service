@@ -1,4 +1,4 @@
-import { UserEntity } from '@app/database/entity/user';
+import { UserEntity } from '@app/database/entity/user/user';
 import {
   IsEmail,
   IsNotEmpty,
@@ -30,8 +30,8 @@ export class GetMyProfileResponse {
     response.email = user.email;
     response.nickName = user.nickName;
     response.profileImage =
-      user.userAttachment?.find((a) => a.attachmentCode === 'PF001')
-        .attachment.attachmentPath || undefined;
+      user.userAttachment?.find((a) => a.attachmentCode === 'PF001').attachment
+        .attachmentPath || undefined;
     return response;
   }
 }

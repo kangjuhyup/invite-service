@@ -177,8 +177,8 @@ export class LetterFacade {
         letterCategoryCode: request.category,
         body: request.body,
         title: request.title,
-        commentYn: booleanToYN(request.commentYn),
-        attendYn: booleanToYN(request.attendYn),
+        comment: request.commentYn,
+        attend: request.attendYn,
       },
       thumbnailAttachment: this.letterAttachmentService.createAttachmentDetail(
         thumbnailMeta,
@@ -214,12 +214,12 @@ export class LetterFacade {
 
   async prepareModifyLetter(
     letterId: number,
-    dto : PrepareRequest,
+    dto: PrepareRequest,
     user: User,
   ): Promise<PrepareResponse> {
     await this.letterService.checkLetterAuthor(letterId, user);
     const letter = await this.letterService.getLetter(letterId);
-    if(letter.letterAttachment){
+    if (letter.letterAttachment) {
       letter.letterAttachment.forEach((attachment) => {
         const [bucket, key] = attachment.attachment.attachmentPath.split('/');
         this.storage.deleteObject({
@@ -258,9 +258,9 @@ export class LetterFacade {
     await this.updateLetterTransaction.run({
       letter: {
         letterId,
-        ...request
+        ...request,
       },
-      thumbnailAttachment : this.letterAttachmentService.createAttachmentDetail(
+      thumbnailAttachment: this.letterAttachmentService.createAttachmentDetail(
         thumbnailMeta,
         this.letterAttachmentService.thumbnailBucket,
         LetterAttachmentCode.THUMBNAIL,

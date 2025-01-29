@@ -15,9 +15,9 @@ import { LetterAttachmentCode } from '@app/util/attachment';
 import { YN } from '@app/util/yn';
 import { DefaultColumn } from '../column/default';
 import { LetterAttachmentColumn } from '../column/letter.attachment.column';
-import { LetterEntity } from '../entity/letter';
-import { LetterAttachmentEntity } from '../entity/letter.attachment';
-import { LetterCommentEntity } from '../entity/letter.comment';
+import { LetterEntity } from '../entity/letter/letter';
+import { LetterAttachmentEntity } from '../entity/letter/letter.attachment';
+import { LetterCommentEntity } from '../entity/letter/letter.comment';
 
 @Injectable()
 export class LetterRepository {
@@ -56,6 +56,12 @@ export class LetterRepository {
         'letterAttachment.attachment',
         'attachment',
         `attachment.${DefaultColumn.useYn} = :useYn`,
+        { useYn: YN.Y },
+      )
+      .innerJoinAndSelect(
+        'attachment.metadata',
+        'metadata',
+        `metadata.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
       .where({ userId, useYn: YN.Y })
@@ -101,6 +107,12 @@ export class LetterRepository {
         { useYn: YN.Y },
       )
       .innerJoinAndSelect(
+        'attachment.metadata',
+        'metadata',
+        `metadata.${DefaultColumn.useYn} = :useYn`,
+        { useYn: YN.Y },
+      )
+      .innerJoinAndSelect(
         'letter.user',
         'user',
         `user.${DefaultColumn.useYn} = :useYn`,
@@ -116,21 +128,33 @@ export class LetterRepository {
     return await repo.insert(letter);
   }
 
-  async updateLetter({ letterId,title,body,commentYn,attendYn,publicYn, updator , entityManager }: Omit<UpdateLetter,'password'>) {
+  async updateLetter({
+    letterId,
+    title,
+    body,
+    commentYn,
+    attendYn,
+    publicYn,
+    updator,
+    entityManager,
+  }: Omit<UpdateLetter, 'password'>) {
     const repo = this._getRepository('letter', entityManager);
     const set = {
       updator,
     };
-    if(title) set['title'] = title;
-    if(body) set['body'] = body;
-    if(commentYn) set['commentYn'] = commentYn;
-    if(attendYn) set['attendYn'] = attendYn;
-    if(publicYn) set['publicYn'] = publicYn;
-    return await repo.update({
-      letterId
-    }, {
-      ...set
-    });
+    if (title) set['title'] = title;
+    if (body) set['body'] = body;
+    if (commentYn) set['commentYn'] = commentYn;
+    if (attendYn) set['attendYn'] = attendYn;
+    if (publicYn) set['publicYn'] = publicYn;
+    return await repo.update(
+      {
+        letterId,
+      },
+      {
+        ...set,
+      },
+    );
   }
 
   async deleteLetter({

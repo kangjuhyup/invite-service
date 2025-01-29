@@ -84,7 +84,7 @@ class MetaText extends MetaDetail {
   color: string;
 
   @ApiProperty()
-  @Transform(({ value }) => value ? 'true' : 'false')
+  @Transform(({ value }) => (value ? 'true' : 'false'))
   @IsNotEmpty()
   @IsString()
   bold: string;

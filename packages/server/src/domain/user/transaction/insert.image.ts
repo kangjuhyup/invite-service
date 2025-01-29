@@ -1,5 +1,5 @@
-import { AttachmentEntity } from '@app/database/entity/attachment';
-import { UserAttachmentEntity } from '@app/database/entity/user.attachment';
+import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
+import { UserAttachmentEntity } from '@app/database/entity/user/user.attachment';
 import { AttachmentRepository } from '@app/database/repository/attachment';
 import { UserRepository } from '@app/database/repository/user';
 import { BaseTransaction } from '@app/database/transaction.base';
@@ -28,12 +28,12 @@ export class InsertImageTransaction extends BaseTransaction<Input, number> {
     { userId, attachmentPath }: Input,
     manager: EntityManager,
   ): Promise<number> {
+    const attachment = AttachmentEntity.of(
+      `prf/${attachmentPath}`,
+      this.creator,
+    );
     const result = await this.attachmentRepository.insertAttachment({
-      attachment: {
-        attachmentPath: `prf/${attachmentPath}`,
-        creator: this.creator,
-        updator: this.creator,
-      },
+      attachment,
       entityManager: manager,
     });
     const attachmentId = result.identifiers[0].attachmentId;

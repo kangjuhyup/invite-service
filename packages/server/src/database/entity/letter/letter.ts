@@ -7,17 +7,17 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { DefaultEntity } from './default';
-import { UserEntity } from './user';
+import { DefaultEntity } from '../default';
+import { UserEntity } from '../user/user';
 import { LetterCategoryEntity } from './letter.cateogry';
 import { LetterCommentEntity } from './letter.comment';
 import { LetterAttachmentEntity } from './letter.attachment';
 import { LetterTotalEntity } from './letter.total';
 import { LetterCategoryCode } from '@app/util/category';
 import { YN } from '@app/util/yn';
-import { LetterCategoryColumn } from '../column/letter.category.column';
-import { LetterColumn } from '../column/letter.column';
-import { UserColumn } from '../column/user.column';
+import { LetterCategoryColumn } from '../../column/letter.category.column';
+import { LetterColumn } from '../../column/letter.column';
+import { UserColumn } from '../../column/user.column';
 
 @Entity({ name: LetterColumn.table })
 export class LetterEntity extends DefaultEntity {
@@ -116,4 +116,27 @@ export class LetterEntity extends DefaultEntity {
 
   @OneToOne(() => LetterTotalEntity, { nullable: false })
   letterTotal: LetterTotalEntity;
+
+  static of(param: {
+    userId: string;
+    letterCategoryCode: LetterCategoryCode;
+    title: string;
+    body?: string;
+    commentYn: YN;
+    attendYn: YN;
+    publicYn: YN;
+    creator: string;
+  }) {
+    const letter = new LetterEntity();
+    letter.userId = param.userId;
+    letter.letterCategoryCode = param.letterCategoryCode;
+    letter.title = param.title;
+    letter.body = param.body;
+    letter.commentYn = param.commentYn;
+    letter.attendYn = param.attendYn;
+    letter.publicYn = param.publicYn;
+    letter.creator = param.creator;
+    letter.updator = param.creator;
+    return letter;
+  }
 }
