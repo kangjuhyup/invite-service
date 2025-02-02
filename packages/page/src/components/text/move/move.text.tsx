@@ -14,6 +14,7 @@ export interface TextInfo {
 interface MoveResizeTextProps {
   index: number;
   textInfo: TextInfo;
+  isSelected?: boolean;
   onUpdate: (text: Partial<TextInfo>) => void;
   onClick: () => void;
 }
@@ -21,6 +22,7 @@ interface MoveResizeTextProps {
 const MoveText = ({
   index,
   textInfo,
+  isSelected,
   onUpdate,
   onClick,
 }: MoveResizeTextProps) => {
@@ -50,6 +52,7 @@ const MoveText = ({
         userSelect: "none",
         zIndex: 1000 + index,
         padding: "10px",
+        border: isSelected ? "2px dashed #228be6" : "none",
       }}
       onClick={onClick}
       onTouchStart={handleMouseDown}

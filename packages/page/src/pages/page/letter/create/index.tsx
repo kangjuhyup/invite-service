@@ -144,6 +144,7 @@ const CreatePage = () => {
               <MoveResizeImage
                 key={index}
                 fileInfo={fileInfo}
+                isSelected={selectedImageIndex === index}
                 onUpdate={(data) => {
                   setFiles((prevFiles) =>
                     prevFiles.map((f, i) =>
@@ -162,6 +163,7 @@ const CreatePage = () => {
                 key={index}
                 index={index}
                 textInfo={text}
+                isSelected={selectedTextIndex === index}
                 onUpdate={(text) => {
                   setTexts((prevTexts) =>
                     prevTexts.map((t, i) =>
