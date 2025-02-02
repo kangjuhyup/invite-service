@@ -75,6 +75,10 @@ export class AttachmentEntity extends DefaultEntity {
 
   deleteId() {
     this.attachmentId = undefined;
+    this.metadata = this.metadata ? {
+      ...this.metadata,
+      attachmentId: undefined,
+    } : null;
     return this;
   }
 } 

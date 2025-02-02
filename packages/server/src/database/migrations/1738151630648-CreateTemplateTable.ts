@@ -28,6 +28,13 @@ export class CreateTemplateTable implements MigrationInterface {
                 isPrimary: true,
               },
               {
+                name: DefaultColumn.useYn,
+                type: 'char',
+                length: '1',
+                default: "'Y'",
+                isNullable: false,  
+              },
+              {
                 name: DefaultColumn.creator,
                 type: 'varchar',
                 length: '100',
@@ -77,6 +84,13 @@ export class CreateTemplateTable implements MigrationInterface {
                 name: AttachmentColumn.attachmentId,
                 type: 'int',
                 isPrimary: true,
+              },
+              {
+                name: DefaultColumn.useYn,
+                type: 'char',
+                length: '1',
+                default: "'Y'",
+                isNullable: false,
               },
               {
                 name: DefaultColumn.creator,

@@ -9,8 +9,10 @@ import {
 import { AttachmentEntity } from '../entity/attachment/attachment';
 import { YN } from '@app/util/yn';
 import { MetadataEntity } from '../entity/attachment/metadata';
+import { Logger } from '@nestjs/common';
 
 export class AttachmentRepository {
+  #logger = new Logger(AttachmentRepository.name);
   constructor(
     @InjectRepository(AttachmentEntity)
     private readonly attachment: Repository<AttachmentEntity>,
@@ -43,8 +45,9 @@ export class AttachmentRepository {
   > {
     const repo = this._getRepository('attachment', entityManager);
     return await repo
-      .createQueryBuilder()
+      .createQueryBuilder('attachment')
       .select()
+      .innerJoinAndSelect('attachment.metadata', 'metadata')
       .where({
         attachmentPath: In(attachmentPaths),
       })
@@ -76,7 +79,10 @@ export class AttachmentRepository {
       .createQueryBuilder()
       .insert()
       .values(attachments)
-      .execute();
+      .execute().catch((e) => {
+        this.#logger.error(e);
+        throw e;
+      });
   }
 
   async buildInsertMetadata({

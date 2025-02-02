@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import axios from 'axios';
 import { SignRequest } from '@app/domain/auth/dto/sign';
 import { AddLetterRequest } from '@app/domain/letter/dto/request/add.letter';
+import { CreateTemplateRequest } from '@app/domain/template/dto/request/create.template';
 
 describe('AppController (e2e)', () => {
   let app: INestApplication;
@@ -35,7 +36,7 @@ describe('AppController (e2e)', () => {
   describe('회원', () => {
     it('[POST] /auth/signup', () => {
       const body: SignRequest = {
-        phone: '01012341234',
+        email: 'test@test.com',
         password: 'test',
       };
       return request(app.getHttpServer())
@@ -53,7 +54,7 @@ describe('AppController (e2e)', () => {
 
     it('[POST] /auth/signin (성공)', () => {
       const body: SignRequest = {
-        phone: '01012341234',
+        email: 'test@test.com',
         password: 'test',
       };
       return request(app.getHttpServer())
@@ -67,7 +68,7 @@ describe('AppController (e2e)', () => {
 
     it('[POST] /auth/signin (잘못된 비밀번호)', () => {
       const body: SignRequest = {
-        phone: '01012341234',
+        email: 'test@test.com',
         password: 'test1111',
       };
       return request(app.getHttpServer())
@@ -81,7 +82,7 @@ describe('AppController (e2e)', () => {
 
     it('[POST] /auth/signin (없는 유저)', () => {
       const body: SignRequest = {
-        phone: '01043214321',
+        email: 'test2@test.com',
         password: 'test1111',
       };
       return request(app.getHttpServer())
@@ -106,7 +107,7 @@ describe('AppController (e2e)', () => {
     let token;
     it('[POST] /auth/signin (Access 토큰 획득)', () => {
       const body: SignRequest = {
-        phone: '01012341234',
+        email: 'test@test.com',
         password: 'test',
       };
       return request(app.getHttpServer())
@@ -268,6 +269,34 @@ describe('AppController (e2e)', () => {
           .set('Authorization', token)
           .expect(200);
       });
+    });
+  });
+
+  describe('탬플릿', () => {
+    let token;
+    it('[POST] /auth/signin (Access 토큰 획득)', () => {
+      const body: SignRequest = {
+        email: 'test@test.com',
+        password: 'test',
+      };
+      return request(app.getHttpServer())
+        .post('/auth/signin')
+        .send(body)
+        .expect(201)
+        .expect((response) => {
+          expect(response.headers['authorization']).toBeDefined();
+          token = response.headers['authorization'];
+        });
+    });
+    it('[POST] /template', async () => {
+      const body : CreateTemplateRequest = {
+        letterId : 77,
+      };
+      const response = await request(app.getHttpServer())
+        .post('/template')
+        .send(body)
+        .set('Authorization', token)
+        .expect(201);
     });
   });
 });

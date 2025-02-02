@@ -34,8 +34,7 @@ export class InsertTemplateTransaction extends BaseTransaction<
         letterEntity
     }: Input,
     entityManager: EntityManager,
-  ): Promise<number> {
-    // 1. 탬플릿 삽입
+  ): Promise<number> {    // 1. 탬플릿 삽입
     const userId = letterEntity.userId;
     const template = TemplateEntity.of(userId, this.#transactionName);
     const insertResult = await this.templateRepository.insertTemplate({
@@ -57,14 +56,16 @@ export class InsertTemplateTransaction extends BaseTransaction<
     entityManager: EntityManager,
   ): Promise<void> {
     const attachments = letterEntity.letterAttachment.map((a) => a.attachment.setTemplatePath().setUpdator(this.#transactionName).deleteId());
-    this.#logger.debug('attachments : ', attachments)
     // 2. 첨부 파일 삽입
+    this.#logger.debug(`2. 첨부파일 삽입`)
     await this.attachmentRepository.bulkInsertAttachments({attachments,entityManager})
     const newAttachments = await this.attachmentRepository.selectAttachments({
         attachmentPaths : attachments.map((a) => a.attachmentPath),
         entityManager,
     })
     // 3. 모든 첨부 파일 정보를 결합
+    this.#logger.debug(`3. 모든 첨부 파일 정보를 결합`)
+    this.#logger.debug(`newAttachments : ${JSON.stringify(newAttachments)}`)
     const metadatas = newAttachments.map((a) => MetadataEntity.of(
       this.#transactionName,
       a.attachmentId,
@@ -93,6 +94,7 @@ export class InsertTemplateTransaction extends BaseTransaction<
         }
     });
     // 4. 탬플릿 첨부 파일 관계 삽입
+    this.#logger.debug(`4. 탬플릿 첨부 파일 관계 삽입`)
     await this.templateRepository.bulkInsertTemplateAttachment({templateAttachments,entityManager});
   }
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { TemplateService } from './service/template.service';
 import { GetTemplatePageRequest } from './dto/request/template.page';
 import { GetTemplatePageResponse } from './dto/response/template.page';
@@ -7,20 +7,25 @@ import { User } from '@app/jwt/user';
 import { StorageService } from '@app/storage/storage.service';
 import { CreateTemplateRequest } from './dto/request/create.template';
 import { LetterService } from '../letter/service/letter.service';
+import { InsertTemplateTransaction } from './transaction/insert.transaction';
 
 @Injectable()
 export class TemplateFacade {
+
+    private readonly logger = new Logger(TemplateFacade.name);
 
     constructor(
         private readonly letter : LetterService,
         private readonly template: TemplateService,
         private readonly storage : StorageService,
+        private readonly insertTemplateTransaction: InsertTemplateTransaction
     ) {}
 
     async getTemplates(
         { startAt, limit }: GetTemplatePageRequest,
     ) : Promise<GetTemplatePageResponse> {
         const { totalCount, entities } = await this.template.getTemplates({ startAt, limit });
+        this.logger.debug(`getTemplates run : ${JSON.stringify({ totalCount, entities })}`);
         return GetTemplatePageResponse.of(
             totalCount,
             limit,
@@ -35,6 +40,8 @@ export class TemplateFacade {
     }
 
     async createTemplate(dto : CreateTemplateRequest, user:User) {
+        this.logger.debug(`createTemplate run : ${JSON.stringify(dto)}`);
+        await this.letter.checkLetterAuthor(dto.letterId, user);
         // 기존 letter 의 attachment 조회하기
         const letter = await this.letter.getLetter(dto.letterId);
         // attachment의 path 를 이용해 object 복사하기
@@ -48,7 +55,9 @@ export class TemplateFacade {
             });
         });
         // template 생성하기
-        // template attachment 생성하기
+        return await this.insertTemplateTransaction.run({
+            letterEntity : letter,
+        })
     }
 
     async deleteTemplate(id : number, user:User) : Promise<boolean> {

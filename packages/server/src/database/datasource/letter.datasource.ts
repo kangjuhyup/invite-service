@@ -14,4 +14,5 @@ export const LetterDataSource = (param: {
     ...param,
     entities: [join(__dirname, '../entity/**/*.{ts,js}')],
     migrations: [join(__dirname, '../migrations/*.{ts,js}')],
+    logging : process.env.NODE_ENV === 'production' ? false : true,
   });

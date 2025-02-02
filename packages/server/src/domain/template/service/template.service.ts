@@ -5,7 +5,7 @@ import { TemplateEntity } from '@app/database/entity/template/template';
 
 @Injectable()
 export class TemplateService {
-
+    
     constructor(
         private readonly templateRepository : TemplateRepository,
     ) {}
@@ -13,9 +13,11 @@ export class TemplateService {
     async getTemplates(
         { startAt, limit }: GetTemplatePageRequest,
     ) : Promise<{ totalCount : number, entities : TemplateEntity[] }> {
+        const totalCount = await this.templateRepository.selectTemplateTotalCount();
+        const entities = await this.templateRepository.selectTemplates({ startAt, limit });
         return {
-            totalCount : await this.templateRepository.selectTemplateTotalCount(),
-            entities : await this.templateRepository.selectTemplates({ startAt, limit }),
+            totalCount,
+            entities,
         };
     }
 

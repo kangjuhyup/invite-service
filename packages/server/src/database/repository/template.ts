@@ -1,12 +1,13 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { AttachmentEntity } from '../entity/attachment/attachment';
 import { TemplateEntity } from '../entity/template/template';
 import { TemplateAttachmentEntity } from '../entity/template/template.attachment';
 import { YN } from '@app/util/yn';
 import { DefaultColumn } from '../column/default';
 import { InsertTemplate, InsertTemplateAttachment, SelectTemplate } from './param/template';
+import { TemplateColumn } from '../column/template.column';
 
 export class TemplateRepository {
   private readonly logger = new Logger(TemplateRepository.name);
@@ -44,17 +45,21 @@ export class TemplateRepository {
     ) as Repository<TemplateEntity>;
     const where = { useYn: YN.Y };
     if (startAt) {
-      where['templateId'] = startAt;
+      where['templateId'] = MoreThanOrEqual(startAt);
     }
-    const ids = await repo
+    const baseTemplates = (await repo
       .createQueryBuilder()
-      .select('templateId')
+      .select([TemplateColumn.templateId])
       .where(where)
-      .orderBy('templateId', 'DESC')
+      .orderBy(TemplateColumn.templateId, 'DESC')
       .limit(limit)
-      .getRawMany();
-    return await repo
-      .createQueryBuilder()
+      .getRawMany());
+
+    const ids = baseTemplates.map((template) => template[TemplateColumn.templateId]);
+    console.log(baseTemplates);
+    if(ids.length === 0) return [];
+    else return await repo
+      .createQueryBuilder('template')
       .leftJoinAndSelect(
         'template.templateAttachment',
         'templateAttachment',
@@ -67,13 +72,13 @@ export class TemplateRepository {
         `attachment.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
-      .innerJoinAndSelect(
+      .leftJoinAndSelect(
         'attachment.metadata',
         'metadata',
         `metadata.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
-      .where('template.templateId IN (:...ids)', { ids })
+      .where(`template.${TemplateColumn.templateId} IN (:...ids)`, { ids })
       .getMany();
   }
 
