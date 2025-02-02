@@ -44,7 +44,11 @@ export class InsertTemplateTransaction extends BaseTransaction<
 
     const templateId = insertResult.identifiers[0].templateId;
 
-    await this.insertAttachments(templateId, letterEntity, entityManager);
+    await this.insertAttachments(
+      templateId,
+      letterEntity,
+      entityManager
+    );
     
 
     return templateId;
@@ -56,19 +60,22 @@ export class InsertTemplateTransaction extends BaseTransaction<
     entityManager: EntityManager,
   ): Promise<void> {
     const attachments = letterEntity.letterAttachment.map((a) => a.attachment.setTemplatePath().setUpdator(this.#transactionName).deleteId());
-    // 2. 첨부 파일 삽입
-    this.#logger.debug(`2. 첨부파일 삽입`)
+    // 1. 첨부 파일 삽입
+    this.#logger.debug(`1. 첨부파일 삽입`)
+    this.#logger.debug(`attachments : ${attachments.length} 건`)
     await this.attachmentRepository.bulkInsertAttachments({attachments,entityManager})
     const newAttachments = await this.attachmentRepository.selectAttachments({
         attachmentPaths : attachments.map((a) => a.attachmentPath),
         entityManager,
     })
-    // 3. 모든 첨부 파일 정보를 결합
-    this.#logger.debug(`3. 모든 첨부 파일 정보를 결합`)
+
     this.#logger.debug(`newAttachments : ${JSON.stringify(newAttachments)}`)
-    const metadatas = newAttachments.map((a) => MetadataEntity.of(
+    this.#logger.debug(`newAttachments.length : ${newAttachments.length} 건`)
+    // 2. 메타데이터 생성 및 삽입
+    this.#logger.debug(`2. 메타데이터 생성 및 삽입`)
+    const metadatas = attachments.map((a, index) => MetadataEntity.of(
       this.#transactionName,
-      a.attachmentId,
+      newAttachments[index].attachmentId,
       a.metadata.angle,
       a.metadata.width,
       a.metadata.height,
@@ -80,8 +87,10 @@ export class InsertTemplateTransaction extends BaseTransaction<
       a.metadata.bold,
     ));
     await this.attachmentRepository.buildInsertMetadata({metadatas,entityManager});
-    const templateAttachments = newAttachments.map((a) => {
-        const attachmentCode = a.attachmentPath.split('-')[1];
+    const templateAttachments = newAttachments.map((a,idx) => {
+        this.#logger.debug(`idx : ${idx} , letterAttachment : ${JSON.stringify(letterEntity.letterAttachment[idx])}`)
+        const attachmentCode = letterEntity.letterAttachment[idx].attachmentCode;
+        this.#logger.debug(`attachmentCode : ${attachmentCode}`)
         switch (attachmentCode) {
             case LetterAttachmentCode.THUMBNAIL:
                 return TemplateAttachmentEntity.of(templateId, LetterAttachmentCode.THUMBNAIL, a.attachmentId, this.#transactionName);
@@ -91,11 +100,15 @@ export class InsertTemplateTransaction extends BaseTransaction<
                 return TemplateAttachmentEntity.of(templateId, LetterAttachmentCode.BACKGROUND, a.attachmentId, this.#transactionName);
             case LetterAttachmentCode.COMPONENT:
                 return TemplateAttachmentEntity.of(templateId, LetterAttachmentCode.COMPONENT, a.attachmentId, this.#transactionName);
+            default: 
+                return;
         }
     });
     // 4. 탬플릿 첨부 파일 관계 삽입
     this.#logger.debug(`4. 탬플릿 첨부 파일 관계 삽입`)
-    await this.templateRepository.bulkInsertTemplateAttachment({templateAttachments,entityManager});
+    this.#logger.debug(`templateAttachments : ${JSON.stringify(templateAttachments)}`)
+    const result = await this.templateRepository.bulkInsertTemplateAttachment({templateAttachments,entityManager});
+    this.#logger.debug(`result : ${JSON.stringify(result)}`);
   }
 
 }

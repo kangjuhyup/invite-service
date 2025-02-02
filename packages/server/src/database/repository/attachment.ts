@@ -43,13 +43,15 @@ export class AttachmentRepository {
   }: Pick<SelectAttachment, 'attachmentPaths' | 'entityManager'>): Promise<
     AttachmentEntity[]
   > {
+    this.#logger.debug(`attachmentPaths : ${JSON.stringify(attachmentPaths)}`)
     const repo = this._getRepository('attachment', entityManager);
     return await repo
       .createQueryBuilder('attachment')
       .select()
-      .innerJoinAndSelect('attachment.metadata', 'metadata')
+      .leftJoinAndSelect('attachment.metadata', 'metadata')
       .where({
         attachmentPath: In(attachmentPaths),
+        useYn : YN.Y,
       })
       .getMany();
   }
@@ -90,7 +92,7 @@ export class AttachmentRepository {
     entityManager,
   }: Pick<InsertMetadata, 'metadatas' | 'entityManager'>) {
     const repo = this._getRepository('metadata', entityManager);
-    return await repo.insert(metadatas);
+    return await repo.createQueryBuilder().insert().values(metadatas).execute();
   }
 
   async deleteAttachments({

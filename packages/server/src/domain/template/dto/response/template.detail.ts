@@ -3,23 +3,23 @@ import { Background, Component } from "@app/domain/letter/dto/response/get.detai
 import { LetterAttachmentCode } from "@app/util/attachment";
 
 export class TemplateDetailResponse {
-    #templateId : number;
-    #userId : string;
+    templateId : number;
+    userId : string;
 
-    #background : Background;
+    background : Background;
 
-    #components : Component[]
+    components : Component[]
 
     static of(template: TemplateEntity) {
         const response = new TemplateDetailResponse();
-        response.#templateId = template.templateId;
-        response.#userId = template.userId;
-        response.#background = Background.of(
+        response.templateId = template.templateId;
+        response.userId = template.userId;
+        response.background = Background.of(
             template.templateAttachment.find(
                 (la) => la.attachmentCode === LetterAttachmentCode.BACKGROUND,
             )?.attachment,
         );
-        response.#components = template.templateAttachment
+        response.components = template.templateAttachment
             .filter((la) => la.attachmentCode === LetterAttachmentCode.COMPONENT)
             .map((la) => Component.of(la.attachment));
         return response;   

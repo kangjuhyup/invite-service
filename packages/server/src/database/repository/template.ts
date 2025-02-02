@@ -8,6 +8,7 @@ import { YN } from '@app/util/yn';
 import { DefaultColumn } from '../column/default';
 import { InsertTemplate, InsertTemplateAttachment, SelectTemplate } from './param/template';
 import { TemplateColumn } from '../column/template.column';
+import { AttachmentColumn } from '../column/attachment.column';
 
 export class TemplateRepository {
   private readonly logger = new Logger(TemplateRepository.name);
@@ -107,14 +108,13 @@ export class TemplateRepository {
         `attachment.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
-      .innerJoinAndSelect(
+      .leftJoinAndSelect(
         'attachment.metadata',
         'metadata',
         `metadata.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
       .where({ templateId, useYn: YN.Y });
-    this.logger.debug(`qb : ${JSON.stringify(qb.getSql())}`);
     return await qb.getOne();
   }
 
@@ -140,7 +140,7 @@ export class TemplateRepository {
       'templateAttachment',
       entityManager,
     ) as Repository<TemplateAttachmentEntity>;
-    return await repo.insert(templateAttachments);
+    return await repo.createQueryBuilder().insert().values(templateAttachments).execute();
   }
 
   async deleteTemplateFromId({

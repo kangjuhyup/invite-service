@@ -36,6 +36,7 @@ export class TemplateFacade {
 
     async getTemplateDetail(id : number) : Promise<TemplateDetailResponse> {
         const template = await this.template.getTemplate(id);
+        this.logger.debug(`getTemplateDetail run : ${JSON.stringify(template)}`);
         return TemplateDetailResponse.of(template);
     }
 

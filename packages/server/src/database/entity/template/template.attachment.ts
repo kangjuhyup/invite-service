@@ -28,7 +28,7 @@ export class TemplateAttachmentEntity extends DefaultEntity {
   @PrimaryColumn({ name: AttachmentColumn.attachmentId, type: 'int' })
   attachmentId: number;
 
-  @ManyToOne(() => TemplateEntity, { nullable: false })
+  @ManyToOne(() => TemplateEntity)
   @JoinColumn({ name: TemplateColumn.templateId })
   template: TemplateEntity;
 

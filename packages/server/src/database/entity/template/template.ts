@@ -1,5 +1,7 @@
 import {
+  Column,
   Entity,
+  JoinColumn,
   OneToMany,
   PrimaryColumn,
   PrimaryGeneratedColumn,
@@ -12,13 +14,14 @@ import { TemplateAttachmentEntity } from './template.attachment';
 export class TemplateEntity extends DefaultEntity {
   @PrimaryGeneratedColumn({ name: TemplateColumn.templateId })
   templateId: number;
-  @PrimaryColumn({ name: TemplateColumn.userId })
+  @Column({ name: TemplateColumn.userId })
   userId: string;
 
   @OneToMany(
     () => TemplateAttachmentEntity,
     (templateAttachment) => templateAttachment.template,
   )
+  @JoinColumn({ name: TemplateColumn.templateId })
   templateAttachment?: TemplateAttachmentEntity[];
 
   static of(userId: string, creator:string) {
