@@ -30,7 +30,7 @@ export class GetMyProfileResponse {
     response.email = user.email;
     response.nickName = user.nickName;
     response.profileImage =
-      user.userAttachment?.find((a) => a.attachmentCode === 'PF001').attachment
+      user.userAttachment?.find((a) => a.attachmentCode === 'PF001')?.attachment
         .attachmentPath || undefined;
     return response;
   }

@@ -4,6 +4,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  JoinColumn,
 } from 'typeorm';
 import { DefaultEntity } from '../default';
 import { LetterAttachmentEntity } from '../letter/letter.attachment';
@@ -27,8 +28,9 @@ export class AttachmentEntity extends DefaultEntity {
   })
   attachmentPath: string;
 
-  @OneToOne(() => MetadataEntity, { nullable: true })
-  metadata?: MetadataEntity;
+  @OneToOne(() => MetadataEntity, (metadata) => metadata.attachment, { cascade: true })
+  @JoinColumn({ name: AttachmentColumn.attachmentId })
+  metadata: MetadataEntity;
 
   @OneToMany(
     () => LetterAttachmentEntity,

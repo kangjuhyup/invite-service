@@ -76,6 +76,13 @@ export class CreateMetadataTable implements MigrationInterface {
             isNullable: false,
           },
           {
+            name: DefaultColumn.useYn,
+            type: 'char',
+            length: '1',
+            default: 'Y',
+            isNullable: false,
+          },
+          {
             name: DefaultColumn.createdAt,
             type: 'timestamp',
             default: 'CURRENT_TIMESTAMP',
@@ -112,6 +119,7 @@ export class CreateMetadataTable implements MigrationInterface {
         ${MetadataColumn.font},
         ${MetadataColumn.bold},
         ${MetadataColumn.color},
+        ${DefaultColumn.useYn},
         ${DefaultColumn.creator},
         ${DefaultColumn.updator}
       )
@@ -126,6 +134,7 @@ export class CreateMetadataTable implements MigrationInterface {
         la.${MetadataColumn.font},
         la.${MetadataColumn.bold},
         la.${MetadataColumn.color},
+        a.${DefaultColumn.useYn},
         a.${DefaultColumn.creator},
         a.${DefaultColumn.updator}
       FROM ${AttachmentColumn.table} a

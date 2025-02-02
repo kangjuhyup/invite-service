@@ -58,7 +58,7 @@ export class LetterRepository {
         `attachment.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
-      .innerJoinAndSelect(
+      .leftJoinAndSelect(
         'attachment.metadata',
         'metadata',
         `metadata.${DefaultColumn.useYn} = :useYn`,

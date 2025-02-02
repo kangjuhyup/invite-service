@@ -1,7 +1,8 @@
 import { AttachmentColumn } from '@app/database/column/attachment.column';
 import { MetadataColumn } from '@app/database/column/metadata.column';
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
 import { DefaultEntity } from '../default';
+import { AttachmentEntity } from './attachment';
 
 @Entity({ name: MetadataColumn.table })
 export class MetadataEntity extends DefaultEntity {
@@ -64,6 +65,9 @@ export class MetadataEntity extends DefaultEntity {
     nullable: true,
   })
   bold?: boolean;
+
+  @OneToOne(() => AttachmentEntity, attachment => attachment.metadata)
+  attachment: AttachmentEntity;
 
   static of(
     creator: string,
