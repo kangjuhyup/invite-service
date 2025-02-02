@@ -79,7 +79,7 @@ export class CreateMetadataTable implements MigrationInterface {
             name: DefaultColumn.useYn,
             type: 'char',
             length: '1',
-            default: 'Y',
+            default: "'Y'",
             isNullable: false,
           },
           {
