@@ -57,6 +57,11 @@ export class LetterPageItem {
   thumbnail: string;
 
   @ApiProperty({
+    description : '일자'
+  })
+  inviteDate : string;
+
+  @ApiProperty({
     description: '공통 유효성',
     example: YN.N,
   })
@@ -72,8 +77,19 @@ export class LetterPageItem {
   @IsString()
   password?: string;
 
+  @ApiProperty({
+    description : '조회수'
+  })
   viewCount : number;
+
+  @ApiProperty({
+    description : '댓글 수'
+  })
   commentCount : number;
+
+  @ApiProperty({
+    description : '총 참여자 수'
+  })
   attendCount : number;
 
   static of(letter: LetterEntity) {
@@ -82,6 +98,7 @@ export class LetterPageItem {
     item.title = letter.title;
     item.body = letter.body;
     item.category = letter.letterCategoryCode;
+    item.inviteDate = letter.inviteDate;
     item.thumbnail = letter.letterAttachment.find(
       (la) => la.attachmentCode === LetterAttachmentCode.THUMBNAIL,
     )?.attachment.attachmentPath;

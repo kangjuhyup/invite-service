@@ -10,9 +10,12 @@ import { LetterAttachmentCode } from '@app/util/attachment';
 import { TemplateEntity } from '@app/database/entity/template/template';
 import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
 import { TemplateTotalEntity } from '@app/database/entity/template/template.total';
+import { LetterCategoryCode } from '@app/util/category';
 
 interface Input {
   userId : string
+  title : string
+  category : LetterCategoryCode
   attachments : Array<{attachmentCode : LetterAttachmentCode , attachment : AttachmentEntity}>
 }
 
@@ -35,11 +38,13 @@ export class InsertTemplateTransaction extends BaseTransaction<
   protected async execute(
     {
         userId,
+        title,
+        category,
         attachments
     }: Input,
     entityManager: EntityManager,
   ): Promise<number> {    // 1. 탬플릿 삽입
-    const template = TemplateEntity.of(userId, this.#transactionName);
+    const template = TemplateEntity.of(userId, title, category, this.#transactionName);
     const insertResult = await this.templateRepository.insertTemplate({
       template,
       entityManager,

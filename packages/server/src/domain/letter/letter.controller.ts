@@ -29,10 +29,19 @@ import { UserPublicGuard } from '@app/jwt/guard/user.public.guard';
 import { GetUser } from '@app/decorator/user.decorator';
 import { User } from '@app/jwt/user';
 import { ModifyLetterRequest } from './dto/request/modify.letter';
+import { LetterCategoryCode } from '@app/util/category';
 
 @Controller('letter')
 export class LetterController {
   constructor(private readonly letterFacade: LetterFacade) {}
+
+  @Get('category')
+  async getCategories() {
+    return {
+      result : true,
+      data : Object.values(LetterCategoryCode)
+    }
+  }
 
   @ApiOperation({ summary: '내 초대장 페이지 조회' })
   @ApiOkResponse({

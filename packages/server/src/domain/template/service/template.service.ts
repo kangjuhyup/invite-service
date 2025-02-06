@@ -11,10 +11,10 @@ export class TemplateService {
     ) {}
 
     async getTemplates(
-        { startAt, limit }: GetTemplatePageRequest,
+        { startAt, limit, category, title, userId }: GetTemplatePageRequest,
     ) : Promise<{ totalCount : number, entities : TemplateEntity[] }> {
-        const totalCount = await this.templateRepository.selectTemplateTotalCount();
-        const entities = await this.templateRepository.selectTemplates({ startAt, limit });
+        const totalCount = await this.templateRepository.selectTemplateTotalCount({ category, title, userId });
+        const entities = await this.templateRepository.selectTemplates({ startAt, limit, category, title, userId });
         return {
             totalCount,
             entities,

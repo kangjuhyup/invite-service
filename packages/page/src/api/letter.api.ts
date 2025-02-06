@@ -26,6 +26,7 @@ const useLetterApi = () => {
   const [addLetter, setAddLetter] = useState<AddLetterResponse>();
   const [comments, setComments] = useState<GetLetterCommentResponse>();
   const [modifyLetter, setModifyLetter] = useState<AddLetterResponse>();
+  const [categories, setCategories] = useState<string[]>([]);
 
   const getLetter = async (letterId: number, token?: string) => {
     const response = await apiClient.get<ApiResponse<GetLetterResponse>>(
@@ -210,6 +211,17 @@ const useLetterApi = () => {
     }
   };
 
+  const getCategories = async () => {
+    const response = await apiClient.get<ApiResponse<string[]>>(
+      `/letter/category`
+    );
+    if (!response.result) {
+      setError(response.error);
+    } else {
+      setCategories(response.data || []);
+    }
+  };
+
   return {
     letter,
     getLetter,
@@ -230,6 +242,8 @@ const useLetterApi = () => {
     modifyLetter,
     patchmModifyLetter,
     getModifyPrepareUrls,
+    getCategories,
+    categories,
   };
 };
 

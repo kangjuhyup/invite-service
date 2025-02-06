@@ -11,6 +11,7 @@ import {
   Group,
   Menu,
   ActionIcon,
+  rem
 } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 import { useShare } from "@/hooks/share.hook";
@@ -151,14 +152,20 @@ const LetterListPage = () => {
                   <Menu shadow="md" width={200} position="bottom-end">
                     <Menu.Target>
                       <ActionIcon
-                        variant="subtle"
+                        variant="filled"
                         color="gray"
+                        size="lg"
+                        radius="xl"
                         onClick={(e: any) => {
                           e.stopPropagation();
                         }}
+                        style={{
+                          backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                          backdropFilter: 'blur(4px)',
+                        }}
                       >
                         <IconDotsVertical
-                          style={{ width: "70%", height: "70%" }}
+                          style={{ width: rem(16), height: rem(16) }}
                           stroke={1.5}
                         />
                       </ActionIcon>
@@ -228,20 +235,25 @@ const LetterListPage = () => {
                 style={{ flex: 1, justifyContent: "space-between" }}
               >
                 <Stack gap="xs">
-                  <Badge
-                    variant="light"
-                    color={
-                      letter.category === "ANNIVERSARY"
-                        ? "pink"
-                        : letter.category === "WEDDING"
-                        ? "blue"
-                        : letter.category === "BIRTHDAY"
-                        ? "yellow"
-                        : "gray"
-                    }
-                  >
-                    {letter.category || "GENERAL"}
-                  </Badge>
+                  <Group justify="space-between" align="center">
+                    <Badge
+                      variant="light"
+                      color={
+                        letter.category === "ANNIVERSARY"
+                          ? "pink"
+                          : letter.category === "WEDDING"
+                          ? "blue"
+                          : letter.category === "BIRTHDAY"
+                          ? "yellow"
+                          : "gray"
+                      }
+                    >
+                      {letter.category || "GENERAL"}
+                    </Badge>
+                    <Text size="sm" c="dimmed">
+                      {letter.inviteDate}
+                    </Text>
+                  </Group>
                   <Text
                     fw={700}
                     size="xl"

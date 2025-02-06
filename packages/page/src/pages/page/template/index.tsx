@@ -14,32 +14,30 @@ import {
   ActionIcon,
   TextInput,
 } from "@mantine/core";
-import { IconUsers, IconSearch } from "@tabler/icons-react";
+import { IconUsers, IconSearch, IconArrowFork } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import PresignedImage from "@/components/image/presigned/presigned.image";
-
-type Category = "ALL" | "WEDDING" | "BIRTHDAY" | "ANNIVERSARY" | "GENERAL";
+import useLetterApi from "@/api/letter.api";
 
 const TemplateListPage = () => {
   const { getTemplatePage, templatePageResponse } = useTemplateApi();
-  const [category, setCategory] = useState<Category>("ALL");
+  const { getCategories, categories } = useLetterApi();
+  const [category, setCategory] = useState<string>();
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    getTemplatePage({ 
-      startAt: 0, 
+    getTemplatePage({
+      startAt: 0,
       limit: 100,
-      category: category === "ALL" ? undefined : category
+      category,
+      title: searchQuery,
     });
-  }, [category]);
+  }, [category, searchQuery]);
 
-  const filteredTemplates = (templatePageResponse?.templates || []).filter(
-    (template) =>
-      searchQuery === "" ||
-      template.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      template.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    getCategories();
+  }, []);
 
   return (
     <Container py="xl">
@@ -52,23 +50,23 @@ const TemplateListPage = () => {
             onChange={(e) => setSearchQuery(e.currentTarget.value)}
           />
           <Group justify="center">
-          <SegmentedControl
-            value={category}
-            onChange={(value) => setCategory(value as Category)}
-            data={[
-              { label: "전체", value: "ALL" },
-              { label: "웨딩", value: "WEDDING" },
-              { label: "생일", value: "BIRTHDAY" },
-              { label: "기념일", value: "ANNIVERSARY" },
-              { label: "일반", value: "GENERAL" },
-            ]}
-          />
+            <SegmentedControl
+              value={"전체"}
+              onChange={(value) => setCategory(value)}
+              data={[
+                { label: "전체", value: "" },
+                ...categories.map((c) => ({ label: c, value: c })),
+              ]}
+            />
           </Group>
         </Stack>
 
         <Grid>
-          {filteredTemplates.map((template) => (
-            <Grid.Col key={template.templateId} span={{ base: 12, sm: 6, md: 4 }}>
+          {(templatePageResponse?.templates || []).map((template) => (
+            <Grid.Col
+              key={template.templateId}
+              span={{ base: 12, sm: 6, md: 4 }}
+            >
               <Card
                 shadow="sm"
                 padding="lg"
@@ -89,7 +87,7 @@ const TemplateListPage = () => {
                 }
               >
                 <Card.Section>
-                  <AspectRatio ratio={34/64}>
+                  <AspectRatio ratio={34 / 64}>
                     <PresignedImage
                       path={template.thumbnailUrl}
                       height="100%"
@@ -112,10 +110,11 @@ const TemplateListPage = () => {
                   >
                     {template.category || "GENERAL"}
                   </Badge>
+                  <Text>{template.title}</Text>
                   <Group gap="xs">
-                    <IconUsers size={16} style={{ color: "gray" }} />
+                    <IconArrowFork size={16} style={{ color: "gray" }} />
                     <Text size="sm" c="dimmed">
-                      {template.usedCount || 0}
+                      {template.forkCount || 0}
                     </Text>
                   </Group>
                 </Group>

@@ -25,9 +25,9 @@ export class TemplateFacade {
     ) {}
 
     async getTemplates(
-        { startAt, limit }: GetTemplatePageRequest,
+        { startAt, limit, category, title, userId }: GetTemplatePageRequest,
     ) : Promise<GetTemplatePageResponse> {
-        const { totalCount, entities } = await this.template.getTemplates({ startAt, limit });
+        const { totalCount, entities } = await this.template.getTemplates({ startAt, limit, category, title, userId });
         this.logger.debug(`getTemplates run : ${JSON.stringify({ totalCount, entities })}`);
         return GetTemplatePageResponse.of(
             totalCount,
@@ -62,6 +62,8 @@ export class TemplateFacade {
         // template 생성하기
         return await this.insertTemplateTransaction.run({
             userId : user.id,
+            title : letter.title,
+            category : letter.letterCategoryCode,
             attachments : letter.letterAttachment.map((attachment) => {
                 const newAttachment = attachment.attachment.setTemplatePath( newKey).deleteId();
                 return {

@@ -1,6 +1,6 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
+import { EntityManager, Like, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { AttachmentEntity } from '../entity/attachment/attachment';
 import { TemplateEntity } from '../entity/template/template';
 import { TemplateAttachmentEntity } from '../entity/template/template.attachment';
@@ -26,23 +26,37 @@ export class TemplateRepository {
   ) {}
 
   async selectTemplateTotalCount(
-    entityManager?: EntityManager,
+    { category, title, userId, entityManager }: Pick<SelectTemplate, 'category' | 'title' | 'userId' | 'entityManager'>,
   ): Promise<number> {
     const repo = this._getRepository('template', entityManager);
+    const where = {
+      useYn : YN.Y,
+    }
+    if (category) {
+      where['category'] = category;
+    }
+    if (title) {
+      where['title'] = title;
+    }
+    if (userId) {
+      where['userId'] = userId;
+    }
     return await repo.count({
-      where: {
-        useYn: YN.Y,
-      },
+      where,
     });
   }
 
   async selectTemplates({
     startAt,
     limit,
+    category,
+    title,
+    userId,
     entityManager,
-  }: Pick<SelectTemplate, 'startAt' | 'limit' | 'entityManager'>): Promise<
+  }: Pick<SelectTemplate, 'startAt' | 'limit' | 'category' | 'title' | 'userId' | 'entityManager'>): Promise<
     TemplateEntity[]
   > {
+    console.log(category);
     const repo = this._getRepository(
       'template',
       entityManager,
@@ -50,6 +64,15 @@ export class TemplateRepository {
     const where = { useYn: YN.Y };
     if (startAt) {
       where['templateId'] = MoreThanOrEqual(startAt);
+    }
+    if (category) {
+      where['category'] = category;
+    }
+    if (title) {
+      where['title'] = Like(`%${title}%`);
+    }
+    if (userId) {
+      where['userId'] = userId;
     }
     const baseTemplates = (await repo
       .createQueryBuilder()

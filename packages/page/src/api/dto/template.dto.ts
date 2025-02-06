@@ -11,6 +11,9 @@ export interface CreateTemplateResponse {
 export interface GetTemplatePageRequest {
   startAt: number;
   limit: number;
+  category?: string;
+  title?: string;
+  userId?: string;
 }
 
 export interface GetTemplatePageResponse {

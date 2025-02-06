@@ -16,6 +16,8 @@ class TemplatePageItem {
         const item = new TemplatePageItem();
         item.templateId = template.templateId;
         item.userId = template.userId;
+        item.title = template.title;
+        item.category = template.category;
         item.thumbnailUrl = template.templateAttachment.find((attachment) => attachment.attachmentCode === LetterAttachmentCode.THUMBNAIL)?.attachment.attachmentPath;    
         item.forkCount = template.templateTotal.forkCount;
         item.viewCount = template.templateTotal.viewCount;    

@@ -12,6 +12,7 @@ import { DefaultEntity } from '../default';
 import { TemplateAttachmentEntity } from './template.attachment';
 import { LetterCategoryColumn } from '@app/database/column/letter.category.column';
 import { TemplateTotalEntity } from './template.total';
+import { LetterCategoryCode } from '@app/util/category';
 
 @Entity({ name: TemplateColumn.table })
 export class TemplateEntity extends DefaultEntity {
@@ -24,7 +25,7 @@ export class TemplateEntity extends DefaultEntity {
   title: string;
 
   @Column({ name: LetterCategoryColumn.letterCategoryCode })
-  category: string;
+  category: LetterCategoryCode;
 
   @OneToMany(
     () => TemplateAttachmentEntity,
@@ -37,9 +38,11 @@ export class TemplateEntity extends DefaultEntity {
   @JoinColumn({ name: TemplateColumn.templateId })
   templateTotal: TemplateTotalEntity;
 
-  static of(userId: string, creator:string) {
+  static of(userId: string, title: string, category: LetterCategoryCode, creator:string) {
     const template = new TemplateEntity();
     template.userId = userId;
+    template.title = title;
+    template.category = category;
     template.creator = creator;
     template.updator = creator;
     return template;

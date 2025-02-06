@@ -37,7 +37,12 @@ const useTemplateApi = () => {
   };
   const getTemplatePage = async (query: GetTemplatePageRequest) => {
     const response = await apiClient.get<ApiResponse<GetTemplatePageResponse>>(
-      `/template?startAt=${query.startAt}&limit=${query.limit}`,
+      `/template?startAt=${query.startAt}&limit=${query.limit}` +
+        (query.category && query.category.length > 0
+          ? `&category=${query.category}`
+          : "") +
+        (query.title ? `&title=${query.title}` : "") +
+        (query.userId ? `&userId=${query.userId}` : ""),
       {
         headers: {
           Authorization: `Bearer ${access ?? ""}`,

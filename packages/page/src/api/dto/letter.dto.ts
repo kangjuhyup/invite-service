@@ -63,6 +63,8 @@ interface LetterPageItem {
 
   thumbnail: string;
 
+  inviteDate: string;
+
   publicYn: boolean;
 
   password?: string;
