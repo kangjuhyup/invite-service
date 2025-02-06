@@ -12,7 +12,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
-    "start:prod:migrate": "yarn run-migrations && yarn start:prod",
+    "start:prod:migrate": "yarn run-migrations && yarn pm2-runtime ecosystem.config.js",
     "run-migrations": "typeorm migration:run -d ./dist/src/database/datasource/migration.datasource.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",

@@ -28,4 +28,4 @@ RUN yarn workspaces focus server --production
 
 EXPOSE 3003
 
-CMD ["yarn","workspace","server","run-migrations","&&","yarn","workspace","server","pm2-runtime", "ecosystem.config.js"]
+CMD ["yarn","workspace","server","start:prod:migrate"]
