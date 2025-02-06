@@ -3,7 +3,6 @@ module.exports = {
     {
       name: 'invite-service',
       script: './dist/src/main.js',
-      // pre_start: 'yarn run-migrations',
       instances: 'max',
       exec_mode: 'cluster',
       autorestart: true,
