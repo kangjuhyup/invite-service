@@ -3,6 +3,7 @@ export const LetterColumn = {
   letterId: 'letr_id',
   title: 'tit',
   body: 'body',
+  inviteDate : 'inv_dt',
   commentYn: 'cmt_yn',
   attendYn: 'atd_yn',
   publicYn: 'pub_yn',

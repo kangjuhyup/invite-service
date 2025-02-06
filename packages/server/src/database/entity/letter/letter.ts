@@ -58,6 +58,14 @@ export class LetterEntity extends DefaultEntity {
   body?: string;
 
   @Column({
+    name: LetterColumn.inviteDate,
+    type: 'char',
+    length: 10,
+    nullable: false,
+  })
+  inviteDate : string;
+
+  @Column({
     name: LetterColumn.commentYn,
     type: process.env.NODE_ENV === 'test' ? 'varchar' : 'char',
     length: 1,
