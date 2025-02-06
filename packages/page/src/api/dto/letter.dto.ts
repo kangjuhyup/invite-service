@@ -57,6 +57,8 @@ interface LetterPageItem {
 
   title: string;
 
+  body: string;
+
   category: string;
 
   thumbnail: string;
@@ -64,6 +66,12 @@ interface LetterPageItem {
   publicYn: boolean;
 
   password?: string;
+
+  commentCount: number;
+
+  attendCount: number;
+
+  viewCount: number;
 }
 
 export interface GetLetterPageResponse {
@@ -93,7 +101,7 @@ export interface GetLetterResponse {
   letter: Letter;
   comments: Comment[];
 }
-interface Background {
+export interface Background {
   path: string;
 
   width: number;
@@ -101,7 +109,7 @@ interface Background {
   height: number;
 }
 
-interface Image {
+export interface Component {
   path: string;
 
   width: number;
@@ -130,7 +138,7 @@ export interface GetLetterDetailResponse {
 
   background: Background;
 
-  components?: Image[];
+  components?: Component[];
 }
 
 export interface GetLetterCommentRequest {

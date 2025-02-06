@@ -1,39 +1,20 @@
-import useLetterApi from "@/api/letter.api";
 import useUserApi from "@/api/user.api";
 import PresignedImage from "@/components/image/presigned/presigned.image";
 import {
   Container,
-  Grid,
-  Card,
   Text,
-  AspectRatio,
   Avatar,
   Group,
   Paper,
   Stack,
   Button,
-  Collapse,
-  Title,
-  Transition,
-  Menu,
-  ActionIcon,
   Modal,
   TextInput,
   FileInput,
 } from "@mantine/core";
-import {
-  IconChevronDown,
-  IconChevronUp,
-  IconDotsVertical,
-  IconEdit,
-  IconShare,
-  IconTrash,
-  IconUpload,
-  IconUser,
-} from "@tabler/icons-react";
+import { IconEdit, IconUpload, IconUser } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useShare } from "@/hooks/share.hook";
 import { useDisclosure } from "@mantine/hooks";
 import { notifications } from "@mantine/notifications";
 import useImageApi from "@/api/image.api";
@@ -49,8 +30,6 @@ const ProfilePage = () => {
     validateProfileImage,
   } = useUserApi();
   const { putImageToPresignedUrl } = useImageApi();
-  const { letterPage, getLetterPage, deleteLetter } = useLetterApi();
-  const { handleKakaoShare } = useShare();
   const [editModalOpened, { open: openEditModal, close: closeEditModal }] =
     useDisclosure(false);
   const [nickName, setNickName] = useState("");
@@ -58,7 +37,6 @@ const ProfilePage = () => {
 
   useEffect(() => {
     getProfile();
-    getLetterPage(100, 0);
   }, []);
 
   useEffect(() => {
@@ -66,41 +44,6 @@ const ProfilePage = () => {
       setNickName(profile.nickName || "");
     }
   }, [profile]);
-
-  const [gridOpened, setGridOpened] = useState(true);
-  const [isVisible, setIsVisible] = useState(true);
-
-  useEffect(() => {
-    if (letterPage?.items) {
-      setIsVisible(false);
-      setTimeout(() => setIsVisible(true), 100);
-    }
-  }, [letterPage?.items]);
-
-  const refreshLetters = async () => {
-    await getLetterPage(100, 0);
-  };
-
-  const handleDelete = async (letterId: number) => {
-    await deleteLetter(letterId);
-    await refreshLetters();
-  };
-
-  const handleShare = (letterId: number) => {
-    const letter = letterPage?.items.find((item) => item.id === letterId);
-    if (!letter) return;
-
-    handleKakaoShare({
-      title: "초대장이 도착했습니다!",
-      description: letter.title,
-      imageUrl: letter.thumbnail,
-      url:
-        `${window.location.origin}/page/letter/${letterId}` +
-        (letter.publicYn === false && letter.password
-          ? `?token=${letter.password}&isView=true`
-          : "?isView=true"),
-    });
-  };
 
   useEffect(() => {
     uploadProfileImage();
@@ -187,6 +130,41 @@ const ProfilePage = () => {
         </Group>
       </Paper>
 
+      <Group gap="md" mb="xl" grow>
+        <Button
+          h={150}
+          onClick={() => router.push("/page/letter")}
+          variant="light"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text size="xl" fw={700}>
+            내 초대장 보러가기
+          </Text>
+        </Button>
+        <Button
+          h={150}
+          onClick={() => router.push("/page/template")}
+          variant="light"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text size="xl" fw={700}>
+            템플릿 보러가기
+          </Text>
+        </Button>
+      </Group>
+
       <Modal
         opened={editModalOpened}
         onClose={closeEditModal}
@@ -212,120 +190,6 @@ const ProfilePage = () => {
           <Button onClick={handleProfileUpdate}>저장</Button>
         </Stack>
       </Modal>
-
-      <Group justify="space-between" align="center">
-        <Title>내 초대장</Title>
-        <Button
-          variant="subtle"
-          onClick={() => setGridOpened((o) => !o)}
-          leftSection={
-            gridOpened ? (
-              <IconChevronUp size={16} />
-            ) : (
-              <IconChevronDown size={16} />
-            )
-          }
-        >
-          {gridOpened ? "접기" : "펼치기"}
-        </Button>
-      </Group>
-
-      <Collapse
-        in={gridOpened}
-        transitionDuration={400}
-        transitionTimingFunction="ease"
-      >
-        <Grid pt="md" gutter="md">
-          {letterPage?.items.map((letter, index) => (
-            <Grid.Col key={letter.id} span={{ base: 12, sm: 6, md: 4 }}>
-              <Transition
-                mounted={isVisible}
-                transition="fade"
-                duration={400}
-                timingFunction="ease"
-              >
-                {(styles) => (
-                  <Card
-                    style={styles}
-                    shadow="sm"
-                    padding="md"
-                    radius="md"
-                    withBorder
-                  >
-                    <Card.Section
-                      onClick={() =>
-                        router.push({
-                          pathname: "/page/letter/[id]",
-                          query: { id: letter.id },
-                        })
-                      }
-                    >
-                      <AspectRatio ratio={16 / 9}>
-                        <PresignedImage path={letter.thumbnail} />
-                      </AspectRatio>
-                    </Card.Section>
-
-                    <Group justify="space-between" mt="md">
-                      <Text fw={500} size="lg">
-                        {letter.title || "Untitled Letter"}
-                      </Text>
-                      <Menu shadow="md" width={200} position="bottom-end">
-                        <Menu.Target>
-                          <ActionIcon variant="subtle" color="gray">
-                            <IconDotsVertical
-                              style={{ width: "70%", height: "70%" }}
-                              stroke={1.5}
-                            />
-                          </ActionIcon>
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                          <Menu.Item
-                            leftSection={
-                              <IconEdit
-                                style={{ width: "14px", height: "14px" }}
-                              />
-                            }
-                            onClick={() =>
-                              router.replace(`/page/letter/modify/${letter.id}`)
-                            }
-                          >
-                            수정하기
-                          </Menu.Item>
-                          <Menu.Item
-                            leftSection={
-                              <IconShare
-                                style={{ width: "14px", height: "14px" }}
-                              />
-                            }
-                            onClick={() => {
-                              handleShare(letter.id);
-                            }}
-                          >
-                            공유하기
-                          </Menu.Item>
-                          <Menu.Item
-                            color="red"
-                            leftSection={
-                              <IconTrash
-                                style={{ width: "14px", height: "14px" }}
-                              />
-                            }
-                            onClick={() => {
-                              handleDelete(letter.id);
-                            }}
-                          >
-                            삭제하기
-                          </Menu.Item>
-                        </Menu.Dropdown>
-                      </Menu>
-                    </Group>
-                  </Card>
-                )}
-              </Transition>
-            </Grid.Col>
-          ))}
-        </Grid>
-      </Collapse>
     </Container>
   );
 };

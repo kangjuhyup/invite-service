@@ -14,9 +14,11 @@ export class TemplateController {
     constructor(private readonly template: TemplateFacade) {}   
 
     @Get()
+    @UseGuards(UserAccessGuard)
     @UseInterceptors(new ResponseValidationInterceptor(GetTemplatePageResponse))
     async getTemplates(
         @Query() dto: GetTemplatePageRequest,
+        @GetUser() user: User,
     ) {
         return {
             result : true,
@@ -25,9 +27,11 @@ export class TemplateController {
     }
 
     @Get(':id')
+    @UseGuards(UserAccessGuard)
     @UseInterceptors(new ResponseValidationInterceptor(TemplateDetailResponse))
     async getTemplate(
         @Param('id') id : string,
+        @GetUser() user: User,
     ) {
         return {
             result : true,

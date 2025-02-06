@@ -7,6 +7,7 @@ import {
   InsertComment,
   InsertLetter,
   InsertLetterAttachment,
+  InsertLetterTotal,
   SelectComment,
   SelectLetter,
   UpdateLetter,
@@ -18,6 +19,8 @@ import { LetterAttachmentColumn } from '../column/letter.attachment.column';
 import { LetterEntity } from '../entity/letter/letter';
 import { LetterAttachmentEntity } from '../entity/letter/letter.attachment';
 import { LetterCommentEntity } from '../entity/letter/letter.comment';
+import { LetterTotalEntity } from '../entity/letter/letter.total';
+import { LetterTotalColumn } from '../column/letter.total.column';
 
 @Injectable()
 export class LetterRepository {
@@ -29,6 +32,8 @@ export class LetterRepository {
     private readonly letterAttachment: Repository<LetterAttachmentEntity>,
     @InjectRepository(LetterCommentEntity)
     private readonly letterComment: Repository<LetterCommentEntity>,
+    @InjectRepository(LetterTotalEntity)
+    private readonly letterTotal: Repository<LetterTotalEntity>,
   ) {}
 
   async selectLetterFromUser({
@@ -64,6 +69,10 @@ export class LetterRepository {
         `metadata.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
+      .innerJoinAndSelect(
+        'letter.letterTotal',
+        'letterTotal',
+      )
       .where({ userId, useYn: YN.Y })
       .orderBy('letter.createdAt', 'DESC')
       .limit(limit)
@@ -81,6 +90,19 @@ export class LetterRepository {
     ) as Repository<LetterEntity>;
     return await repo.findOne({
       where: { letterId },
+    });
+  }
+
+  async selectLetterCountFromUser({
+    userId,
+    entityManager,
+  }: Pick<SelectLetter, 'userId' | 'entityManager'>): Promise<number> {
+    const repo = this._getRepository(
+      'letter',
+      entityManager,
+    ) as Repository<LetterEntity>;
+    return await repo.count({
+      where: { userId },
     });
   }
 
@@ -128,6 +150,11 @@ export class LetterRepository {
     return await repo.insert(letter);
   }
 
+  async insertLetterTotal({ letterTotal, entityManager }: InsertLetterTotal) {
+    const repo = this._getRepository('letterTotal', entityManager);
+    return await repo.insert(letterTotal);
+  }
+
   async updateLetter({
     letterId,
     title,
@@ -153,6 +180,81 @@ export class LetterRepository {
       },
       {
         ...set,
+      },
+    );
+  }
+
+  async increaseLetterViewCount({
+    letterId,
+    entityManager,
+  }: Pick<UpdateLetter, 'letterId' | 'entityManager'>) {
+    const repo = this._getRepository('letterTotal', entityManager);
+    return await repo.update(
+      {
+        letterId,
+      },
+      {
+        viewCount: () => `${LetterTotalColumn.viewCount} + 1`,
+      },
+    );
+  }
+
+  async increaseLetterCommentCount({
+    letterId,
+    entityManager,
+  }: Pick<UpdateLetter, 'letterId' | 'entityManager'>) {
+    const repo = this._getRepository('letterTotal', entityManager);
+    return await repo.update(
+      {
+        letterId,
+      },
+      {
+        commentCount: () => `${LetterTotalColumn.commentCount} + 1`,
+      },
+    );
+  }
+
+  async decreaseLetterCommentCount({
+    letterId,
+    entityManager,
+  }: Pick<UpdateLetter, 'letterId' | 'entityManager'>) {
+    const repo = this._getRepository('letterTotal', entityManager);
+    return await repo.update(
+      {
+        letterId,
+      },
+      {
+        commentCount: () => `${LetterTotalColumn.commentCount} - 1`,
+      },
+    );
+  }
+
+  async increaseLetterAttendCount({
+    letterId,
+    entityManager,
+  }: Pick<UpdateLetter, 'letterId' | 'entityManager'>) {
+    const repo = this._getRepository('letterTotal', entityManager);
+    return await repo.update(
+      {
+        letterId,
+      },
+      {
+        attendantCount: () => `${LetterTotalColumn.attendantcount} + 1`,
+      },
+    );
+  }
+
+  async decreaseLetterAttendCount({
+    letterId,
+    entityManager,
+  }: Pick<UpdateLetter, 'letterId' | 'entityManager'>) {
+    const repo = this._getRepository('letterTotal', entityManager);
+    return await repo.update(
+      {
+        letterId,
+      },
+      {
+        attendantCount: () => `${LetterTotalColumn.attendantcount} - 1`,
       },
     );
   }
@@ -279,7 +381,7 @@ export class LetterRepository {
   }
 
   private _getRepository<
-    T extends 'letter' | 'letterAttachment' | 'letterComment',
+    T extends 'letter' | 'letterAttachment' | 'letterComment' | 'letterTotal',
   >(
     type: T,
     entityManager?: EntityManager,
@@ -287,7 +389,9 @@ export class LetterRepository {
     ? Repository<LetterEntity>
     : T extends 'letterAttachment'
       ? Repository<LetterAttachmentEntity>
-      : Repository<LetterCommentEntity> {
+      : T extends 'letterComment'
+        ? Repository<LetterCommentEntity>
+        : Repository<LetterTotalEntity> {
     if (type === 'letter')
       return (
         entityManager ? entityManager.getRepository(LetterEntity) : this.letter
@@ -303,6 +407,12 @@ export class LetterRepository {
         entityManager
           ? entityManager.getRepository(LetterCommentEntity)
           : this.letterComment
+      ) as any;
+    if (type === 'letterTotal')
+      return (
+        entityManager
+          ? entityManager.getRepository(LetterTotalEntity)
+          : this.letterTotal
       ) as any;
     throw new Error('Invalid repository type');
   }

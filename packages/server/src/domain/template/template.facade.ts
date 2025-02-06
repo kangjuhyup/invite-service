@@ -5,9 +5,12 @@ import { GetTemplatePageResponse } from './dto/response/template.page';
 import { TemplateDetailResponse } from './dto/response/template.detail';
 import { User } from '@app/jwt/user';
 import { StorageService } from '@app/storage/storage.service';
-import { CreateTemplateRequest } from './dto/request/create.template';
+import { CreateTemplateRequest } from './dto/request/create.template'
+import { v4 as uuidv4 } from 'uuid';;
 import { LetterService } from '../letter/service/letter.service';
 import { InsertTemplateTransaction } from './transaction/insert.transaction';
+import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
+import { TemplateAttachmentEntity } from '@app/database/entity/template/template.attachment';
 
 @Injectable()
 export class TemplateFacade {
@@ -45,19 +48,27 @@ export class TemplateFacade {
         await this.letter.checkLetterAuthor(dto.letterId, user);
         // 기존 letter 의 attachment 조회하기
         const letter = await this.letter.getLetter(dto.letterId);
-        // attachment의 path 를 이용해 object 복사하기
+        // attachment의 path 를 이용해 object 복사하기\
+        const newKey = uuidv4();
         letter.letterAttachment.map((attachment) => {
             const [bucket, key] = attachment.attachment.attachmentPath.split('/');
             this.storage.copyObject({
               sourceBucket : bucket,
               sourceKey : key,
               destinationBucket : `tmp-${bucket}`,
-              destinationKey : key,
+              destinationKey : newKey,
             });
         });
         // template 생성하기
         return await this.insertTemplateTransaction.run({
-            letterEntity : letter,
+            userId : user.id,
+            attachments : letter.letterAttachment.map((attachment) => {
+                const newAttachment = attachment.attachment.setTemplatePath( newKey).deleteId();
+                return {
+                    attachmentCode : attachment.attachmentCode,
+                    attachment : newAttachment
+                }
+            })
         })
     }
 

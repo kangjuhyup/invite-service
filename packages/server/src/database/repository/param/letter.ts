@@ -3,6 +3,7 @@ import { LetterAttachmentEntity } from '@app/database/entity/letter/letter.attac
 import { LetterCategoryCode } from '@app/util/category';
 import { DefaultParameter } from './default';
 import { LetterCommentEntity } from '@app/database/entity/letter/letter.comment';
+import { LetterTotalEntity } from '@app/database/entity/letter/letter.total';
 
 export class SelectLetter extends DefaultParameter {
   userId: string;
@@ -15,6 +16,10 @@ export class SelectLetter extends DefaultParameter {
 
 export class InsertLetter extends DefaultParameter {
   letter: LetterEntity;
+}
+
+export class InsertLetterTotal extends DefaultParameter {
+  letterTotal: LetterTotalEntity;
 }
 
 export class UpdateLetter extends DefaultParameter {

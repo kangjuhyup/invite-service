@@ -23,7 +23,9 @@ export class CommentService {
       param.content,
       'addComment',
     );
-    return await this.letterRepository.insertComment({ comment: newComment });
+    const comment =  await this.letterRepository.insertComment({ comment: newComment });
+    await this.letterRepository.increaseLetterCommentCount({letterId: param.letterId})
+    return comment;
   }
 
   async selectComments(letterId: number) {
@@ -31,7 +33,12 @@ export class CommentService {
   }
 
   async deleteComment(commentId: number) {
+    const comment = await this.letterRepository.selectComment({
+      letterCommentId: commentId,
+    });
+    if (!comment) throw new NotFoundException('댓글을 찾을 수 없습니다.');
     await this.letterRepository.deleteComment({ letterCommentId: commentId });
+    await this.letterRepository.decreaseLetterCommentCount({letterId: comment.letterId})
   }
 
   async deleteCommentFromLetter(letterId: number) {

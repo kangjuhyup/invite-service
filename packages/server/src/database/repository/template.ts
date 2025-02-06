@@ -6,9 +6,10 @@ import { TemplateEntity } from '../entity/template/template';
 import { TemplateAttachmentEntity } from '../entity/template/template.attachment';
 import { YN } from '@app/util/yn';
 import { DefaultColumn } from '../column/default';
-import { InsertTemplate, InsertTemplateAttachment, SelectTemplate } from './param/template';
+import { InsertTemplate, InsertTemplateAttachment, InsertTemplateTotal, SelectTemplate } from './param/template';
 import { TemplateColumn } from '../column/template.column';
 import { AttachmentColumn } from '../column/attachment.column';
+import { TemplateTotalEntity } from '../entity/template/template.total';
 
 export class TemplateRepository {
   private readonly logger = new Logger(TemplateRepository.name);
@@ -20,6 +21,8 @@ export class TemplateRepository {
     private readonly templateAttachment: Repository<TemplateAttachmentEntity>,
     @InjectRepository(AttachmentEntity)
     private readonly attachment: Repository<AttachmentEntity>,
+    @InjectRepository(TemplateTotalEntity)
+    private readonly templateTotal: Repository<TemplateTotalEntity>,
   ) {}
 
   async selectTemplateTotalCount(
@@ -79,6 +82,7 @@ export class TemplateRepository {
         `metadata.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
+      .innerJoinAndSelect('template.templateTotal','templateTotal')
       .where(`template.${TemplateColumn.templateId} IN (:...ids)`, { ids })
       .getMany();
   }
@@ -143,6 +147,20 @@ export class TemplateRepository {
     return await repo.createQueryBuilder().insert().values(templateAttachments).execute();
   }
 
+  async insertTemplateTotal({
+    templateTotal,
+    entityManager,
+  }: Pick<
+    InsertTemplateTotal,
+    'templateTotal' | 'entityManager'
+  >)  {
+      const repo = this._getRepository(
+        'templateTotal',
+        entityManager,
+      ) as Repository<TemplateTotalEntity>;
+      return await repo.insert(templateTotal);
+  }
+
   async deleteTemplateFromId({
     templateId,
     entityManager,
@@ -165,7 +183,7 @@ export class TemplateRepository {
   }
 
   private _getRepository<
-    T extends 'template' | 'templateAttachment' | 'attachment',
+    T extends 'template' | 'templateAttachment' | 'attachment' | 'templateTotal',
   >(
     type: T,
     entityManager?: EntityManager,
@@ -173,6 +191,8 @@ export class TemplateRepository {
     ? Repository<TemplateEntity>
     : T extends 'templateAttachment'
       ? Repository<TemplateAttachmentEntity>
+      : T extends 'templateTotal'
+      ? Repository<TemplateTotalEntity>
       : Repository<AttachmentEntity> {
     if (type === 'template')
       return (
@@ -191,6 +211,12 @@ export class TemplateRepository {
         entityManager
           ? entityManager.getRepository(AttachmentEntity)
           : this.attachment
+      ) as any;
+    if (type === 'templateTotal')
+      return (
+        entityManager
+          ? entityManager.getRepository(TemplateTotalEntity)
+          : this.templateTotal
       ) as any;
     throw new Error('Invalid repository type');
   }

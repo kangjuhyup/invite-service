@@ -9,6 +9,7 @@ import {
 import { LetterEntity } from '@app/database/entity/letter/letter';
 import { LetterCategoryCode } from '@app/util/category';
 import { booleanToYN } from '../../../util/yn';
+import { LetterTotalEntity } from '@app/database/entity/letter/letter.total';
 
 interface LetterDetail {
   userId: string;
@@ -87,6 +88,10 @@ export class InsertLetterTransaction extends LetterTransactionBase<
 
     // 4. 레터 첨부 파일 관계 삽입
     await this.insertLetterAttachments(letterId, allAttachments, entityManager);
+    await this.letterRepository.insertLetterTotal({
+      letterTotal: LetterTotalEntity.of(letterId, this.transactionName),
+      entityManager,
+    });
 
     return letterId;
   }

@@ -1,4 +1,4 @@
-import { Column, Entity, OneToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { DefaultEntity } from '../default';
 import { LetterEntity } from './letter';
 import { LetterColumn } from '../../column/letter.column';
@@ -20,4 +20,12 @@ export class LetterTotalEntity extends DefaultEntity {
 
   @OneToOne(() => LetterEntity, { nullable: false })
   letter: LetterEntity;
+
+  static of(letterId: number, creator: string) {
+    const letterTotal = new LetterTotalEntity();
+    letterTotal.letterId = letterId;
+    letterTotal.creator = creator;
+    letterTotal.updator = creator;
+    return letterTotal;
+  }
 }

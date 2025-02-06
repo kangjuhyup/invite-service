@@ -33,6 +33,13 @@ export class LetterPageItem {
   title: string;
 
   @ApiProperty({
+    description : '초대장 설명',
+  })
+  @IsNotEmpty()
+  @IsString()
+  body: string;
+
+  @ApiProperty({
     description: '카테고리',
     example: LetterCategoryCode.ANNIVERSARY,
     enum: Object.values(LetterCategoryCode),
@@ -65,21 +72,24 @@ export class LetterPageItem {
   @IsString()
   password?: string;
 
-  static of(
-    id: number,
-    title: string,
-    category: LetterCategoryCode,
-    thumbnail: string,
-    publicYn: boolean,
-    password?: string,
-  ) {
+  viewCount : number;
+  commentCount : number;
+  attendCount : number;
+
+  static of(letter: LetterEntity) {
     const item = new LetterPageItem();
-    item.id = id;
-    item.title = title;
-    item.category = category;
-    item.thumbnail = thumbnail;
-    item.publicYn = publicYn;
-    item.password = password;
+    item.id = letter.letterId;
+    item.title = letter.title;
+    item.body = letter.body;
+    item.category = letter.letterCategoryCode;
+    item.thumbnail = letter.letterAttachment.find(
+      (la) => la.attachmentCode === LetterAttachmentCode.THUMBNAIL,
+    )?.attachment.attachmentPath;
+    item.publicYn = ynToBoolean(letter.publicYn);
+    item.password = letter.password;
+    item.viewCount = letter.letterTotal.viewCount;
+    item.commentCount = letter.letterTotal.commentCount;
+    item.attendCount = letter.letterTotal.attendantCount;
     return item;
   }
 }
@@ -107,14 +117,7 @@ export class GetLetterPageResponse {
     response.totalCount = totalCount;
     response.items = letters.map((l) =>
       LetterPageItem.of(
-        l.letterId,
-        l.title,
-        l.letterCategoryCode,
-        l.letterAttachment.find(
-          (la) => la.attachmentCode === LetterAttachmentCode.THUMBNAIL,
-        )?.attachment.attachmentPath,
-        ynToBoolean(l.publicYn),
-        l.password,
+        l
       ),
     );
     return response;

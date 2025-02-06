@@ -8,9 +8,12 @@ import { MetadataEntity } from '@app/database/entity/attachment/metadata';
 import { TemplateAttachmentEntity } from '@app/database/entity/template/template.attachment';
 import { LetterAttachmentCode } from '@app/util/attachment';
 import { TemplateEntity } from '@app/database/entity/template/template';
+import { AttachmentEntity } from '@app/database/entity/attachment/attachment';
+import { TemplateTotalEntity } from '@app/database/entity/template/template.total';
 
 interface Input {
-  letterEntity : LetterEntity
+  userId : string
+  attachments : Array<{attachmentCode : LetterAttachmentCode , attachment : AttachmentEntity}>
 }
 
 @Injectable()
@@ -31,11 +34,11 @@ export class InsertTemplateTransaction extends BaseTransaction<
 
   protected async execute(
     {
-        letterEntity
+        userId,
+        attachments
     }: Input,
     entityManager: EntityManager,
   ): Promise<number> {    // 1. 탬플릿 삽입
-    const userId = letterEntity.userId;
     const template = TemplateEntity.of(userId, this.#transactionName);
     const insertResult = await this.templateRepository.insertTemplate({
       template,
@@ -46,20 +49,19 @@ export class InsertTemplateTransaction extends BaseTransaction<
 
     await this.insertAttachments(
       templateId,
-      letterEntity,
+      attachments,
       entityManager
     );
-    
 
     return templateId;
   }
 
   protected async insertAttachments(
     templateId : number,
-    letterEntity: LetterEntity,
+    attachmentEntities: Array<{attachmentCode : LetterAttachmentCode , attachment : AttachmentEntity}>,
     entityManager: EntityManager,
   ): Promise<void> {
-    const attachments = letterEntity.letterAttachment.map((a) => a.attachment.setTemplatePath().setUpdator(this.#transactionName).deleteId());
+    const attachments = attachmentEntities.map((a) => a.attachment.setUpdator(this.#transactionName));
     // 1. 첨부 파일 삽입
     this.#logger.debug(`1. 첨부파일 삽입`)
     this.#logger.debug(`attachments : ${attachments.length} 건`)
@@ -88,8 +90,7 @@ export class InsertTemplateTransaction extends BaseTransaction<
     ));
     await this.attachmentRepository.buildInsertMetadata({metadatas,entityManager});
     const templateAttachments = newAttachments.map((a,idx) => {
-        this.#logger.debug(`idx : ${idx} , letterAttachment : ${JSON.stringify(letterEntity.letterAttachment[idx])}`)
-        const attachmentCode = letterEntity.letterAttachment[idx].attachmentCode;
+        const attachmentCode = attachmentEntities[idx].attachmentCode;
         this.#logger.debug(`attachmentCode : ${attachmentCode}`)
         switch (attachmentCode) {
             case LetterAttachmentCode.THUMBNAIL:
@@ -108,6 +109,10 @@ export class InsertTemplateTransaction extends BaseTransaction<
     this.#logger.debug(`4. 탬플릿 첨부 파일 관계 삽입`)
     this.#logger.debug(`templateAttachments : ${JSON.stringify(templateAttachments)}`)
     const result = await this.templateRepository.bulkInsertTemplateAttachment({templateAttachments,entityManager});
+    await this.templateRepository.insertTemplateTotal({
+      templateTotal : TemplateTotalEntity.of(templateId, this.#transactionName),
+      entityManager,
+    })
     this.#logger.debug(`result : ${JSON.stringify(result)}`);
   }
 

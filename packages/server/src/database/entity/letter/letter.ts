@@ -115,6 +115,7 @@ export class LetterEntity extends DefaultEntity {
   letterAttachment: LetterAttachmentEntity[];
 
   @OneToOne(() => LetterTotalEntity, { nullable: false })
+  @JoinColumn({ name: LetterColumn.letterId })
   letterTotal: LetterTotalEntity;
 
   static of(param: {

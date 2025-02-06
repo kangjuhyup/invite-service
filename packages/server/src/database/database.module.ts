@@ -17,6 +17,8 @@ import { TemplateAttachmentEntity } from './entity/template/template.attachment'
 import { MetadataEntity } from './entity/attachment/metadata';
 import { TemplateRepository } from './repository/template';
 import { LetterDataSource } from './datasource/letter.datasource';
+import { LetterTotalEntity } from './entity/letter/letter.total';
+import { TemplateTotalEntity } from './entity/template/template.total';
 
 const repositories = [LetterRepository, AttachmentRepository, UserRepository, TemplateRepository];
 
@@ -51,8 +53,10 @@ const repositories = [LetterRepository, AttachmentRepository, UserRepository, Te
       LetterEntity,
       LetterAttachmentEntity,
       LetterCommentEntity,
+      LetterTotalEntity,
       TemplateEntity,
       TemplateAttachmentEntity,
+      TemplateTotalEntity,
     ]),
   ],
   providers: [...repositories],

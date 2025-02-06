@@ -62,13 +62,19 @@ export class AttachmentEntity extends DefaultEntity {
   }
 
   setTemplatePath(
+    key : string,
   ) {
-    this.attachmentPath = `tmp-${this.attachmentPath}`;
+    this.attachmentPath = `tmp-${this.attachmentPath.split('/')[0]}/${key}`;
+    return this;
+  }
+
+  setCreator(creator: string) {
+    this.creator = creator;
+    this.updator = creator;
     return this;
   }
 
   setUpdator(updator: string) {
-    this.creator = updator;
     this.updator = updator;
     return this;
   }
