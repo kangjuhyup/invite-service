@@ -28,4 +28,5 @@ RUN yarn workspaces focus server --production
 
 EXPOSE 3003
 
-CMD ["yarn","workspace","server","start:prod:migrate"]
+# CMD ["yarn","workspace","server","start:prod:migrate"]
+CMD ["yarn","workspace","server","start:prod"]
