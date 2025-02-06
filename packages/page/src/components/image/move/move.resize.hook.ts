@@ -74,7 +74,9 @@ const useMoveResize = () => {
     } else if (rotating) {
       // 회전 처리
       const target = e.target as HTMLElement;
-      const rect = target.closest(".image-container").getBoundingClientRect();
+      const container = target.closest(".image-container");
+      if (!container) return;
+      const rect = container.getBoundingClientRect();
       const centerX = rect.left + rect.width / 2;
       const centerY = rect.top + rect.height / 2;
       const currentAngle = Math.atan2(clientY - centerY, clientX - centerX);
