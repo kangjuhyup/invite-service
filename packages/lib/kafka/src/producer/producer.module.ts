@@ -14,6 +14,11 @@ export class KafkaProducerModule {
           useFactory: options.useFactory,
           inject: options.inject,
         },
+        {
+          provide: 'SCHEMA_REGISTRY_CONFIG',
+          useFactory: (config: KafkaConfig) => config.schemaRegistry,
+          inject: ['KAFKA_CONFIG'],
+        },
         KafkaProducerService,
       ],
       exports: [KafkaProducerService],
@@ -27,6 +32,10 @@ export class KafkaProducerModule {
         {
           provide: 'KAFKA_CONFIG',
           useValue: config,
+        },
+        {
+          provide: 'SCHEMA_REGISTRY_CONFIG',
+          useValue: config.schemaRegistry,
         },
         KafkaProducerService,
       ],

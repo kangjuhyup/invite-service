@@ -11,7 +11,6 @@ describe('KafkaProducerService Integration Test', () => {
 
   // 테스트 시작 전에 토픽 생성 (Admin API 사용)
   beforeAll(async () => {
-    // Kafka Admin 클라이언트를 생성하여 토픽 존재 여부를 확인하고, 없으면 생성
     const kafkaAdmin = new Kafka({
       clientId: 'test-admin-client',
       brokers: kafkaBrokers,
@@ -76,12 +75,16 @@ describe('KafkaProducerService Integration Test', () => {
     });
     await testConsumer.connect();
     await testConsumer.subscribe({ topic: testTopic, fromBeginning: false });
+    
+    // 컨슈머가 준비될 시간을 2초 정도 대기
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
     const receivedMessagePromise = new Promise<any>(async (resolve, reject) => {
       try {
         await testConsumer.run({
           eachMessage: async ({ message }) => {
             const value = message.value?.toString();
+            console.log('Received message:', value); // 디버깅 로그
             if (value) {
               const parsed = JSON.parse(value);
               if (parsed.hello === testMessage.hello) {

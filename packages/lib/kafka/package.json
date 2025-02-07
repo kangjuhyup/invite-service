@@ -27,6 +27,7 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
+    "@kafkajs/confluent-schema-registry": "^3.6.1",
     "@nestjs/cli": "^10.0.0",
     "@nestjs/common": "^11.0.8",
     "@nestjs/config": "^4.0.0",
