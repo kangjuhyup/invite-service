@@ -1,14 +1,19 @@
-const path = require("path");
+const {getDefaultConfig, mergeConfig} = require('@react-native/metro-config');
 
-module.exports = {
-  projectRoot: path.resolve(__dirname),
-  watchFolders: [path.resolve(__dirname, "node_modules")],
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
-  },
-};
+/**
+ * Metro configuration
+ * https://reactnative.dev/docs/metro
+ *
+ * @type {import('@react-native/metro-config').MetroConfig}
+ */
+
+const {
+  wrapWithReanimatedMetroConfig,
+} = require('react-native-reanimated/metro-config');
+
+const config = {};
+
+module.exports = mergeConfig(
+  wrapWithReanimatedMetroConfig(getDefaultConfig(__dirname)),
+  config,
+);
