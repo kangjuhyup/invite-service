@@ -10,7 +10,8 @@ export class GoogleService {
 
   private GOOGLE_OAUTH_URL = 'https://oauth2.googleapis.com/token';
   private GOOGLE_KEYS_URL = 'https://www.googleapis.com/oauth2/v3/certs';
-  private GOOGLE_CLIENT_ID: string;
+  private GOOGLE_WEB_CLIENT_ID: string;
+  private GOOGLE_IOS_CLIENT_ID: string;
   private GOOGLE_CLIENT_SECRET: string;
   private GOOGLE_CALLBACK_URL: string;
 
@@ -18,7 +19,8 @@ export class GoogleService {
     private readonly http: HttpService,
     private readonly config: ConfigService,
   ) {
-    this.GOOGLE_CLIENT_ID = config.get<string>('GOOGLE_CLIENT_ID');
+    this.GOOGLE_WEB_CLIENT_ID = config.get<string>('GOOGLE_WEB_CLIENT_ID');
+    this.GOOGLE_IOS_CLIENT_ID = config.get<string>('GOOGLE_IOS_CLIENT_ID');
     this.GOOGLE_CLIENT_SECRET = config.get<string>('GOOGLE_CLIENT_SECRET');
     this.GOOGLE_CALLBACK_URL = config.get<string>('GOOGLE_CALLBACK_URL');
   }
@@ -32,22 +34,32 @@ export class GoogleService {
     this.logger.debug(`code : ${code}`);
     this.logger.debug(
       JSON.stringify({
-        client_id: this.GOOGLE_CLIENT_ID,
+        client_id: this.GOOGLE_WEB_CLIENT_ID,
         client_secret: this.GOOGLE_CLIENT_SECRET,
         redirect_uri: this.GOOGLE_CALLBACK_URL,
       }),
     );
     if (!code) throw new UnauthorizedException('AuhorizationCode required');
+    // iOS 앱에서 요청인 경우 iOS 클라이언트 ID 사용
+    const clientId = code.startsWith('4/') ? this.GOOGLE_IOS_CLIENT_ID : this.GOOGLE_WEB_CLIENT_ID;
+    
+    // iOS 앱인 경우 client secret 생략
+    const requestBody: any = {
+      code,
+      client_id: clientId,
+      grant_type: 'authorization_code',
+    };
+
+    // 웹 애플리케이션인 경우에만 client secret과 redirect_uri 추가
+    if (!code.startsWith('4/')) {
+      requestBody.client_secret = this.GOOGLE_CLIENT_SECRET;
+      requestBody.redirect_uri = this.GOOGLE_CALLBACK_URL;
+    }
+
     const { data } = await firstValueFrom(
       this.http.post<{
         id_token: string;
-      }>(this.GOOGLE_OAUTH_URL, {
-        code,
-        client_id: this.GOOGLE_CLIENT_ID,
-        client_secret: this.GOOGLE_CLIENT_SECRET,
-        redirect_uri: this.GOOGLE_CALLBACK_URL,
-        grant_type: 'authorization_code',
-      }),
+      }>(this.GOOGLE_OAUTH_URL, requestBody),
     ).catch((err) => {
       this.logger.error(err);
       throw err;
