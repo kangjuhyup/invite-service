@@ -1,0 +1,169 @@
+import React, {useState} from 'react';
+import {googleLogin} from '../api/auth';
+import {saveToken} from '../utils/token';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+} from 'react-native';
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
+import type {RootStackParamList} from '../types/navigation';
+
+type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
+
+const Login: React.FC<Props> = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = () => {
+    // TODO: 로그인 로직 구현
+    console.log('로그인:', {email, password});
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const response = await googleLogin();
+      // 로그인 성공 시 토큰 저장
+      await saveToken(response.data.access);
+      console.log('로그인 성공:', response.data.access);
+
+      // 메인 화면으로 이동
+      navigation.replace('MainTabs');
+    } catch (error) {
+      console.error('로그인 실패:', error);
+      // TODO: 에러 처리 (예: 알림 표시)
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.content}>
+        {/* 로고 또는 타이틀 */}
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Invite</Text>
+          <Text style={styles.subtitle}>함께하는 초대장</Text>
+        </View>
+
+        {/* 로그인 폼 */}
+        <View style={styles.formContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="이메일"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="비밀번호"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginButtonText}>로그인</Text>
+          </TouchableOpacity>
+
+          {/* 구글 로그인 버튼 */}
+          <TouchableOpacity
+            style={styles.googleButton}
+            onPress={handleGoogleLogin}>
+            <Text style={styles.googleButtonText}>Google로 로그인</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 회원가입 링크 */}
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>계정이 없으신가요?</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.signupLink}>회원가입</Text>
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#1a73e8',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#5f6368',
+  },
+  formContainer: {
+    width: '100%',
+  },
+  input: {
+    backgroundColor: '#f1f3f4',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+    fontSize: 16,
+  },
+  loginButton: {
+    backgroundColor: '#1a73e8',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  loginButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  googleButton: {
+    backgroundColor: '#ffffff',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#dadce0',
+  },
+  googleButtonText: {
+    color: '#3c4043',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  signupContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 20,
+  },
+  signupText: {
+    color: '#5f6368',
+    marginRight: 4,
+  },
+  signupLink: {
+    color: '#1a73e8',
+    fontWeight: '600',
+  },
+});
+
+export default Login;
