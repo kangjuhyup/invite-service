@@ -14,11 +14,11 @@ import {
   Dimensions,
 } from 'react-native';
 import {
+  Gesture,
+  GestureDetector,
   GestureHandlerRootView,
-  PanGestureHandler,
 } from 'react-native-gesture-handler';
 import Animated, {
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -46,24 +46,24 @@ const DraggableMemo: React.FC<{memo: MemoItem; onPress: () => void}> = ({
   const translateX = useSharedValue(50);
   const translateY = useSharedValue(50);
 
-  const gestureHandler = useAnimatedGestureHandler<any>({
-    onStart: (_, context: any) => {
+  const gesture = Gesture.Pan()
+    .onBegin(() => {
       'worklet';
-      context.startX = translateX.value;
-      context.startY = translateY.value;
-    },
-    onActive: (event, context) => {
+    })
+    .onStart(() => {
       'worklet';
-      translateX.value = context.startX + event.translationX;
-      translateY.value = context.startY + event.translationY;
-    },
-    onEnd: () => {
+    })
+    .onUpdate(event => {
+      'worklet';
+      translateX.value = event.translationX;
+      translateY.value = event.translationY;
+    })
+    .onEnd(() => {
       'worklet';
       // 바운스 효과 추가
       translateX.value = withSpring(translateX.value);
       translateY.value = withSpring(translateY.value);
-    },
-  });
+    });
 
   const animatedStyle = useAnimatedStyle(() => {
     'worklet';
@@ -76,7 +76,7 @@ const DraggableMemo: React.FC<{memo: MemoItem; onPress: () => void}> = ({
   });
 
   return (
-    <PanGestureHandler onGestureEvent={gestureHandler}>
+    <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.draggableMemo, animatedStyle]}>
         <TouchableOpacity onPress={onPress} style={styles.memoContent}>
           <Text style={[styles.draggableMemoText, memo.style]}>
@@ -84,7 +84,7 @@ const DraggableMemo: React.FC<{memo: MemoItem; onPress: () => void}> = ({
           </Text>
         </TouchableOpacity>
       </Animated.View>
-    </PanGestureHandler>
+    </GestureDetector>
   );
 };
 
@@ -102,11 +102,14 @@ const AddPhotoMemo: React.FC<Props> = ({navigation, route}) => {
   });
   const {imageUri} = route.params;
 
-  const handleDeleteMemo = useCallback((index: number) => {
-    const newMemos = memos.filter((_, i) => i !== index);
-    setMemos(newMemos);
-    setShowStyleModal(false);
-  }, [memos]);
+  const handleDeleteMemo = useCallback(
+    (index: number) => {
+      const newMemos = memos.filter((_, i) => i !== index);
+      setMemos(newMemos);
+      setShowStyleModal(false);
+    },
+    [memos],
+  );
 
   const handleAddMemo = useCallback(() => {
     if (memo.trim()) {
@@ -225,7 +228,7 @@ const AddPhotoMemo: React.FC<Props> = ({navigation, route}) => {
 
                 {/* 버튼 */}
                 <View style={styles.modalButtons}>
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={[styles.modalButton, styles.deleteButton]}
                     onPress={() => {
                       if (selectedMemoIndex !== null) {
