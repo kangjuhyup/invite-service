@@ -27,9 +27,8 @@ const CARD_HEIGHT = SCREEN_HEIGHT * 0.6;
 // 카드 색상 배열
 const CARD_COLORS = ['#FF9EAA', '#90CAF9', '#A5D6A7', '#FFD54F', '#B39DDB'];
 
-const Home: React.FC<Props> = ({navigation}) => {
+const My: React.FC<Props> = ({navigation}) => {
   const scrollX = React.useRef(new Animated.Value(0)).current;
-  const [currentIndex, setCurrentIndex] = React.useState(0);
   const [profile, setProfile] = useState<ProfileResponse>();
   const [letters, setLetters] = useState<Letter[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,7 +53,10 @@ const Home: React.FC<Props> = ({navigation}) => {
             .map(async item => {
               try {
                 const [bucket, path] = item.thumbnail.split('/');
+                console.info('bucket:', bucket);
+                console.info('path:', path);
                 const url = await fetchImage(bucket, path);
+                console.info('url:', url);
                 urls[item.thumbnail] = url;
               } catch (error) {
                 console.error('이미지 로드 실패:', error);
@@ -182,10 +184,7 @@ const Home: React.FC<Props> = ({navigation}) => {
         <Text style={styles.headerTitle}>나의 초대장</Text>
         <TouchableOpacity
           style={styles.createButton}
-          onPress={() => {
-            // TODO: 초대장 생성 페이지로 이동
-            console.log('초대장 생성');
-          }}>
+          onPress={() => navigation.navigate('LetterEditor')}>
           <Text style={styles.createButtonText}>+ 새 초대장</Text>
         </TouchableOpacity>
       </View>
@@ -414,4 +413,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Home;
+export default My;

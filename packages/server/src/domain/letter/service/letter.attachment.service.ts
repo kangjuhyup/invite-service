@@ -28,6 +28,7 @@ export class LetterAttachmentService extends AttachmentBaseService {
     componentCount: number,
   ) {
     const metadata = await this.getMetadata(objectKey, componentCount);
+    this.logger.debug(`metadata : ${JSON.stringify(metadata)}`);
     if (
       metadata.thumbnailMeta.Metadata.session !== sessionKey ||
       metadata.letterMeta.Metadata.session !== sessionKey ||

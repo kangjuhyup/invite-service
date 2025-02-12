@@ -35,9 +35,9 @@ export class LetterPageItem {
   @ApiProperty({
     description : '초대장 설명',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  body: string;
+  body?: string;
 
   @ApiProperty({
     description: '카테고리',
@@ -59,7 +59,9 @@ export class LetterPageItem {
   @ApiProperty({
     description : '일자'
   })
-  inviteDate : string;
+  @IsOptional()
+  @IsString()
+  inviteDate? : string;
 
   @ApiProperty({
     description: '공통 유효성',

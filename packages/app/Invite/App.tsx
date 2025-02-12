@@ -7,10 +7,11 @@ import type {RootStackParamList} from './src/types/navigation';
 // 페이지 import
 import Login from './src/pages/Login';
 import Signup from './src/pages/Signup';
-import Home from './src/pages/Home';
+import My from './src/pages/My';
 import Template from './src/pages/Template';
 import Settings from './src/pages/Settings';
 import LetterDetail from './src/pages/LetterDetail';
+import LetterEditor from './src/pages/LetterEditor';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -24,7 +25,7 @@ function MainTabs() {
       }}>
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={My}
         options={{
           title: '초대장',
         }}
@@ -47,26 +48,37 @@ function MainTabs() {
   );
 }
 
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+
 function App(): React.JSX.Element {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Signup" component={Signup} />
-        <Stack.Screen name="MainTabs" component={MainTabs} />
-        <Stack.Screen
-          name="LetterDetail"
-          component={LetterDetail}
-          options={{
+    <GestureHandlerRootView style={{flex: 1}}>
+      <NavigationContainer>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{
             headerShown: false,
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+          }}>
+          <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="Signup" component={Signup} />
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+          <Stack.Screen
+            name="LetterDetail"
+            component={LetterDetail}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="LetterEditor"
+            component={LetterEditor}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
 
