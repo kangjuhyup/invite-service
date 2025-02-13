@@ -75,6 +75,7 @@ const LetterEditor: React.FC = () => {
     handleBoldToggle,
     toggleColorPicker,
     closeTextStyleControls,
+    deleteItem,
   } = useTextEditor({
     items,
     onUpdateItem: updateItem,
@@ -232,16 +233,7 @@ const LetterEditor: React.FC = () => {
         onSelectImage={selectBackgroundImage}
       />
 
-      {!showTextStyleControls && !showImageControls ? (
-        <DefaultController
-          onBackgroundPress={() => setShowBackgroundModal(true)}
-          onTextPress={addText}
-          onImagePress={addImage}
-          onStickerPress={() => {}}
-          onDeletePress={selectedItem ? () => {} : undefined}
-          selectedItem={selectedItem}
-        />
-      ) : showImageControls && selectedItem ? (
+      {showImageControls && selectedItem ? (
         <ImageController
           isProcessingImage={isProcessingImage}
           onDeletePress={() => {
@@ -253,7 +245,7 @@ const LetterEditor: React.FC = () => {
             setSelectedItem(null);
           }}
         />
-      ) : (
+      ) : showTextStyleControls && selectedItem ? (
         <TextStyleController
           fontSize={fontSize}
           isBold={isBold}
@@ -263,6 +255,25 @@ const LetterEditor: React.FC = () => {
           onBoldToggle={handleBoldToggle}
           onColorChange={handleColorChange}
           onToggleColorPicker={toggleColorPicker}
+          onDeletePress={() => {
+            if (selectedItem) {
+              deleteItem();
+              setSelectedItem(null);
+            }
+          }}
+          onDonePress={() => {
+            closeTextStyleControls();
+            setSelectedItem(null);
+          }}
+        />
+      ) : (
+        <DefaultController
+          onBackgroundPress={() => setShowBackgroundModal(true)}
+          onTextPress={addText}
+          onImagePress={addImage}
+          onStickerPress={() => {}}
+          onDeletePress={selectedItem ? () => {} : undefined}
+          selectedItem={selectedItem}
         />
       )}
     </SafeAreaView>

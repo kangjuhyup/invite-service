@@ -20,7 +20,12 @@ interface UseTextEditorProps {
 /**
  * 텍스트 에디터 관련 상태와 함수들을 관리하는 훅
  */
-export const useTextEditor = ({items, onUpdateItem, onAddItem, onDeleteItem}: UseTextEditorProps) => {
+export const useTextEditor = ({
+  items,
+  onUpdateItem,
+  onAddItem,
+  onDeleteItem,
+}: UseTextEditorProps) => {
   const [state, setState] = useState<TextEditorState>({
     selectedTextId: null,
     isTextStyleVisible: false,
@@ -34,45 +39,67 @@ export const useTextEditor = ({items, onUpdateItem, onAddItem, onDeleteItem}: Us
   const selectedTextItem = items.find(item => item.id === state.selectedTextId);
 
   // 텍스트 선택
-  const handleTextSelect = useCallback((id: string) => {
-    const textItem = items.find(item => item.id === id);
-    if (textItem) {
-      setState(prev => ({
-        ...prev,
-        selectedTextId: id,
-        isTextStyleVisible: true,
-        textColor: textItem.style?.color || '#000000',
-        fontSize: textItem.style?.fontSize || 16,
-        isBold: textItem.style?.fontWeight === 'bold',
-      }));
-    }
-  }, [items]);
+  const handleTextSelect = useCallback(
+    (id: string) => {
+      const textItem = items.find(item => item.id === id);
+      if (textItem) {
+        setState(prev => ({
+          ...prev,
+          selectedTextId: id,
+          isTextStyleVisible: true,
+          textColor: textItem.style?.color || '#000000',
+          fontSize: textItem.style?.fontSize || 16,
+          isBold: textItem.style?.fontWeight === 'bold',
+        }));
+      }
+    },
+    [items],
+  );
 
   // 텍스트 스타일 변경
-  const handleTextStyleChange = useCallback((updates: Partial<EditorItemType['style']>) => {
-    if (state.selectedTextId) {
-      onUpdateItem(state.selectedTextId, {
-        style: {
-          fontSize: state.fontSize,
-          color: state.textColor,
-          fontWeight: state.isBold ? 'bold' : 'normal',
-          ...updates,
-        },
-      });
-    }
-  }, [state.selectedTextId, state.fontSize, state.textColor, state.isBold, onUpdateItem]);
+  const handleTextStyleChange = useCallback(
+    (updates: Partial<EditorItemType['style']>) => {
+      if (state.selectedTextId) {
+        onUpdateItem(state.selectedTextId, {
+          style: {
+            fontSize: state.fontSize,
+            color: state.textColor,
+            fontWeight: state.isBold ? 'bold' : 'normal',
+            ...updates,
+          },
+        });
+      }
+    },
+    [
+      state.selectedTextId,
+      state.fontSize,
+      state.textColor,
+      state.isBold,
+      onUpdateItem,
+    ],
+  );
 
   // 폰트 크기 변경
-  const handleFontSizeChange = useCallback((newSize: number) => {
-    setState(prev => ({...prev, fontSize: newSize}));
-    handleTextStyleChange({fontSize: newSize});
-  }, [handleTextStyleChange]);
+  const handleFontSizeChange = useCallback(
+    (newSize: number) => {
+      setState(prev => ({...prev, fontSize: newSize}));
+      handleTextStyleChange({fontSize: newSize});
+    },
+    [handleTextStyleChange],
+  );
 
   // 텍스트 색상 변경
-  const handleColorChange = useCallback((color: string) => {
-    setState(prev => ({...prev, textColor: color, isColorPickerVisible: false}));
-    handleTextStyleChange({color});
-  }, [handleTextStyleChange]);
+  const handleColorChange = useCallback(
+    (color: string) => {
+      setState(prev => ({
+        ...prev,
+        textColor: color,
+        isColorPickerVisible: false,
+      }));
+      handleTextStyleChange({color});
+    },
+    [handleTextStyleChange],
+  );
 
   // 굵기 변경
   const handleBoldToggle = useCallback(() => {
@@ -81,19 +108,26 @@ export const useTextEditor = ({items, onUpdateItem, onAddItem, onDeleteItem}: Us
   }, [state.isBold, handleTextStyleChange]);
 
   // 텍스트 내용 변경
-  const handleTextChange = useCallback((text: string) => {
-    if (state.selectedTextId) {
-      onUpdateItem(state.selectedTextId, {content: text});
-    }
-  }, [state.selectedTextId, onUpdateItem]);
+  const handleTextChange = useCallback(
+    (text: string) => {
+      if (state.selectedTextId) {
+        onUpdateItem(state.selectedTextId, {content: text});
+      }
+    },
+    [state.selectedTextId, onUpdateItem],
+  );
 
   // 컬러 피커 토글
   const toggleColorPicker = useCallback(() => {
-    setState(prev => ({...prev, isColorPickerVisible: !prev.isColorPickerVisible}));
+    setState(prev => ({
+      ...prev,
+      isColorPickerVisible: !prev.isColorPickerVisible,
+    }));
   }, []);
 
   // 텍스트 스타일 컨트롤 닫기
   const closeTextStyleControls = useCallback(() => {
+    console.log('closeTextStyleControls');
     setState(prev => ({
       ...prev,
       selectedTextId: null,
@@ -101,6 +135,17 @@ export const useTextEditor = ({items, onUpdateItem, onAddItem, onDeleteItem}: Us
       isColorPickerVisible: false,
     }));
   }, []);
+
+  const deleteItem = useCallback(() => {
+    if (!state.selectedTextId) return;
+    onDeleteItem(state.selectedTextId);
+    setState(prev => ({
+      ...prev,
+      selectedTextId: null,
+      isTextStyleVisible: false,
+      isColorPickerVisible: false,
+    }));
+  }, [state.selectedTextId, onDeleteItem]);
 
   return {
     state,
@@ -112,5 +157,6 @@ export const useTextEditor = ({items, onUpdateItem, onAddItem, onDeleteItem}: Us
     handleTextChange,
     toggleColorPicker,
     closeTextStyleControls,
+    deleteItem,
   };
 };

@@ -1,5 +1,11 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 interface TextStyleControllerProps {
@@ -11,6 +17,8 @@ interface TextStyleControllerProps {
   onBoldToggle: () => void;
   onColorChange: (color: string) => void;
   onToggleColorPicker: () => void;
+  onDeletePress: () => void;
+  onDonePress: () => void;
 }
 
 /**
@@ -26,6 +34,8 @@ export const TextStyleController: React.FC<TextStyleControllerProps> = ({
   onBoldToggle,
   onColorChange,
   onToggleColorPicker,
+  onDeletePress,
+  onDonePress,
 }) => {
   // 기본 색상 팔레트
   const colorPalette = [
@@ -69,6 +79,21 @@ export const TextStyleController: React.FC<TextStyleControllerProps> = ({
           onPress={onToggleColorPicker}
           style={styles.colorButton}>
           <View style={[styles.colorPreview, {backgroundColor: textColor}]} />
+          <Text style={styles.controlText}>색상</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.controlsRight}>
+        <TouchableOpacity
+          style={[styles.controlButton, styles.deleteButton]}
+          onPress={onDeletePress}>
+          <Icon name="delete" size={24} color="#ff4444" />
+          <Text style={[styles.controlText, styles.deleteText]}>삭제</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.controlButton} onPress={onDonePress}>
+          <Icon name="check" size={24} color="#1a73e8" />
+          <Text style={[styles.controlText, styles.doneText]}>완료</Text>
         </TouchableOpacity>
       </View>
 
@@ -95,28 +120,37 @@ export const TextStyleController: React.FC<TextStyleControllerProps> = ({
 };
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flexGrow: 0,
+    marginRight: 8,
+  },
   container: {
     backgroundColor: 'white',
     borderTopWidth: 1,
     borderTopColor: '#e0e0e0',
-    padding: 8,
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   controls: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    gap: 12,
+    paddingHorizontal: 12,
   },
   sizeControl: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
-    borderRadius: 20,
+    borderRadius: 8,
     padding: 4,
+    marginRight: 4,
   },
   button: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
@@ -131,12 +165,13 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   colorButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
+    paddingBottom: 4,
   },
   colorPreview: {
     width: 24,
@@ -167,5 +202,31 @@ const styles = StyleSheet.create({
   selectedColor: {
     borderWidth: 2,
     borderColor: '#000',
+  },
+  controlsRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  controlButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: '#f5f5f5',
+    marginLeft: 8,
+  },
+  deleteButton: {
+    backgroundColor: '#ffebee',
+  },
+  controlText: {
+    marginTop: 4,
+    fontSize: 12,
+    color: '#666',
+  },
+  deleteText: {
+    color: '#ff4444',
+  },
+  doneText: {
+    color: '#1a73e8',
   },
 });
