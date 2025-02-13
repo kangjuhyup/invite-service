@@ -1,6 +1,11 @@
-import React, {useState} from 'react';
-import {googleLogin} from '../api/auth';
-import {saveToken} from '../utils/token';
+import React, {useState, useEffect} from 'react';
+import {googleLogin, resignToken} from '../api/auth';
+import {
+  saveTokens,
+  getAccessToken,
+  getRefreshToken,
+  clearTokens,
+} from '../utils/token';
 import {
   View,
   Text,
@@ -20,6 +25,41 @@ const Login: React.FC<Props> = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      try {
+        const accessToken = await getAccessToken();
+        const refreshToken = await getRefreshToken();
+
+        if (!accessToken && !refreshToken) {
+          // 로그인되지 않은 상태
+          return;
+        }
+
+        if (!accessToken && refreshToken) {
+          // access token이 만료되고 refresh token이 있는 경우
+          try {
+            const response = await resignToken(refreshToken);
+            await saveTokens(response.data.access, response.data.refresh);
+            navigation.replace('MainTabs');
+          } catch (error) {
+            console.error('토큰 갱신 실패:', error);
+            // refresh token도 만료된 경우
+            await clearTokens();
+          }
+        } else if (accessToken) {
+          // access token이 있는 경우
+          navigation.replace('MainTabs');
+        }
+      } catch (error) {
+        console.error('토큰 확인 실패:', error);
+        await clearTokens();
+      }
+    };
+
+    checkLoginStatus();
+  }, [navigation]);
+
   const handleLogin = () => {
     // TODO: 로그인 로직 구현
     console.log('로그인:', {email, password});
@@ -28,9 +68,10 @@ const Login: React.FC<Props> = ({navigation}) => {
   const handleGoogleLogin = async () => {
     try {
       const response = await googleLogin();
+      console.log('google 로그인 성공:', response);
       // 로그인 성공 시 토큰 저장
-      await saveToken(response.data.access);
-      console.log('로그인 성공:', response.data.access);
+      await saveTokens(response.data.access, response.data.refresh);
+      console.log('로그인 성공');
 
       // 메인 화면으로 이동
       navigation.replace('MainTabs');

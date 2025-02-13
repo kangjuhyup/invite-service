@@ -10,6 +10,24 @@ interface LoginResponse {
   };
 }
 
+// 토큰 갱신 함수
+export const resignToken = async (
+  refreshToken: string,
+): Promise<LoginResponse> => {
+  return await fetch(`${BASE_URL}/api/auth/resign`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${refreshToken}`,
+    },
+  }).then(res => {
+    if (!res.ok) {
+      throw new Error('Token refresh failed');
+    }
+    return res.json();
+  });
+};
+
 // 구글 로그인 설정
 GoogleSignin.configure({
   webClientId:
@@ -19,6 +37,8 @@ GoogleSignin.configure({
   offlineAccess: true, // serverAuthCode를 받기 위해 필요
 });
 
+import {apiClient, BASE_URL} from './client';
+
 // 구글 로그인 함수
 export const googleLogin = async (): Promise<LoginResponse> => {
   try {
@@ -27,30 +47,21 @@ export const googleLogin = async (): Promise<LoginResponse> => {
     const userInfo = await GoogleSignin.signIn();
 
     // 서버에 인증 코드 전송
-    // 플랫폼에 따라 다른 주소 사용
-    const serverUrl = Platform.select({
-      ios: 'http://192.168.0.18:3003',
-      android: 'http://10.0.2.2:3000',
-    });
-    console.log('serverUrl : ', serverUrl);
-    const response = await fetch(`${serverUrl}/api/auth/signin/google`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    const response = await apiClient.post<LoginResponse>(
+      '/api/auth/signin/google',
+      {
         code: userInfo.data?.serverAuthCode,
-      }),
-      credentials: 'include', // 쿠키를 받기 위해 필요
-    });
+      },
+      {
+        credentials: 'include', // 쿠키를 받기 위해 필요
+      },
+    );
     console.log('response : ', response);
-    if (!response.ok) {
+    if (!response || !response.result || !response.data) {
       throw new Error('서버 로그인 실패');
     }
 
-    const data = await response.json();
-    console.log('data : ', data);
-    return data as LoginResponse;
+    return response;
   } catch (error) {
     console.error('구글 로그인 에러:', error);
     throw error;
