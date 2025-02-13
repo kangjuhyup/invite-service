@@ -33,40 +33,38 @@ const My: React.FC<Props> = ({navigation}) => {
   const [letters, setLetters] = useState<Letter[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageUrls, setImageUrls] = useState<{[key: string]: string}>({});
+  const [renderedItems, setRenderedItems] = useState<{[key: string]: boolean}>({});
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setLoading(true);
+        // 프로필과 레터 데이터 로드
         const [profileData, lettersData] = await Promise.all([
           getProfile(),
           getLetters(),
         ]);
-        setProfile(profileData);
+        setProfile(profileData.data);
         setLetters(lettersData.items);
+        setLoading(false);
 
-        // 이미지 URL 불러오기
-        const urls: {[key: string]: string} = {};
-        await Promise.all(
-          lettersData.items
-            .filter(item => item.thumbnail)
-            .map(async item => {
-              try {
-                const [bucket, path] = item.thumbnail.split('/');
-                console.info('bucket:', bucket);
-                console.info('path:', path);
-                const url = await fetchImage(bucket, path);
-                console.info('url:', url);
-                urls[item.thumbnail] = url;
-              } catch (error) {
-                console.error('이미지 로드 실패:', error);
-              }
-            }),
-        );
-        setImageUrls(urls);
+        // 이미지 비동기 로드
+        lettersData.items
+          .filter(item => item.thumbnail)
+          .forEach(async (item) => {
+            try {
+              const [bucket, path] = item.thumbnail.split('/');
+              const url = await fetchImage(bucket, path);
+              setImageUrls(prev => ({
+                ...prev,
+                [item.thumbnail]: url
+              }));
+            } catch (error) {
+              console.error('이미지 로드 실패:', error);
+            }
+          });
       } catch (error) {
         console.error('데이터 로딩 실패:', error);
-      } finally {
         setLoading(false);
       }
     };
@@ -94,6 +92,12 @@ const My: React.FC<Props> = ({navigation}) => {
     return (
       <Animated.View
         key={item.id}
+        onLayout={() => {
+          setRenderedItems(prev => ({
+            ...prev,
+            [item.id]: true
+          }));
+        }}
         style={[styles.cardContainer, {transform: [{scale}], opacity}]}>
         <TouchableOpacity
           style={[
@@ -104,16 +108,22 @@ const My: React.FC<Props> = ({navigation}) => {
             navigation.navigate('LetterDetail', {letter: item});
           }}>
           <View style={styles.cardContent}>
-            <Image
-              source={{
-                uri:
-                  item.thumbnail && imageUrls[item.thumbnail]
-                    ? imageUrls[item.thumbnail]
-                    : 'https://via.placeholder.com/400x600/808080/ffffff?text=No+Image',
-              }}
-              style={styles.thumbnail}
-              resizeMode="cover"
-            />
+            <Animated.View style={[styles.thumbnail, styles.thumbnailBackground]}>
+              {item.thumbnail && renderedItems[item.id] && (
+                <Animated.Image
+                  source={{
+                    uri: imageUrls[item.thumbnail] || undefined,
+                  }}
+                  style={[
+                    styles.thumbnail,
+                    {
+                      opacity: imageUrls[item.thumbnail] ? 1 : 0,
+                    },
+                  ]}
+                  resizeMode="cover"
+                />
+              )}
+            </Animated.View>
             <View style={styles.overlay} />
             <View style={styles.cardInfo}>
               <View style={styles.cardHeader}>
@@ -206,9 +216,7 @@ const My: React.FC<Props> = ({navigation}) => {
         scrollEventThrottle={16}
         contentContainerStyle={styles.scrollContainer}>
         {loading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#0000ff" />
-          </View>
+          <View style={styles.loadingContainer}></View>
         ) : (
           letters.map((item, index) => renderCard(item, index))
         )}
@@ -410,6 +418,9 @@ const styles = StyleSheet.create({
     width: 1,
     height: 16,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  thumbnailBackground: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
   },
 });
 

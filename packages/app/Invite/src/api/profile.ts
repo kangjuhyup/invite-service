@@ -1,4 +1,5 @@
-import {getToken} from '../utils/token';
+import {apiClient} from './client';
+import ApiResponse from '../../../../page/src/common/response';
 
 export interface ProfileResponse {
   userId: string;
@@ -7,24 +8,8 @@ export interface ProfileResponse {
   profileImage?: string;
 }
 
-export const getProfile = async (): Promise<ProfileResponse> => {
-  const token = await getToken();
-  if (!token) {
-    throw new Error('로그인이 필요합니다');
-  }
-
-  const response = await fetch('http://192.168.0.18:3003/api/user', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+export const getProfile = async (): Promise<ApiResponse<ProfileResponse>> => {
+  return await apiClient.get<ProfileResponse>('/api/user', {
     credentials: 'include',
   });
-
-  if (!response.ok) {
-    throw new Error('프로필 조회 실패');
-  }
-
-  return (await response.json()).data as ProfileResponse;
 };
