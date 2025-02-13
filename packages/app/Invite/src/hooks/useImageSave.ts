@@ -158,7 +158,6 @@ export const useImageSave = (): UseImageSaveReturn => {
         'x-amz-meta-angle': '0',
         sessionKey: response.data.sessionKey,
       });
-      console.log('배경 이미지 업로드 완료');
 
       // 컴포넌트(이미지) 업로드
       const imageItems = items.filter(item => item.type === 'image');

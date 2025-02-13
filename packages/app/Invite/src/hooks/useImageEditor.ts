@@ -131,7 +131,10 @@ export const useImageEditor = ({
 
   // 배경 모달 토글
   const toggleBackgroundModal = useCallback(() => {
-    setState(prev => ({...prev, showBackgroundModal: !prev.showBackgroundModal}));
+    setState(prev => ({
+      ...prev,
+      showBackgroundModal: !prev.showBackgroundModal,
+    }));
   }, []);
 
   // 이미지 컨트롤 닫기
