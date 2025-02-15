@@ -3,20 +3,19 @@ import {StyleSheet, Dimensions} from 'react-native';
 const {height: SCREEN_HEIGHT} = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
-  letterImage: {
-    width: '100%',
-    height: '100%',
-    marginVertical: 20,
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
     flex: 1,
-    width: '100%',
   },
-  thumbnail: {
+  letterImage: {
+    // flex: 1,
     width: '100%',
-    height: undefined,
-    aspectRatio: 1,
-    marginVertical: 10,
+    height: SCREEN_HEIGHT * 0.7,
   },
   errorText: {
     color: '#d32f2f',

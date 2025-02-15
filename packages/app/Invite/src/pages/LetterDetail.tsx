@@ -106,7 +106,7 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView}>
+      <View style={styles.scrollView}>
         {/* 헤더 */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
@@ -134,29 +134,30 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
           </View>
         </View>
 
-        {/* 컨텐츠 */}
-        <View style={styles.content}>
-          {detailLoading ? (
+        {detailLoading ? (
+          <View style={styles.content}>
             <ActivityIndicator style={styles.loading} color="#1a73e8" />
-          ) : letterData ? (
-            <>
-              <Text style={styles.title}>{letterData.title}</Text>
-              <Image
-                source={{uri: imageUrl}}
-                style={styles.thumbnail}
-                resizeMode="cover"
-              />
-              {letterData.body && (
-                <Text style={styles.body}>{letterData.body}</Text>
-              )}
-            </>
-          ) : (
+          </View>
+        ) : letterData ? (
+          <View style={styles.content}>
+            <Text style={styles.title}>{letterData.title}</Text>
+            <Image 
+              source={{uri: imageUrl}} 
+              style={styles.letterImage}
+              resizeMode="contain"
+            />
+            {letterData.body && (
+              <Text style={styles.body}>{letterData.body}</Text>
+            )}
+          </View>
+        ) : (
+          <View style={styles.content}>
             <Text style={styles.errorText}>
               초대장 정보를 불러올 수 없습니다.
             </Text>
-          )}
-        </View>
-      </ScrollView>
+          </View>
+        )}
+      </View>
 
       <CommentModal
         visible={showComments}
