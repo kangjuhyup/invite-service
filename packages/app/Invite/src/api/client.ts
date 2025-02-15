@@ -99,9 +99,22 @@ export const apiClient = {
     }
   },
 
-  get<T>(endpoint: string, options: Omit<RequestInit, 'method'> = {}) {
-    return this.fetch<T>(endpoint, {
-      ...options,
+  get<T>(endpoint: string, options: Omit<RequestInit, 'method'> & { params?: Record<string, any> } = {}) {
+    const { params, ...fetchOptions } = options;
+    
+    let queryString = '';
+    if (params) {
+      const validParams = Object.entries(params)
+        .filter(([_, value]) => value !== undefined && value !== null)
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
+      
+      if (validParams.length > 0) {
+        queryString = `?${validParams.join('&')}`;
+      }
+    }
+
+    return this.fetch<T>(`${endpoint}${queryString}`, {
+      ...fetchOptions,
       method: 'GET',
     });
   },
@@ -134,6 +147,18 @@ export const apiClient = {
     return this.fetch<T>(endpoint, {
       ...options,
       method: 'DELETE',
+    });
+  },
+
+  patch<T>(
+    endpoint: string,
+    data?: any,
+    options: Omit<RequestInit, 'method' | 'body'> = {},
+  ) {
+    return this.fetch<T>(endpoint, {
+      ...options,
+      method: 'PATCH',
+      body: JSON.stringify(data),
     });
   },
 };

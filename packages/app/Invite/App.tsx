@@ -1,8 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import type {RootStackParamList} from './src/types/navigation';
+import {initializeApp, getApp} from '@react-native-firebase/app';
+import {
+  getMessaging,
+  getToken,
+  onMessage,
+} from '@react-native-firebase/messaging';
 
 // 페이지 import
 import Login from './src/pages/Login';
@@ -22,12 +28,20 @@ function MainTabs() {
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#1a73e8',
+        tabBarInactiveTintColor: '#666',
+        tabBarStyle: {
+          paddingBottom: 5,
+          height: 60,
+        },
       }}>
       <Tab.Screen
         name="Home"
         component={My}
         options={{
           title: '초대장',
+          tabBarIcon: ({color, size}) => (
+            <Icon name="mail" size={size} color={color} />
+          ),
         }}
       />
       <Tab.Screen
@@ -35,6 +49,9 @@ function MainTabs() {
         component={Template}
         options={{
           title: '템플릿',
+          tabBarIcon: ({color, size}) => (
+            <Icon name="dashboard" size={size} color={color} />
+          ),
         }}
       />
       <Tab.Screen
@@ -42,6 +59,9 @@ function MainTabs() {
         component={Settings}
         options={{
           title: '설정',
+          tabBarIcon: ({color, size}) => (
+            <Icon name="settings" size={size} color={color} />
+          ),
         }}
       />
     </Tab.Navigator>
@@ -49,8 +69,51 @@ function MainTabs() {
 }
 
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Profile from './src/pages/Profile';
 
 function App(): React.JSX.Element {
+  // Firebase 초기화 및 FCM 권한 요청
+  useEffect(() => {
+    console.log('App 노드');
+    const initFirebase = async () => {
+      try {
+        console.log('Firebase 초기화 시작');
+
+        // Firebase 앱 초기화
+        try {
+          getApp();
+        } catch (e) {
+          console.log('Firebase 앱 초기화 실패');
+          initializeApp();
+        }
+
+        const app = getApp();
+        const messaging = getMessaging(app);
+
+        // FCM 권한 요청
+        const authStatus = await messaging.requestPermission();
+        console.log('FCM 권한 요청 시작', authStatus);
+
+        // FCM 토큰 가져오기
+        const fcmToken = await getToken(messaging);
+        console.log('FCM 토큰:', fcmToken);
+
+        // 토큰 갱신 리스너
+        const unsubscribe = onMessage(messaging, message => {
+          console.log('새로운 FCM 메시지:', message);
+        });
+
+        console.log('FCM 초기화 완료');
+        return () => unsubscribe();
+      } catch (error) {
+        console.error('Firebase 초기화 오류:', error);
+      }
+    };
+
+    initFirebase();
+  }, []);
+
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <NavigationContainer>
@@ -72,6 +135,13 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="LetterEditor"
             component={LetterEditor}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={Profile}
             options={{
               headerShown: false,
             }}

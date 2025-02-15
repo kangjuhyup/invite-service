@@ -6,6 +6,7 @@ import {
   getRefreshToken,
   clearTokens,
 } from '../utils/token';
+import messaging from '@react-native-firebase/messaging';
 import {
   View,
   Text,
@@ -26,6 +27,8 @@ const Login: React.FC<Props> = ({navigation}) => {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
+    // FCM 토큰 갱신 이벤트 리스너
+
     const checkLoginStatus = async () => {
       try {
         const accessToken = await getAccessToken();
@@ -58,6 +61,8 @@ const Login: React.FC<Props> = ({navigation}) => {
     };
 
     checkLoginStatus();
+
+    // 컴포넌트 언마운트 시 리스너 제거
   }, [navigation]);
 
   const handleLogin = () => {

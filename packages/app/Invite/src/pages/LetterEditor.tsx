@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import ViewShot from 'react-native-view-shot';
 import {useImageSave} from '../hooks/useImageSave';
 import {
@@ -15,19 +15,28 @@ import {TextStyleController} from '../components/editor/controller/TextStyleCont
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {BackgroundSettingModal} from '../components/modal/BackgroundSettingModal';
 import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import {RootStackParamList} from '../types/navigation';
 import {useTextEditor} from '../hooks/useTextEditor';
 import {useImageEditor} from '../hooks/useImageEditor';
 
 import {styles} from '../styles/LetterEditor.styles';
+import {LetterSend} from '../components/common/LetterSend';
 import {EditorItemType} from '../types/editor';
 import {BACKGROUND_HEIGHT, BACKGROUND_WIDTH} from '../constants/canvas';
 import {DefaultController} from '../components/editor/controller/DefaultController';
 import {ImageController} from '../components/editor/controller/ImageController';
+import {Component, getLetterDetail} from '../api/letter';
+import {NativeStackScreenProps} from '@react-navigation/native-stack';
+import {fetchImage, getImageUrl} from '../api/image';
 
-const LetterEditor: React.FC = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'LetterEditor'>;
+
+const LetterEditor: React.FC<Props> = ({route}) => {
+  const letterId = route.params?.letterId;
   const [showTextStyleControls, setShowTextStyleControls] =
     useState<boolean>(false);
-  const navigation = useNavigation();
+  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
   const {editorRef, viewShotRef, handleSave} = useImageSave();
 
@@ -38,11 +47,55 @@ const LetterEditor: React.FC = () => {
   const [items, setItems] = useState<EditorItemType[]>([]);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const updateItem = (id: string, updates: Partial<EditorItemType>) => {
     setItems(prev =>
       prev.map(item => (item.id === id ? {...item, ...updates} : item)),
     );
+  };
+
+  useEffect(() => {
+    if (letterId) {
+      setModifyComponents();
+    }
+  }, []);
+
+  const setModifyComponents = async () => {
+    const response = await getLetterDetail(letterId!);
+    if (response.result && response.data) {
+      for (const [idx, item] of response.data.components?.entries() || []) {
+        let content = '';
+        if (item.path) {
+          try {
+            const [bucket, path] = item.path.split('/');
+            content = await fetchImage(bucket, path);
+          } catch (error) {
+            console.error('이미지 로드 실패:', error);
+          }
+        }
+
+        setItems(prev => [
+          ...prev,
+          {
+            id: idx.toString(),
+            type: item.font ? 'text' : 'image',
+            content,
+            style: {
+              fontFamily: item.font || '',
+              fontSize: 12,
+              fontWeight: item.bold ? 'bold' : 'normal',
+              color: item.color,
+            },
+            position: {
+              x: parseFloat(item.x),
+              y: parseFloat(item.y),
+            },
+          },
+        ]);
+      }
+    }
+    console.log(response);
   };
 
   const {
@@ -149,6 +202,7 @@ const LetterEditor: React.FC = () => {
         <TouchableOpacity
           onPress={async () => {
             try {
+              setIsSaving(true);
               await handleSave(
                 backgroundImage,
                 BACKGROUND_WIDTH,
@@ -156,10 +210,20 @@ const LetterEditor: React.FC = () => {
                 items,
               );
               Alert.alert('성공', '초대장이 저장되었습니다.');
-              navigation.goBack();
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: 'MainTabs',
+                    params: {screen: 'My'},
+                  },
+                ],
+              });
             } catch (error) {
               console.error('이미지 저장 중 오류 발생:', error);
               Alert.alert('오류', '초대장 저장에 실패했습니다.');
+            } finally {
+              setIsSaving(false);
             }
           }}>
           <Text style={styles.saveButton}>저장</Text>
@@ -276,6 +340,7 @@ const LetterEditor: React.FC = () => {
           selectedItem={selectedItem}
         />
       )}
+      <LetterSend visible={isSaving} />
     </SafeAreaView>
   );
 };

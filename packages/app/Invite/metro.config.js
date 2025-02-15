@@ -11,7 +11,12 @@ const {
   wrapWithReanimatedMetroConfig,
 } = require('react-native-reanimated/metro-config');
 
-const config = {};
+const config = {
+  resolver: {
+    assetExts: ['dotlottie', 'png', 'jpg', 'gif'],
+    sourceExts: ['js', 'jsx', 'json', 'ts', 'tsx', 'dotlottie'],
+  },
+};
 
 module.exports = mergeConfig(
   wrapWithReanimatedMetroConfig(getDefaultConfig(__dirname)),

@@ -1,32 +1,43 @@
-import axios from 'axios';
-import {API_URL} from '../config';
+import {apiClient} from './client';
+import ApiResponse from '../../../../page/src/common/response';
+import {HttpResponse} from './letter';
 
 export interface Comment {
-  id: string;
-  letterId: string;
-  userId: string;
-  userNickname: string;
-  userProfileImage?: string;
-  content: string;
-  createdAt: string;
+  id: number;
+  editor: string;
+  body: string;
 }
 
 export interface CreateCommentRequest {
-  content: string;
+  editor: string;
+  body: string;
 }
 
-export const getComments = async (letterId: string): Promise<Comment[]> => {
-  const response = await axios.get(`${API_URL}/letters/${letterId}/comments`);
-  return response.data;
+export interface GetCommentsResponse {
+  letterId: number;
+  comments: Comment[];
+}
+
+export interface CreateCommentResponse {
+  result: boolean;
+  data: Comment;
+}
+
+export const getComments = async (
+  letterId: number,
+): Promise<HttpResponse<GetCommentsResponse>> => {
+  return await apiClient.get<GetCommentsResponse>(
+    `/api/comment/letter/${letterId}`,
+  );
 };
 
 export const createComment = async (
   letterId: string,
-  data: CreateCommentRequest,
-): Promise<Comment> => {
-  const response = await axios.post(
-    `${API_URL}/letters/${letterId}/comments`,
-    data,
+  request: CreateCommentRequest,
+): Promise<CreateCommentResponse> => {
+  const response = await apiClient.post<CreateCommentResponse>(
+    `/comment/letter/${letterId}`,
+    request,
   );
   return response.data;
 };
@@ -34,6 +45,9 @@ export const createComment = async (
 export const deleteComment = async (
   letterId: string,
   commentId: string,
-): Promise<void> => {
-  await axios.delete(`${API_URL}/letters/${letterId}/comments/${commentId}`);
+): Promise<{result: boolean}> => {
+  const response = await apiClient.delete<{result: boolean}>(
+    `/comment/letter/${letterId}/${commentId}`,
+  );
+  return response.data;
 };

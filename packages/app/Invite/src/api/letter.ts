@@ -1,4 +1,5 @@
 import {apiClient} from './client';
+import {Comment} from './comment';
 
 export enum LetterCategoryCode {
   ANNIVERSARY = 'LT001',
@@ -8,18 +9,38 @@ export enum LetterCategoryCode {
   ETC = 'LT005',
 }
 
-export interface Letter {
+export interface LetterInfo {
+  path: string;
+  width: number;
+  height: number;
+}
+
+export interface LetterPageItem {
   id: number;
+  thumbnail: string;
   title: string;
   body: string;
+  inviteDate?: string;
   category: LetterCategoryCode;
-  thumbnail: string;
-  inviteDate: string;
-  publicYn: boolean;
-  password?: string;
   viewCount: number;
   commentCount: number;
   attendCount: number;
+}
+
+export interface Letter {
+  userId: string;
+  title: string;
+  body: string;
+  letterId: number;
+  publicYn: boolean;
+  password?: string;
+  letter: LetterInfo;
+  inviteDate?: string;
+  category: LetterCategoryCode;
+  viewCount: number;
+  commentCount: number;
+  attendCount: number;
+  comments: Array<Comment>;
 }
 
 export interface GetLetterPageRequest {
@@ -29,7 +50,7 @@ export interface GetLetterPageRequest {
 
 export interface GetLetterPageResponse {
   totalCount: number;
-  items: Letter[];
+  items: LetterPageItem[];
 }
 
 export interface PrepareMetaDefault {
@@ -83,6 +104,32 @@ export interface AddLetterResponse {
 export interface HttpResponse<T> {
   result: boolean;
   data: T;
+}
+
+export interface Background {
+  path: string;
+  width: number;
+  height: number;
+}
+
+export interface Component {
+  path: string;
+  width: number;
+  height: number;
+  x: string;
+  y: string;
+  z: number;
+  ang: string;
+  font?: string;
+  color?: string;
+  bold?: boolean;
+}
+
+export interface GetLetterDetailResponse {
+  title: string;
+  body?: string;
+  background: Background;
+  components?: Component[];
 }
 
 export const uploadFile = async (
@@ -168,20 +215,30 @@ export const prepareLetter = async (
 
 export const getLetters = async (
   params: GetLetterPageRequest = {limit: 5, skip: 0},
-): Promise<GetLetterPageResponse> => {
+): Promise<HttpResponse<GetLetterPageResponse>> => {
   const queryParams = new URLSearchParams({
     skip: params.skip?.toString() || '0',
     limit: params.limit?.toString() || '5',
   });
 
-  const result = await apiClient.get<GetLetterPageResponse>(
+  return await apiClient.get<GetLetterPageResponse>(
     `/api/letter?${queryParams.toString()}`,
   );
-  return {
-    totalCount: result.data.totalCount,
-    items: result.data.items.map(item => ({
-      ...item,
-      id: item.id,
-    })),
-  };
+};
+
+export const getLetterDetail = async (
+  id: string | number,
+): Promise<HttpResponse<GetLetterDetailResponse>> => {
+  return await apiClient.get<GetLetterDetailResponse>(
+    `/api/letter/detail/${id}`,
+  );
+};
+
+export const getLetter = async (
+  id: string | number,
+  token?: string,
+): Promise<HttpResponse<Letter>> => {
+  const url = token ? `/api/letter/${id}?token=${token}` : `/api/letter/${id}`;
+  console.log(url);
+  return await apiClient.get<Letter>(url);
 };

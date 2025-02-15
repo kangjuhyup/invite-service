@@ -15,13 +15,15 @@ import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../types/navigation';
 import {getProfile} from '../api/profile';
 import type {ProfileResponse} from '../api/profile';
-import {getLetters, Letter} from '../api/letter';
+import {getLetters, Letter, LetterPageItem} from '../api/letter';
 import {fetchImage, getImageUrl} from '../api/image';
 import Icon from 'react-native-vector-icons/Feather';
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
 const CARD_WIDTH = SCREEN_WIDTH * 0.85;
+const SPACING = 10;
+const OFFSET = (SCREEN_WIDTH - CARD_WIDTH) / 2;
 const CARD_HEIGHT = SCREEN_HEIGHT * 0.6;
 
 // 카드 색상 배열
@@ -30,10 +32,12 @@ const CARD_COLORS = ['#FF9EAA', '#90CAF9', '#A5D6A7', '#FFD54F', '#B39DDB'];
 const My: React.FC<Props> = ({navigation}) => {
   const scrollX = React.useRef(new Animated.Value(0)).current;
   const [profile, setProfile] = useState<ProfileResponse>();
-  const [letters, setLetters] = useState<Letter[]>([]);
+  const [letters, setLetters] = useState<LetterPageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageUrls, setImageUrls] = useState<{[key: string]: string}>({});
-  const [renderedItems, setRenderedItems] = useState<{[key: string]: boolean}>({});
+  const [renderedItems, setRenderedItems] = useState<{[key: string]: boolean}>(
+    {},
+  );
 
   useEffect(() => {
     const loadData = async () => {
@@ -45,19 +49,21 @@ const My: React.FC<Props> = ({navigation}) => {
           getLetters(),
         ]);
         setProfile(profileData.data);
-        setLetters(lettersData.items);
-        setLoading(false);
-
+        if (lettersData.result && lettersData.data) {
+          setLetters(lettersData.data.items);
+          setLoading(false);
+        }
         // 이미지 비동기 로드
-        lettersData.items
+        lettersData.data.items
           .filter(item => item.thumbnail)
-          .forEach(async (item) => {
+          .forEach(async item => {
             try {
               const [bucket, path] = item.thumbnail.split('/');
               const url = await fetchImage(bucket, path);
+              console.log(url);
               setImageUrls(prev => ({
                 ...prev,
-                [item.thumbnail]: url
+                [item.thumbnail]: url,
               }));
             } catch (error) {
               console.error('이미지 로드 실패:', error);
@@ -70,11 +76,12 @@ const My: React.FC<Props> = ({navigation}) => {
     };
     loadData();
   }, []);
-  const renderCard = (item: Letter, index: number) => {
+  const renderCard = (item: LetterPageItem, index: number) => {
+    const position = index * (CARD_WIDTH + SPACING);
     const inputRange = [
-      (index - 1) * CARD_WIDTH,
-      index * CARD_WIDTH,
-      (index + 1) * CARD_WIDTH,
+      position - (CARD_WIDTH + SPACING),
+      position,
+      position + (CARD_WIDTH + SPACING),
     ];
 
     const scale = scrollX.interpolate({
@@ -95,7 +102,7 @@ const My: React.FC<Props> = ({navigation}) => {
         onLayout={() => {
           setRenderedItems(prev => ({
             ...prev,
-            [item.id]: true
+            [item.id]: true,
           }));
         }}
         style={[styles.cardContainer, {transform: [{scale}], opacity}]}>
@@ -105,10 +112,12 @@ const My: React.FC<Props> = ({navigation}) => {
             {backgroundColor: CARD_COLORS[index % CARD_COLORS.length]},
           ]}
           onPress={() => {
-            navigation.navigate('LetterDetail', {letter: item});
+            console.log(item);
+            navigation.navigate('LetterDetail', {letterId: item.id});
           }}>
           <View style={styles.cardContent}>
-            <Animated.View style={[styles.thumbnail, styles.thumbnailBackground]}>
+            <Animated.View
+              style={[styles.thumbnail, styles.thumbnailBackground]}>
               {item.thumbnail && renderedItems[item.id] && (
                 <Animated.Image
                   source={{
@@ -207,8 +216,10 @@ const My: React.FC<Props> = ({navigation}) => {
 
       <Animated.ScrollView
         horizontal
-        pagingEnabled
         showsHorizontalScrollIndicator={false}
+        snapToInterval={CARD_WIDTH + SPACING}
+        snapToAlignment="center"
+        decelerationRate="fast"
         onScroll={Animated.event(
           [{nativeEvent: {contentOffset: {x: scrollX}}}],
           {useNativeDriver: true},
@@ -240,7 +251,8 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     alignItems: 'center',
-    paddingHorizontal: (SCREEN_WIDTH - CARD_WIDTH) / 2,
+    paddingHorizontal: OFFSET,
+    gap: SPACING,
   },
   cardContainer: {
     width: CARD_WIDTH,

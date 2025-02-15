@@ -140,6 +140,10 @@ export class LetterRepository {
         `user.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
+      .innerJoinAndSelect(
+        'letter.letterTotal',
+        'letterTotal',
+      )
       .where({ letterId, useYn: YN.Y });
     this.logger.debug(`qb : ${JSON.stringify(qb.getSql())}`);
     return await qb.getOne();

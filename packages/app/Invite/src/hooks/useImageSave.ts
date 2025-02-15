@@ -112,7 +112,6 @@ export const useImageSave = (): UseImageSaveReturn => {
       // API 호출 및 URL 획득
       const response = await prepareLetter(prepareData);
       const urls = response.data;
-      console.log('URL:', urls);
       // 원본 이미지 캡쳐
       const uri = await viewShotRef.current.capture();
       // 레터 이미지 업로드
