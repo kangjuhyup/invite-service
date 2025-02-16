@@ -131,6 +131,7 @@ export class LetterEntity extends DefaultEntity {
     letterCategoryCode: LetterCategoryCode;
     title: string;
     body?: string;
+    inviteDate: string;
     commentYn: YN;
     attendYn: YN;
     publicYn: YN;
@@ -141,6 +142,7 @@ export class LetterEntity extends DefaultEntity {
     letter.letterCategoryCode = param.letterCategoryCode;
     letter.title = param.title;
     letter.body = param.body;
+    letter.inviteDate = param.inviteDate;
     letter.commentYn = param.commentYn;
     letter.attendYn = param.attendYn;
     letter.publicYn = param.publicYn;

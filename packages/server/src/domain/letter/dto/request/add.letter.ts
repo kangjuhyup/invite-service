@@ -4,6 +4,7 @@ import {
   IsBoolean,
   IsDefined,
   IsIn,
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
@@ -49,6 +50,10 @@ export class AddLetterRequest {
   @IsOptional()
   @IsBoolean()
   commentYn?: boolean;
+
+  @IsNotEmpty()
+  @IsString()
+  inviteDate: string;
 
   @ApiProperty({
     description: 'Indicates if attendance is required',

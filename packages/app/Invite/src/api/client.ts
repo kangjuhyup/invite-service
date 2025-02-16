@@ -9,6 +9,7 @@ import {resignToken} from './auth';
 
 export const BASE_URL = Platform.select({
   ios: 'http://192.168.0.18:3003',
+  // ios: 'http://172.30.1.60:3003',
   android: 'http://10.0.2.2:3000',
 });
 
@@ -99,15 +100,21 @@ export const apiClient = {
     }
   },
 
-  get<T>(endpoint: string, options: Omit<RequestInit, 'method'> & { params?: Record<string, any> } = {}) {
-    const { params, ...fetchOptions } = options;
-    
+  get<T>(
+    endpoint: string,
+    options: Omit<RequestInit, 'method'> & {params?: Record<string, any>} = {},
+  ) {
+    const {params, ...fetchOptions} = options;
+
     let queryString = '';
     if (params) {
       const validParams = Object.entries(params)
         .filter(([_, value]) => value !== undefined && value !== null)
-        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`);
-      
+        .map(
+          ([key, value]) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+        );
+
       if (validParams.length > 0) {
         queryString = `?${validParams.join('&')}`;
       }

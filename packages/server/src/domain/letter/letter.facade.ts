@@ -175,8 +175,9 @@ export class LetterFacade {
       letter: {
         userId: user.id,
         letterCategoryCode: request.category,
-        body: request.body,
         title: request.title,
+        body: request.body,
+        inviteDate: request.inviteDate,
         comment: request.commentYn,
         attend: request.attendYn,
       },

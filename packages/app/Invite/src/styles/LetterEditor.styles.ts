@@ -2,6 +2,11 @@ import {StyleSheet} from 'react-native';
 import {BACKGROUND_WIDTH, BACKGROUND_HEIGHT} from '../constants/canvas';
 
 export const styles = StyleSheet.create({
+  editorContainer: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: 'white',
+  },
   hiddenCanvas: {
     position: 'absolute',
     top: -9999,
@@ -34,6 +39,20 @@ export const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  titleInputContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    width: '100%',
+    backgroundColor: '#fff',
+  },
+  titleInput: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    padding: 8,
+    fontSize: 16,
+    backgroundColor: '#fff',
   },
   saveButton: {
     color: '#1a73e8',

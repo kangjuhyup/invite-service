@@ -3,19 +3,15 @@ import {
   View,
   Text,
   Image,
-  ScrollView,
   SafeAreaView,
   TouchableOpacity,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
   ActivityIndicator,
   Alert,
-  Modal,
 } from 'react-native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../types/navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {AttendeeListModal} from '../components/modal/AttendeeListModal';
 import {CommentModal} from '../components/modal/CommentModal';
 import type {Letter} from '../api/letter';
 import {fetchImage} from '../api/image';
@@ -37,6 +33,27 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
     handleDeleteComment,
   } = useComments(letterId);
   const [showComments, setShowComments] = useState(false);
+  const [attendeeModalVisible, setAttendeeModalVisible] = useState(false);
+
+  // 임시 참여자 데이터
+  const tempAttendees = [
+    {
+      id: '1',
+      name: '김철수',
+      attendedAt: '2025.02.15',
+    },
+    {
+      id: '2',
+      name: '이영희',
+      profileImage: 'https://picsum.photos/200',
+      attendedAt: '2025.02.14',
+    },
+    {
+      id: '3',
+      name: '박지민',
+      attendedAt: '2025.02.13',
+    },
+  ];
   const [letterData, setLetter] = useState<Letter>();
   const [detailLoading, setDetailLoading] = useState(true);
   const [imageUrl, setImageUrl] = useState<string>();
@@ -104,8 +121,17 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
     console.log('삭제하기');
   };
 
+  useEffect(() => {
+    console.log(attendeeModalVisible);
+  }, [attendeeModalVisible]);
+
   return (
     <SafeAreaView style={styles.container}>
+      <AttendeeListModal
+        visible={attendeeModalVisible}
+        onClose={() => setAttendeeModalVisible(false)}
+        attendees={tempAttendees}
+      />
       <View style={styles.scrollView}>
         {/* 헤더 */}
         <View style={styles.header}>
@@ -141,8 +167,8 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
         ) : letterData ? (
           <View style={styles.content}>
             <Text style={styles.title}>{letterData.title}</Text>
-            <Image 
-              source={{uri: imageUrl}} 
+            <Image
+              source={{uri: imageUrl}}
               style={styles.letterImage}
               resizeMode="contain"
             />
@@ -188,10 +214,15 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
             {letterData?.commentCount}
           </Text>
         </TouchableOpacity>
-        <View style={styles.statItem}>
+        <TouchableOpacity
+          style={styles.statItem}
+          onPress={() => {
+            console.log('onPress');
+            setAttendeeModalVisible(true);
+          }}>
           <Icon name="people" size={20} color="#666" />
           <Text style={styles.statText}>{letterData?.attendCount}</Text>
-        </View>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

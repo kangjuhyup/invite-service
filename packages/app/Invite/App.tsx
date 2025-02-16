@@ -18,6 +18,7 @@ import Template from './src/pages/Template';
 import Settings from './src/pages/Settings';
 import LetterDetail from './src/pages/LetterDetail';
 import LetterEditor from './src/pages/LetterEditor';
+import {LetterMeta} from './src/pages/LetterMeta';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -111,7 +112,7 @@ function App(): React.JSX.Element {
       }
     };
 
-    initFirebase();
+    // initFirebase();
   }, []);
 
   return (
@@ -128,6 +129,13 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="LetterDetail"
             component={LetterDetail}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="LetterMeta"
+            component={LetterMeta}
             options={{
               headerShown: false,
             }}

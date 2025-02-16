@@ -203,7 +203,7 @@ const My: React.FC<Props> = ({navigation}) => {
         <Text style={styles.headerTitle}>나의 초대장</Text>
         <TouchableOpacity
           style={styles.createButton}
-          onPress={() => navigation.navigate('LetterEditor')}>
+          onPress={() => navigation.navigate('LetterMeta')}>
           <Text style={styles.createButtonText}>+ 새 초대장</Text>
         </TouchableOpacity>
       </View>
@@ -286,6 +286,7 @@ const styles = StyleSheet.create({
   profileInfo: {
     flex: 1,
   },
+
   profileName: {
     fontSize: 20,
     fontWeight: 'bold',

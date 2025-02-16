@@ -53,6 +53,12 @@ interface UseImageSaveReturn {
     width: string,
     height: string,
     items: EditorItemType[],
+    letterData: {
+      category: LetterCategoryCode;
+      title: string;
+      body?: string;
+      inviteDate: string;
+    },
   ) => Promise<void>;
 }
 
@@ -65,11 +71,18 @@ export const useImageSave = (): UseImageSaveReturn => {
     width: string,
     height: string,
     items: EditorItemType[],
+    letterData: {
+      category: LetterCategoryCode;
+      title: string;
+      body?: string;
+      inviteDate: string;
+    },
   ) => {
     try {
       if (!viewShotRef.current) {
         throw new Error('ViewShot ref is not initialized');
       }
+      console.log('letterData', letterData);
       // 메타데이터 준비
       const prepareData: PrepareRequest = {
         thumbnailMeta: {
@@ -207,8 +220,10 @@ export const useImageSave = (): UseImageSaveReturn => {
 
       // 초대장 생성 API 호출
       const addLetterRequest: AddLetterRequest = {
-        category: LetterCategoryCode.ANNIVERSARY, // TODO: 카테고리 선택 UI 추가 필요
-        title: '제목', // TODO: 제목 입력 UI 추가 필요
+        category: letterData.category, // TODO: 카테고리 선택 UI 추가 필요
+        title: letterData.title, // TODO: 제목 입력 UI 추가 필요
+        body: letterData.body, // TODO: 텍스트 입력 UI 추가 필요
+        inviteDate: letterData.inviteDate,
         commentYn: true,
         attendYn: true,
       };

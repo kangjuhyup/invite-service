@@ -93,6 +93,7 @@ export interface AddLetterRequest {
   category: LetterCategoryCode;
   title: string;
   body?: string;
+  inviteDate: string;
   commentYn?: boolean;
   attendYn?: boolean;
 }

@@ -16,6 +16,7 @@ interface UseImageEditorProps {
   onUpdateItem: (id: string, updates: Partial<EditorItemType>) => void;
   onAddItem: (item: EditorItemType) => void;
   onDeleteItem: (id: string) => void;
+  onFocusRelease?: () => void;
 }
 
 /**
@@ -26,6 +27,7 @@ export const useImageEditor = ({
   onUpdateItem,
   onAddItem,
   onDeleteItem,
+  onFocusRelease,
 }: UseImageEditorProps) => {
   const [state, setState] = useState<ImageEditorState>({
     selectedImageId: null,

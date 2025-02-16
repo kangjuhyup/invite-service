@@ -21,3 +21,19 @@ export const fetchImage = async (
   const blob = await imageResponse.blob();
   return URL.createObjectURL(blob);
 };
+
+export const fetchText = async (
+  bucket: string,
+  imagePath: string,
+): Promise<string> => {
+  const response = await apiClient.get<string>(
+    `/api/image/${bucket}/${imagePath}`,
+  );
+  const url = response.data;
+  // 2. 이미지 다운로드
+  const imageResponse = await fetch(url);
+  if (!imageResponse.ok) {
+    throw new Error('이미지 다운로드 실패');
+  }
+  return imageResponse.text();
+};

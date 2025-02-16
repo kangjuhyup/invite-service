@@ -3050,6 +3050,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-community/datetimepicker@npm:^8.3.0":
+  version: 8.3.0
+  resolution: "@react-native-community/datetimepicker@npm:8.3.0"
+  dependencies:
+    invariant: "npm:^2.2.4"
+  peerDependencies:
+    expo: ">=50.0.0"
+    react: "*"
+    react-native: "*"
+    react-native-windows: "*"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+    react-native-windows:
+      optional: true
+  checksum: 10c0/33918386270dafd8240dca76619fcc8ad4903485d55564aad19f1cd7fed28ca2bf669aadb686d139f4700dd8571ba861d19f77b3a748a7f9ce8c152476593f97
+  languageName: node
+  linkType: hard
+
 "@react-native-community/slider@npm:^4.5.5":
   version: 4.5.5
   resolution: "@react-native-community/slider@npm:4.5.5"
@@ -3955,6 +3974,7 @@ __metadata:
     "@react-native-community/cli": "npm:15.0.1"
     "@react-native-community/cli-platform-android": "npm:15.0.1"
     "@react-native-community/cli-platform-ios": "npm:15.0.1"
+    "@react-native-community/datetimepicker": "npm:^8.3.0"
     "@react-native-community/slider": "npm:^4.5.5"
     "@react-native-firebase/app": "npm:^21.10.0"
     "@react-native-firebase/messaging": "npm:^21.10.0"

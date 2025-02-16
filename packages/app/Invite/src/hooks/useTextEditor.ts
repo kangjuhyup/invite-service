@@ -13,8 +13,8 @@ interface TextEditorState {
 interface UseTextEditorProps {
   items: EditorItemType[];
   onUpdateItem: (id: string, updates: Partial<EditorItemType>) => void;
-  onAddItem: (item: EditorItemType) => void;
   onDeleteItem: (id: string) => void;
+  onFocusRelease?: () => void;
 }
 
 /**
@@ -23,8 +23,8 @@ interface UseTextEditorProps {
 export const useTextEditor = ({
   items,
   onUpdateItem,
-  onAddItem,
   onDeleteItem,
+  onFocusRelease,
 }: UseTextEditorProps) => {
   const [state, setState] = useState<TextEditorState>({
     selectedTextId: null,
@@ -134,7 +134,8 @@ export const useTextEditor = ({
       isTextStyleVisible: false,
       isColorPickerVisible: false,
     }));
-  }, []);
+    onFocusRelease?.();
+  }, [onFocusRelease]);
 
   const deleteItem = useCallback(() => {
     if (!state.selectedTextId) return;

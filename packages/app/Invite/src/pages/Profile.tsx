@@ -22,6 +22,7 @@ import {
   validateProfileImage,
 } from '../api/profile';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {clearTokens} from '../utils/token';
 import {launchImageLibrary} from 'react-native-image-picker';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Profile'>;
@@ -211,7 +212,9 @@ const Profile: React.FC<Props> = ({navigation}) => {
                       return;
                     }
 
-                    const response = await updateProfile({nickName: newNickname});
+                    const response = await updateProfile({
+                      nickName: newNickname,
+                    });
                     if (response.result && response.data) {
                       setProfile(response.data);
                       setIsEditingNickname(false);
@@ -228,11 +231,47 @@ const Profile: React.FC<Props> = ({navigation}) => {
           </View>
         </View>
       </Modal>
+
+      {/* 로그아웃 버튼 */}
+      <View style={styles.logoutContainer}>
+        <TouchableOpacity
+          style={styles.logoutButton}
+          onPress={async () => {
+            try {
+              await clearTokens();
+              navigation.reset({
+                index: 0,
+                routes: [{name: 'Login'}],
+              });
+            } catch (error) {
+              console.error('로그아웃 실패:', error);
+              Alert.alert('오류', '로그아웃에 실패했습니다.');
+            }
+          }}>
+          <Text style={styles.logoutButtonText}>로그아웃</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  logoutContainer: {
+    padding: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  logoutButton: {
+    backgroundColor: '#f44336',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  logoutButtonText: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',

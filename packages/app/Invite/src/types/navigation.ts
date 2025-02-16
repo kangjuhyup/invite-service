@@ -1,9 +1,16 @@
-import type {Letter} from '../api/letter';
+import type {Letter, LetterCategoryCode} from '../api/letter';
 
 export type RootStackParamList = {
   LetterEditor: {
     letterId?: number;
+    meta?: {
+      category: LetterCategoryCode;
+      title: string;
+      body?: string;
+      inviteDate: string;
+    };
   };
+  LetterMeta: undefined;
   Login: undefined;
   Signup: undefined;
   Home: undefined;

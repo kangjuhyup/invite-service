@@ -1,6 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import ViewShot from 'react-native-view-shot';
 import {useImageSave} from '../hooks/useImageSave';
+
+import {Animated, Dimensions} from 'react-native';
 import {
   View,
   Text,
@@ -26,13 +28,15 @@ import {EditorItemType} from '../types/editor';
 import {BACKGROUND_HEIGHT, BACKGROUND_WIDTH} from '../constants/canvas';
 import {DefaultController} from '../components/editor/controller/DefaultController';
 import {ImageController} from '../components/editor/controller/ImageController';
-import {Component, getLetterDetail} from '../api/letter';
+import {getLetterDetail} from '../api/letter';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {fetchImage, getImageUrl} from '../api/image';
+import {fetchImage, fetchText} from '../api/image';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LetterEditor'>;
 
 const LetterEditor: React.FC<Props> = ({route}) => {
+  const meta = route.params?.meta;
+  console.log('meta', meta);
   const letterId = route.params?.letterId;
   const [showTextStyleControls, setShowTextStyleControls] =
     useState<boolean>(false);
@@ -48,6 +52,7 @@ const LetterEditor: React.FC<Props> = ({route}) => {
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [showBackgroundModal, setShowBackgroundModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [letterMeta] = useState(meta);
 
   const updateItem = (id: string, updates: Partial<EditorItemType>) => {
     setItems(prev =>
@@ -69,7 +74,11 @@ const LetterEditor: React.FC<Props> = ({route}) => {
         if (item.path) {
           try {
             const [bucket, path] = item.path.split('/');
-            content = await fetchImage(bucket, path);
+            if (item.font) {
+              content = await fetchText(bucket, path);
+            } else {
+              content = await fetchImage(bucket, path);
+            }
           } catch (error) {
             console.error('이미지 로드 실패:', error);
           }
@@ -78,7 +87,7 @@ const LetterEditor: React.FC<Props> = ({route}) => {
         setItems(prev => [
           ...prev,
           {
-            id: idx.toString(),
+            id: Math.random().toString(),
             type: item.font ? 'text' : 'image',
             content,
             style: {
@@ -95,7 +104,6 @@ const LetterEditor: React.FC<Props> = ({route}) => {
         ]);
       }
     }
-    console.log(response);
   };
 
   const {
@@ -130,9 +138,9 @@ const LetterEditor: React.FC<Props> = ({route}) => {
     closeTextStyleControls,
     deleteItem,
   } = useTextEditor({
+    onFocusRelease: () => setSelectedItem(null),
     items,
     onUpdateItem: updateItem,
-    onAddItem: (item: EditorItemType) => setItems(prev => [...prev, item]),
     onDeleteItem: (id: string) =>
       setItems(prev => prev.filter(item => item.id !== id)),
   });
@@ -192,154 +200,161 @@ const LetterEditor: React.FC<Props> = ({route}) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#666" />
-        </TouchableOpacity>
-        <Text style={styles.title}>초대장 편집</Text>
-        <TouchableOpacity
-          onPress={async () => {
-            try {
-              setIsSaving(true);
-              await handleSave(
-                backgroundImage,
-                BACKGROUND_WIDTH,
-                BACKGROUND_HEIGHT,
-                items,
-              );
-              Alert.alert('성공', '초대장이 저장되었습니다.');
-              navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: 'MainTabs',
-                    params: {screen: 'My'},
-                  },
-                ],
-              });
-            } catch (error) {
-              console.error('이미지 저장 중 오류 발생:', error);
-              Alert.alert('오류', '초대장 저장에 실패했습니다.');
-            } finally {
-              setIsSaving(false);
-            }
-          }}>
-          <Text style={styles.saveButton}>저장</Text>
-        </TouchableOpacity>
-      </View>
-
-      <ViewShot
-        ref={viewShotRef}
-        style={styles.canvasContainer}
-        options={{
-          format: 'png',
-          quality: 1,
-          fileName: 'letter',
-        }}>
-        <View
-          ref={editorRef}
-          style={[
-            styles.canvas,
-            backgroundImage
-              ? {backgroundColor: 'transparent'}
-              : {backgroundColor},
-          ]}>
-          {backgroundImage && (
-            <Image
-              source={{uri: backgroundImage}}
-              style={styles.backgroundImage}
-              resizeMode="cover"
-            />
-          )}
-          <View style={styles.itemsContainer}>
-            {items.map(item => (
-              <EditorItem
-                key={item.id}
-                item={item}
-                isSelected={selectedItem === item.id}
-                onSelect={() => {
-                  if (selectedItem === item.id) return;
-                  setSelectedItem(item.id);
-                  if (item.type === 'text') {
-                    handleTextSelect(item.id);
-                    closeImageControls();
-                  } else if (item.type === 'image') {
-                    handleImageSelect(item.id);
-                    closeTextStyleControls();
-                  } else {
-                    closeTextStyleControls();
-                    closeImageControls();
-                  }
-                }}
-                onPositionChange={position =>
-                  updateImagePosition(item.id, position)
-                }>
-                {renderItem(item)}
-              </EditorItem>
-            ))}
-          </View>
+      <View style={styles.editorContainer}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}>
+            <Icon name="arrow-back" size={24} color="#666" />
+          </TouchableOpacity>
+          <Text style={styles.title}>초대장 편집</Text>
+          <TouchableOpacity
+            onPress={async () => {
+              try {
+                setIsSaving(true);
+                if (!letterMeta) {
+                  Alert.alert('오류', '초대장 정보가 없습니다.');
+                  return;
+                }
+                await handleSave(
+                  backgroundImage,
+                  BACKGROUND_WIDTH,
+                  BACKGROUND_HEIGHT,
+                  items,
+                  letterMeta,
+                );
+                Alert.alert('성공', '초대장이 저장되었습니다.');
+                navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'MainTabs',
+                      params: {screen: 'My'},
+                    },
+                  ],
+                });
+              } catch (error) {
+                console.error('이미지 저장 중 오류 발생:', error);
+                Alert.alert('오류', '초대장 저장에 실패했습니다.');
+              } finally {
+                setIsSaving(false);
+              }
+            }}>
+            <Text style={styles.saveButton}>완료</Text>
+          </TouchableOpacity>
         </View>
-      </ViewShot>
 
-      <BackgroundSettingModal
-        visible={showBackgroundModal}
-        onClose={() => setShowBackgroundModal(false)}
-        hue={hue}
-        saturation={saturation}
-        lightness={lightness}
-        onHueChange={value => setHue(value)}
-        onSaturationChange={value => setSaturation(value)}
-        onLightnessChange={value => {
-          setLightness(value);
-        }}
-        onSelectImage={selectBackgroundImage}
-      />
+        <ViewShot
+          ref={viewShotRef}
+          style={styles.canvasContainer}
+          options={{
+            format: 'png',
+            quality: 1,
+            fileName: 'letter',
+          }}>
+          <View
+            ref={editorRef}
+            style={[
+              styles.canvas,
+              backgroundImage
+                ? {backgroundColor: 'transparent'}
+                : {backgroundColor},
+            ]}>
+            {backgroundImage && (
+              <Image
+                source={{uri: backgroundImage}}
+                style={styles.backgroundImage}
+                resizeMode="cover"
+              />
+            )}
+            <View style={styles.itemsContainer}>
+              {items.map(item => (
+                <EditorItem
+                  key={item.id}
+                  item={item}
+                  isSelected={selectedItem === item.id}
+                  onSelect={() => {
+                    if (selectedItem === item.id) return;
+                    setSelectedItem(item.id);
+                    if (item.type === 'text') {
+                      handleTextSelect(item.id);
+                      closeImageControls();
+                    } else if (item.type === 'image') {
+                      handleImageSelect(item.id);
+                      closeTextStyleControls();
+                    } else {
+                      closeTextStyleControls();
+                      closeImageControls();
+                    }
+                  }}
+                  onPositionChange={position =>
+                    updateImagePosition(item.id, position)
+                  }>
+                  {renderItem(item)}
+                </EditorItem>
+              ))}
+            </View>
+          </View>
+        </ViewShot>
 
-      {showImageControls && selectedItem ? (
-        <ImageController
-          isProcessingImage={isProcessingImage}
-          onDeletePress={() => {
-            deleteImage(selectedItem);
-            closeImageControls();
+        <BackgroundSettingModal
+          visible={showBackgroundModal}
+          onClose={() => setShowBackgroundModal(false)}
+          hue={hue}
+          saturation={saturation}
+          lightness={lightness}
+          onHueChange={value => setHue(value)}
+          onSaturationChange={value => setSaturation(value)}
+          onLightnessChange={value => {
+            setLightness(value);
           }}
-          onDonePress={() => {
-            closeImageControls();
-            setSelectedItem(null);
-          }}
+          onSelectImage={selectBackgroundImage}
         />
-      ) : showTextStyleControls && selectedItem ? (
-        <TextStyleController
-          fontSize={fontSize}
-          isBold={isBold}
-          textColor={textColor}
-          isColorPickerVisible={showColorPicker}
-          onFontSizeChange={handleFontSizeChange}
-          onBoldToggle={handleBoldToggle}
-          onColorChange={handleColorChange}
-          onToggleColorPicker={toggleColorPicker}
-          onDeletePress={() => {
-            if (selectedItem) {
-              deleteItem();
+
+        {showImageControls && selectedItem ? (
+          <ImageController
+            isProcessingImage={isProcessingImage}
+            onDeletePress={() => {
+              deleteImage(selectedItem);
+              closeImageControls();
+            }}
+            onDonePress={() => {
+              closeImageControls();
               setSelectedItem(null);
-            }
-          }}
-          onDonePress={() => {
-            closeTextStyleControls();
-            setSelectedItem(null);
-          }}
-        />
-      ) : (
-        <DefaultController
-          onBackgroundPress={() => setShowBackgroundModal(true)}
-          onTextPress={addText}
-          onImagePress={addImage}
-          onStickerPress={() => {}}
-          onDeletePress={selectedItem ? () => {} : undefined}
-          selectedItem={selectedItem}
-        />
-      )}
+            }}
+          />
+        ) : showTextStyleControls && selectedItem ? (
+          <TextStyleController
+            fontSize={fontSize}
+            isBold={isBold}
+            textColor={textColor}
+            isColorPickerVisible={showColorPicker}
+            onFontSizeChange={handleFontSizeChange}
+            onBoldToggle={handleBoldToggle}
+            onColorChange={handleColorChange}
+            onToggleColorPicker={toggleColorPicker}
+            onDeletePress={() => {
+              if (selectedItem) {
+                deleteItem();
+                setSelectedItem(null);
+              }
+            }}
+            onDonePress={() => {
+              closeTextStyleControls();
+              setSelectedItem(null);
+            }}
+          />
+        ) : (
+          <DefaultController
+            onBackgroundPress={() => setShowBackgroundModal(true)}
+            onTextPress={addText}
+            onImagePress={addImage}
+            onStickerPress={() => {}}
+            onDeletePress={selectedItem ? () => {} : undefined}
+            selectedItem={selectedItem}
+          />
+        )}
+      </View>
       <LetterSend visible={isSaving} />
     </SafeAreaView>
   );
