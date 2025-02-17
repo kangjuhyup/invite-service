@@ -77,6 +77,22 @@
             </array>
         </dict>
     </array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+		<string>mailto</string>
+		<string>instagram</string>
+		<string>instagram-stories</string>
+		<string>facebook</string>
+		<string>facebook-stories</string>
+		<string>twitter</string>
+		<string>line</string>
+		<string>kakaolink</string>
+		<string>kakaotalk</string>
+		<string>message</string>
+		<string>sms</string>
+		<string>tel</string>
+	</array>
 	<key>NSAppTransportSecurity</key>
 		<dict>
 		<key>NSExceptionDomains</key>
@@ -90,8 +106,3 @@
 	</dict>	
 </dict>
 </plist>
-
-  <key>UIBackgroundModes</key>
-  <array>
-    <string>remote-notification</string>
-  </array>

@@ -148,6 +148,14 @@ export const useImageEditor = ({
     }));
   }, []);
 
+  // 백그라운드 이미지 설정
+  const setBackgroundImage = useCallback((imageUrl: string | null) => {
+    setState(prev => ({
+      ...prev,
+      backgroundImage: imageUrl,
+    }));
+  }, []);
+
   return {
     state,
     selectedImageItem,
@@ -158,5 +166,6 @@ export const useImageEditor = ({
     deleteImage,
     toggleBackgroundModal,
     closeImageControls,
+    setBackgroundImage,
   };
 };

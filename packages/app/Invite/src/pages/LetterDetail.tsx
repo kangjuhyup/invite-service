@@ -18,6 +18,7 @@ import {fetchImage} from '../api/image';
 import {getLetter} from '../api/letter';
 import {styles} from '../styles/LetterDetail.styles';
 import {useComments} from '../hooks/useComments';
+import Share from 'react-native-share';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LetterDetail'>;
 
@@ -107,9 +108,25 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
     }
   };
 
-  const handleShare = () => {
-    // TODO: 공유 기능 구현
-    console.log('공유하기');
+  const handleShare = async () => {
+    if (!letterData || !imageUrl) {
+      Alert.alert('오류', '공유할 내용이 없습니다.');
+      return;
+    }
+
+    const shareOptions = {
+      title: letterData.title,
+      message: `${letterData.title}\n\n${letterData.body || ''}`,
+      url: imageUrl,
+      failOnCancel: false,
+    };
+
+    try {
+      await Share.open(shareOptions);
+    } catch (error) {
+      console.error('공유 실패:', error);
+      Alert.alert('오류', '공유하기를 실패했습니다.');
+    }
   };
 
   const handleEdit = () => {

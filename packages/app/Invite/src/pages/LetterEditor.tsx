@@ -2,7 +2,6 @@ import React, {useEffect, useState, useRef} from 'react';
 import ViewShot from 'react-native-view-shot';
 import {useImageSave} from '../hooks/useImageSave';
 
-import {Animated, Dimensions} from 'react-native';
 import {
   View,
   Text,
@@ -69,6 +68,19 @@ const LetterEditor: React.FC<Props> = ({route}) => {
   const setModifyComponents = async () => {
     const response = await getLetterDetail(letterId!);
     if (response.result && response.data) {
+      // 백그라운드 이미지 설정
+      if (response.data.background?.path) {
+        try {
+          const [bucket, path] = response.data.background.path.split('/');
+          const backgroundUrl = await fetchImage(bucket, path);
+          setBackgroundImage(backgroundUrl);
+        } catch (error) {
+          console.error('백그라운드 이미지 로드 실패:', error);
+          Alert.alert('오류', '배경 이미지를 불러오는데 실패했습니다.');
+        }
+      }
+
+      // 컴포넌트 설정
       for (const [idx, item] of response.data.components?.entries() || []) {
         let content = '';
         if (item.path) {
@@ -112,6 +124,7 @@ const LetterEditor: React.FC<Props> = ({route}) => {
       isProcessingImage,
       backgroundImage,
     },
+    setBackgroundImage,
     handleImageSelect,
     addImage,
     selectBackgroundImage,
