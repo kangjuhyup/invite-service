@@ -75,12 +75,32 @@ export const TextStyleController: React.FC<TextStyleControllerProps> = ({
         </TouchableOpacity>
 
         {/* 색상 선택 */}
-        <TouchableOpacity
-          onPress={onToggleColorPicker}
-          style={styles.colorButton}>
-          <View style={[styles.colorPreview, {backgroundColor: textColor}]} />
-          <Text style={styles.controlText}>색상</Text>
-        </TouchableOpacity>
+        <View style={styles.colorButtonContainer}>
+          <TouchableOpacity
+            onPress={onToggleColorPicker}
+            style={styles.colorButton}>
+            <View style={[styles.colorPreview, {backgroundColor: textColor}]} />
+            <Text style={styles.controlText}>색상</Text>
+          </TouchableOpacity>
+          {/* 색상 피커 */}
+          {isColorPickerVisible && (
+            <View style={styles.colorPicker}>
+              <View style={styles.colorGrid}>
+                {colorPalette.map(color => (
+                  <TouchableOpacity
+                    key={color}
+                    style={[
+                      styles.colorOption,
+                      {backgroundColor: color},
+                      textColor === color && styles.selectedColor,
+                    ]}
+                    onPress={() => onColorChange(color)}
+                  />
+                ))}
+              </View>
+            </View>
+          )}
+        </View>
       </View>
 
       <View style={styles.controlsRight}>
@@ -97,24 +117,7 @@ export const TextStyleController: React.FC<TextStyleControllerProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* 색상 피커 */}
-      {isColorPickerVisible && (
-        <View style={styles.colorPicker}>
-          <View style={styles.colorGrid}>
-            {colorPalette.map(color => (
-              <TouchableOpacity
-                key={color}
-                style={[
-                  styles.colorOption,
-                  {backgroundColor: color},
-                  textColor === color && styles.selectedColor,
-                ]}
-                onPress={() => onColorChange(color)}
-              />
-            ))}
-          </View>
-        </View>
-      )}
+
     </View>
   );
 };
@@ -180,17 +183,32 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e0e0e0',
   },
+  colorButtonContainer: {
+    position: 'relative',
+  },
   colorPicker: {
-    marginTop: 8,
+    position: 'absolute',
+    bottom: '100%',
+    left: 0,
+    marginBottom: 8,
     padding: 8,
     backgroundColor: '#f5f5f5',
     borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   colorGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     gap: 8,
+    width: 160,
   },
   colorOption: {
     width: 32,
@@ -198,6 +216,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#e0e0e0',
+    margin: 2,
   },
   selectedColor: {
     borderWidth: 2,

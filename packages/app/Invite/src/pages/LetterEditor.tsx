@@ -193,6 +193,7 @@ const LetterEditor: React.FC<Props> = ({route}) => {
   };
 
   const renderItem = (item: EditorItemType) => {
+    console.log(item);
     switch (item.type) {
       case 'text':
         return (
@@ -341,12 +342,14 @@ const LetterEditor: React.FC<Props> = ({route}) => {
           hue={hue}
           saturation={saturation}
           lightness={lightness}
+          backgroundColor={backgroundColor}
           onHueChange={value => setHue(value)}
           onSaturationChange={value => setSaturation(value)}
           onLightnessChange={value => {
             setLightness(value);
           }}
           onSelectImage={selectBackgroundImage}
+          onSelectColor={setBackgroundColor}
         />
 
         {showImageControls ? (

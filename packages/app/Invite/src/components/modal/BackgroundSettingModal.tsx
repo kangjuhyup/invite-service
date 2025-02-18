@@ -15,10 +15,12 @@ interface BackgroundSettingModalProps {
   hue: number;
   saturation: number;
   lightness: number;
+  backgroundColor: string;
   onHueChange: (value: number) => void;
   onSaturationChange: (value: number) => void;
   onLightnessChange: (value: number) => void;
   onSelectImage: () => void;
+  onSelectColor: (color: string) => void;
 }
 
 export const BackgroundSettingModal: React.FC<BackgroundSettingModalProps> = ({
@@ -27,11 +29,28 @@ export const BackgroundSettingModal: React.FC<BackgroundSettingModalProps> = ({
   hue,
   saturation,
   lightness,
+  backgroundColor,
   onHueChange,
   onSaturationChange,
   onLightnessChange,
   onSelectImage,
+  onSelectColor,
 }) => {
+  // 기본 색상 팔레트
+  const colorPalette = [
+    '#FFFFFF',
+    '#000000',
+    '#FF0000',
+    '#00FF00',
+    '#0000FF',
+    '#FFFF00',
+    '#FF00FF',
+    '#00FFFF',
+    '#FFA500',
+    '#800080',
+    '#008080',
+    '#808080',
+  ];
   return (
     <Modal
       visible={visible}
@@ -47,27 +66,47 @@ export const BackgroundSettingModal: React.FC<BackgroundSettingModalProps> = ({
             activeOpacity={1}
             onPress={e => e.stopPropagation()}>
             <Text style={styles.modalTitle}>배경 설정</Text>
+            <View style={styles.colorPicker}>
+              <Text style={styles.colorLabel}>배경색 선택</Text>
+              <View style={styles.colorGrid}>
+                {colorPalette.map(color => (
+                  <TouchableOpacity
+                    key={color}
+                    style={[
+                      styles.colorOption,
+                      { backgroundColor: color },
+                      backgroundColor === color && styles.selectedColor,
+                    ]}
+                    onPress={() => onSelectColor(color)}
+                  />
+                ))}
+              </View>
+            </View>
+
             <View style={styles.colorControls}>
               <Text style={styles.colorLabel}>색조</Text>
               <Slider
                 value={hue}
-                onValueChange={(value: any) => onHueChange(value[0])}
+                onValueChange={onHueChange}
                 minimumValue={0}
                 maximumValue={360}
+                style={styles.slider}
               />
               <Text style={styles.colorLabel}>채도</Text>
               <Slider
                 value={saturation}
-                onValueChange={(value: any) => onSaturationChange(value[0])}
+                onValueChange={onSaturationChange}
                 minimumValue={0}
                 maximumValue={100}
+                style={styles.slider}
               />
               <Text style={styles.colorLabel}>밝기</Text>
               <Slider
                 value={lightness}
-                onValueChange={(value: any) => onLightnessChange(value[0])}
+                onValueChange={onLightnessChange}
                 minimumValue={0}
                 maximumValue={100}
+                style={styles.slider}
               />
             </View>
             <TouchableOpacity
@@ -84,6 +123,30 @@ export const BackgroundSettingModal: React.FC<BackgroundSettingModalProps> = ({
 };
 
 const styles = StyleSheet.create({
+  colorPicker: {
+    marginBottom: 15,
+  },
+  colorGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginTop: 8,
+  },
+  colorOption: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  selectedColor: {
+    borderWidth: 3,
+    borderColor: '#1a73e8',
+  },
+  slider: {
+    width: '100%',
+    height: 40,
+  },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -102,6 +165,7 @@ const styles = StyleSheet.create({
   },
   colorControls: {
     marginBottom: 15,
+    paddingHorizontal: 8,
   },
   colorLabel: {
     fontSize: 16,

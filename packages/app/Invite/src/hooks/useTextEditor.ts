@@ -130,10 +130,10 @@ export const useTextEditor = ({
 
   // 텍스트 스타일 컨트롤 닫기
   const closeTextStyleControls = useCallback(() => {
-    console.log('closeTextStyleControls');
     setState(prev => ({
       ...prev,
       selectedTextId: null,
+      showTextStyleControls: false,
       isTextStyleVisible: false,
       isColorPickerVisible: false,
     }));
@@ -148,6 +148,7 @@ export const useTextEditor = ({
       selectedTextId: null,
       isTextStyleVisible: false,
       isColorPickerVisible: false,
+      showTextStyleControls: false,
     }));
   }, [state.selectedTextId, onDeleteItem]);
 
