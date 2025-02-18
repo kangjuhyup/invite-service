@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {googleLogin, resignToken} from '../api/auth';
+import {googleLogin, login, resignToken} from '../api/auth';
 import {
   saveTokens,
   getAccessToken,
@@ -16,6 +16,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
+  Alert,
 } from 'react-native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../types/navigation';
@@ -65,25 +66,29 @@ const Login: React.FC<Props> = ({navigation}) => {
     // 컴포넌트 언마운트 시 리스너 제거
   }, [navigation]);
 
-  const handleLogin = () => {
-    // TODO: 로그인 로직 구현
-    console.log('로그인:', {email, password});
+  const handleLogin = async () => {
+    const response = await login(email, password);
+    if (!response.result || !response.data) {
+      // 로그인 실패 시 에러 처리
+      Alert.alert('로그인 실패');
+      return;
+    }
+    const {access, refresh} = response.data;
+    await saveTokens(access, refresh);
+    navigation.replace('MainTabs');
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      const response = await googleLogin();
-      console.log('google 로그인 성공:', response);
-      // 로그인 성공 시 토큰 저장
-      await saveTokens(response.data.access, response.data.refresh);
-      console.log('로그인 성공');
-
-      // 메인 화면으로 이동
-      navigation.replace('MainTabs');
-    } catch (error) {
-      console.error('로그인 실패:', error);
-      // TODO: 에러 처리 (예: 알림 표시)
+    const response = await googleLogin();
+    if (!response.result || !response.data) {
+      // 로그인 실패 시 에러 처리
+      Alert.alert('구글 로그인 실패');
+      return;
     }
+    // 로그인 성공 시 토큰 저장
+    await saveTokens(response.data.access, response.data.refresh);
+    // 메인 화면으로 이동
+    navigation.replace('MainTabs');
   };
 
   return (

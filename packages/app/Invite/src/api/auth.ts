@@ -3,11 +3,8 @@ import {Platform} from 'react-native';
 
 // 서버 응답 타입 정의
 interface LoginResponse {
-  result: boolean;
-  data: {
-    access: string;
-    refresh: string;
-  };
+  access: string;
+  refresh: string;
 }
 
 // 토큰 갱신 함수
@@ -38,9 +35,10 @@ GoogleSignin.configure({
 });
 
 import {apiClient, BASE_URL} from './client';
+import {HttpResponse} from './letter';
 
 // 구글 로그인 함수
-export const googleLogin = async (): Promise<LoginResponse> => {
+export const googleLogin = async (): Promise<HttpResponse<LoginResponse>> => {
   try {
     // 구글 로그인 진행
     await GoogleSignin.hasPlayServices();
@@ -66,4 +64,15 @@ export const googleLogin = async (): Promise<LoginResponse> => {
     console.error('구글 로그인 에러:', error);
     throw error;
   }
+};
+
+export const login = async (
+  email: string,
+  password: string,
+): Promise<HttpResponse<LoginResponse>> => {
+  const response = await apiClient.post<LoginResponse>('/api/auth/signin', {
+    email,
+    password,
+  });
+  return response;
 };

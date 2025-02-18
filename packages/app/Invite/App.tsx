@@ -72,6 +72,7 @@ function MainTabs() {
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Profile from './src/pages/Profile';
+import TemplateDetail from './src/pages/TemplateDetail';
 
 function App(): React.JSX.Element {
   // Firebase 초기화 및 FCM 권한 요청
@@ -150,6 +151,13 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="Profile"
             component={Profile}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="TemplateDetail"
+            component={TemplateDetail}
             options={{
               headerShown: false,
             }}

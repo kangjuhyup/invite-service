@@ -9,6 +9,8 @@ import { SessionService } from './service/session.service';
 import { UserService } from '../user/service/user.service';
 import { randomString } from '@app/util/random';
 import { GoogleService } from '../google/google.service';
+import { MailService } from '../mail/mail.service';
+import { RedisClientService } from '@app/redis/redis.client.service';
 
 @Injectable()
 export class AuthFacade {
@@ -18,6 +20,8 @@ export class AuthFacade {
     private readonly authService: AuthService,
     private readonly sessionService: SessionService,
     private readonly googleService: GoogleService,
+    private readonly mailService : MailService,
+    private readonly redis : RedisClientService,
   ) {}
 
   async prepareSignUp(phone: string) {

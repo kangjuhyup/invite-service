@@ -12,3 +12,17 @@ export const randomString = (length: number = 10): string => {
   }
   return result;
 };
+
+/**
+ * 랜덤한 숫자 문자열을 반환한다. ( 기본 길이 6 )
+ * @param length
+ * @returns string
+ */
+export const randomNumber = (length: number = 6): string => {
+  const chars = '0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};

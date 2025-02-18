@@ -16,6 +16,7 @@ import { ApiOperation } from '@nestjs/swagger';
 import { UserAccessGuard } from '@app/jwt/guard/user.access.guard';
 import { AuthFacade } from './auth.facade';
 import { UserRefreshGuard } from '@app/jwt/guard/user.refresh.guard';
+import { UserNotExistGuard } from '@app/jwt/guard/user.exist.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -33,6 +34,7 @@ export class AuthController {
     summary: '회원가입',
   })
   @Post('signup')
+  @UseGuards(UserNotExistGuard)
   async signUp(
     @Body() dto: SignRequest,
     @Res({ passthrough: true }) res: Response,

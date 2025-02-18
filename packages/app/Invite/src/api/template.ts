@@ -1,5 +1,5 @@
 import {apiClient} from './client';
-import {LetterCategoryCode} from './letter';
+import {Background, Component, LetterCategoryCode} from './letter';
 import ApiResponse from '../../../../page/src/common/response';
 
 export interface GetTemplatePageRequest {
@@ -27,9 +27,38 @@ export interface GetTemplatePageResponse {
   templates: TemplatePageItem[];
 }
 
-export const getTemplates = async (params: GetTemplatePageRequest): Promise<ApiResponse<GetTemplatePageResponse>> => {
+export const getTemplates = async (
+  params: GetTemplatePageRequest,
+): Promise<ApiResponse<GetTemplatePageResponse>> => {
   return await apiClient.get<GetTemplatePageResponse>('/api/template', {
     params,
     credentials: 'include',
+  });
+};
+
+export interface TemplateDetailResponse {
+  templateId: number;
+  userId: string;
+  background: Background;
+  components: Component[];
+}
+
+export const getTemplateDetail = async (
+  id: number,
+): Promise<ApiResponse<TemplateDetailResponse>> => {
+  return await apiClient.get<TemplateDetailResponse>(`/api/template/${id}`, {
+    credentials: 'include',
+  });
+};
+
+export interface CreateTemplateResponse {
+  templateId: number;
+}
+
+export const createTemplate = async (
+  letterId: number,
+): Promise<ApiResponse<CreateTemplateResponse>> => {
+  return await apiClient.post<CreateTemplateResponse>('/api/template', {
+    letterId,
   });
 };

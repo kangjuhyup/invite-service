@@ -1,4 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common';
+import { RedisClientService } from '../../redis/redis.client.service';
 import { UserService } from '../user/service/user.service';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
@@ -11,6 +12,8 @@ import { AuthFacade } from './auth.facade';
 import { SessionService } from './service/session.service';
 import { GoogleService } from '../google/google.service';
 import { HttpModule } from '@nestjs/axios';
+import { MailModule } from '../mail/mail.module';
+import Redis from 'ioredis';
 
 interface AuthModuleAsyncOptions {
   imports?: any[];
@@ -42,9 +45,14 @@ export class AuthModule {
         HttpModule.register({
           timeout: 5000,
         }),
+        MailModule,
       ],
       controllers: [AuthController],
       providers: [
+        {
+          provide: RedisClientService,
+          useFactory: () => new RedisClientService(new Redis(), 'invite'),
+        },
         {
           provide: UserAccessStrategy,
           useFactory: (userService: UserService, ...args: any[]) => {

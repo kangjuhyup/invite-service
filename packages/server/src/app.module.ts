@@ -17,6 +17,8 @@ import { MetricInterceptor } from './interceptor/http.metric';
 import { ImageModule } from './domain/image/image.module';
 import { CommentModule } from './domain/comment/comment.module';
 import { TemplateModule } from './domain/template/template.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { MailModule } from './domain/mail/mail.module';
 
 export const routers = [
   AuthModule.forRootAsync({
@@ -32,9 +34,11 @@ export const routers = [
   ImageModule,
   CommentModule,
   TemplateModule,
+  MailModule,
 ];
 
 export const modules = [
+  EventEmitterModule.forRoot(),
   ConfigModule.forRoot({
     isGlobal: true,
     validate: (config) => {
