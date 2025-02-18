@@ -11,8 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../types/navigation';
 import {LetterCategoryCode} from '../api/letter';
 
@@ -24,12 +23,15 @@ interface LetterMeta {
 }
 const categories = Object.values(LetterCategoryCode);
 
-export const LetterMeta = () => {
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-  const [category, setCategory] = useState('');
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
-  const [date, setDate] = useState(new Date());
+type Props = NativeStackScreenProps<RootStackParamList, 'LetterMeta'>;
+
+export const LetterMeta: React.FC<Props> = ({route, navigation}) => {
+  const {meta, letterId, templateId} = route.params;
+
+  const [category, setCategory] = useState(meta.category);
+  const [title, setTitle] = useState(meta.title);
+  const [body, setBody] = useState(meta.body || '');
+  const [date, setDate] = useState(meta.inviteDate ? new Date(meta.inviteDate) : new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleNext = () => {
@@ -49,6 +51,8 @@ export const LetterMeta = () => {
         body,
         inviteDate: date.toISOString().split('T')[0],
       },
+      letterId,
+      templateId,
     });
   };
 

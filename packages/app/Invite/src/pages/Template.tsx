@@ -37,7 +37,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_WIDTH = (SCREEN_WIDTH - 40 - 20) / 3; // 패딩 40, 갭 20
 const ITEMS_PER_PAGE = 15;
 
-const Template: React.FC<Props> = () => {
+const Template: React.FC<Props> = ({navigation}) => {
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] =
     useState<LetterCategoryCode>();
@@ -112,7 +112,11 @@ const Template: React.FC<Props> = () => {
         }));
       }}
       onPress={() => {
-        /* TODO: 템플릿 상세보기 */
+        navigation.navigate('TemplateDetail', {
+          templateId: item.templateId,
+          template: item,
+          imageUrl: imageUrls[item.thumbnailUrl],
+        });
       }}>
       <View style={styles.cardImageContainer}>
         {item.thumbnailUrl && renderedItems[item.templateId] && (

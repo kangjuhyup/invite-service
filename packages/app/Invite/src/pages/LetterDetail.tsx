@@ -19,6 +19,8 @@ import {getLetter} from '../api/letter';
 import {styles} from '../styles/LetterDetail.styles';
 import {useComments} from '../hooks/useComments';
 import Share from 'react-native-share';
+import {TemplateConfirmModal} from '../components/modal/TemplateConfirmModal';
+import {createTemplate} from '../api/template';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LetterDetail'>;
 
@@ -35,6 +37,7 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
   } = useComments(letterId);
   const [showComments, setShowComments] = useState(false);
   const [attendeeModalVisible, setAttendeeModalVisible] = useState(false);
+  const [templateModalVisible, setTemplateModalVisible] = useState(false);
 
   // 임시 참여자 데이터
   const tempAttendees = [
@@ -130,10 +133,20 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
   };
 
   const handleEdit = () => {
-    navigation.navigate('LetterEditor', {letterId});
+    if (!letterData) return;
+    navigation.navigate('LetterMeta', {
+      letterId: letterData.letterId,
+      meta: {
+        title: letterData.title,
+        category: letterData.category,
+        body: letterData.body,
+        inviteDate: letterData.inviteDate,
+      },
+    });
   };
 
   const handleDelete = () => {
+    if (!letterData) return;
     // TODO: 삭제 확인 다이얼로그 표시
     console.log('삭제하기');
   };
@@ -144,6 +157,24 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TemplateConfirmModal
+        visible={templateModalVisible}
+        onClose={() => setTemplateModalVisible(false)}
+        onConfirm={async () => {
+          try {
+            const response = await createTemplate(letterId);
+            if (response.result) {
+              Alert.alert('성공', '템플릿이 공개되었습니다.');
+              setTemplateModalVisible(false);
+            } else {
+              throw new Error('템플릿 생성 실패');
+            }
+          } catch (error) {
+            console.error('템플릿 공개 실패:', error);
+            Alert.alert('오류', '템플릿 공개에 실패했습니다.');
+          }
+        }}
+      />
       <AttendeeListModal
         visible={attendeeModalVisible}
         onClose={() => setAttendeeModalVisible(false)}
@@ -173,6 +204,11 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
               style={styles.actionButton}
               onPress={handleDelete}>
               <Icon name="delete" size={24} color="#666" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={() => setTemplateModalVisible(true)}>
+              <Icon name="content-copy" size={24} color="#666" />
             </TouchableOpacity>
           </View>
         </View>

@@ -8,6 +8,7 @@ interface TextEditorState {
   fontSize: number;
   isBold: boolean;
   isColorPickerVisible: boolean;
+  showTextStyleControls: boolean;
 }
 
 interface UseTextEditorProps {
@@ -33,6 +34,7 @@ export const useTextEditor = ({
     fontSize: 16,
     isBold: false,
     isColorPickerVisible: false,
+    showTextStyleControls: false,
   });
 
   // 선택된 텍스트 아이템 가져오기
@@ -50,6 +52,7 @@ export const useTextEditor = ({
           textColor: textItem.style?.color || '#000000',
           fontSize: textItem.style?.fontSize || 16,
           isBold: textItem.style?.fontWeight === 'bold',
+          showTextStyleControls: true,
         }));
       }
     },

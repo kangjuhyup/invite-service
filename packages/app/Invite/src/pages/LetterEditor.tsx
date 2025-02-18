@@ -28,6 +28,7 @@ import {BACKGROUND_HEIGHT, BACKGROUND_WIDTH} from '../constants/canvas';
 import {DefaultController} from '../components/editor/controller/DefaultController';
 import {ImageController} from '../components/editor/controller/ImageController';
 import {getLetterDetail} from '../api/letter';
+import {getTemplateDetail} from '../api/template';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {fetchImage, fetchText} from '../api/image';
 
@@ -35,13 +36,11 @@ type Props = NativeStackScreenProps<RootStackParamList, 'LetterEditor'>;
 
 const LetterEditor: React.FC<Props> = ({route}) => {
   const meta = route.params?.meta;
-  console.log('meta', meta);
   const letterId = route.params?.letterId;
-  const [showTextStyleControls, setShowTextStyleControls] =
-    useState<boolean>(false);
+  const templateId = route.params?.templateId;
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
 
-  const {editorRef, viewShotRef, handleSave} = useImageSave();
+  const {editorRef, viewShotRef, handleSave, handleModify} = useImageSave();
 
   const [backgroundColor, setBackgroundColor] = useState('#ffffff');
   const [hue, setHue] = useState(0);
@@ -60,14 +59,20 @@ const LetterEditor: React.FC<Props> = ({route}) => {
   };
 
   useEffect(() => {
-    if (letterId) {
+    if (letterId || templateId) {
       setModifyComponents();
     }
   }, []);
 
   const setModifyComponents = async () => {
-    const response = await getLetterDetail(letterId!);
+    const response = letterId
+      ? await getLetterDetail(letterId!)
+      : templateId
+      ? await getTemplateDetail(templateId)
+      : undefined;
+    if (!response) return;
     if (response.result && response.data) {
+      console.log(response.data);
       // 백그라운드 이미지 설정
       if (response.data.background?.path) {
         try {
@@ -142,7 +147,13 @@ const LetterEditor: React.FC<Props> = ({route}) => {
   });
 
   const {
-    state: {textColor, fontSize, isBold, isColorPickerVisible: showColorPicker},
+    state: {
+      textColor,
+      fontSize,
+      isBold,
+      isColorPickerVisible: showColorPicker,
+      showTextStyleControls,
+    },
     handleTextSelect,
     handleFontSizeChange,
     handleColorChange,
@@ -175,7 +186,6 @@ const LetterEditor: React.FC<Props> = ({route}) => {
     };
     setItems(prev => [...prev, newItem]);
     setSelectedItem(newItem.id);
-    setShowTextStyleControls(true);
   };
 
   const updateTextContent = (id: string, content: string) => {
@@ -211,6 +221,10 @@ const LetterEditor: React.FC<Props> = ({route}) => {
     }
   };
 
+  console.log(
+    `showImageControls: ${showImageControls} , showTextStyleControls: ${showTextStyleControls} , selectedItem: ${selectedItem}`,
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.editorContainer}>
@@ -229,13 +243,25 @@ const LetterEditor: React.FC<Props> = ({route}) => {
                   Alert.alert('오류', '초대장 정보가 없습니다.');
                   return;
                 }
-                await handleSave(
-                  backgroundImage,
-                  BACKGROUND_WIDTH,
-                  BACKGROUND_HEIGHT,
-                  items,
-                  letterMeta,
-                );
+                if (letterId) {
+                  await handleModify(
+                    letterId,
+                    backgroundImage,
+                    BACKGROUND_WIDTH,
+                    BACKGROUND_HEIGHT,
+                    items,
+                    letterMeta,
+                  );
+                } else {
+                  await handleSave(
+                    backgroundImage,
+                    BACKGROUND_WIDTH,
+                    BACKGROUND_HEIGHT,
+                    items,
+                    letterMeta,
+                  );
+                }
+
                 Alert.alert('성공', '초대장이 저장되었습니다.');
                 navigation.reset({
                   index: 0,
@@ -287,7 +313,6 @@ const LetterEditor: React.FC<Props> = ({route}) => {
                   item={item}
                   isSelected={selectedItem === item.id}
                   onSelect={() => {
-                    if (selectedItem === item.id) return;
                     setSelectedItem(item.id);
                     if (item.type === 'text') {
                       handleTextSelect(item.id);
@@ -324,11 +349,11 @@ const LetterEditor: React.FC<Props> = ({route}) => {
           onSelectImage={selectBackgroundImage}
         />
 
-        {showImageControls && selectedItem ? (
+        {showImageControls ? (
           <ImageController
             isProcessingImage={isProcessingImage}
             onDeletePress={() => {
-              deleteImage(selectedItem);
+              deleteImage();
               closeImageControls();
             }}
             onDonePress={() => {
@@ -336,7 +361,7 @@ const LetterEditor: React.FC<Props> = ({route}) => {
               setSelectedItem(null);
             }}
           />
-        ) : showTextStyleControls && selectedItem ? (
+        ) : showTextStyleControls ? (
           <TextStyleController
             fontSize={fontSize}
             isBold={isBold}

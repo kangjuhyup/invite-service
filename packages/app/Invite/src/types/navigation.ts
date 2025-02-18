@@ -1,6 +1,12 @@
-import type {Letter, LetterCategoryCode} from '../api/letter';
+import type {LetterCategoryCode} from '../api/letter';
+import {TemplatePageItem} from '../api/template';
 
 export type RootStackParamList = {
+  TemplateDetail: {
+    templateId: number;
+    template: TemplatePageItem;
+    imageUrl: string;
+  };
   LetterEditor: {
     letterId?: number;
     meta?: {
@@ -9,8 +15,18 @@ export type RootStackParamList = {
       body?: string;
       inviteDate: string;
     };
+    templateId?: number;
   };
-  LetterMeta: undefined;
+  LetterMeta: {
+    letterId?: number;
+    meta: {
+      category: LetterCategoryCode;
+      title: string;
+      body?: string;
+      inviteDate?: string;
+    };
+    templateId?: number;
+  };
   Login: undefined;
   Signup: undefined;
   Home: undefined;

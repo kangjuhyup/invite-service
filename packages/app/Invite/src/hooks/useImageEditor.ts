@@ -101,6 +101,7 @@ export const useImageEditor = ({
       });
       setState(prev => ({
         ...prev,
+        setShowImageControl: true,
         backgroundImage: image.path,
         showBackgroundModal: false,
       }));
@@ -119,17 +120,15 @@ export const useImageEditor = ({
   );
 
   // 이미지 삭제
-  const deleteImage = useCallback(
-    (id: string) => {
-      onDeleteItem(id);
-      setState(prev => ({
-        ...prev,
-        selectedImageId: null,
-        isImageControlsVisible: false,
-      }));
-    },
-    [onDeleteItem],
-  );
+  const deleteImage = useCallback(() => {
+    if (!state.selectedImageId) return;
+    onDeleteItem(state.selectedImageId);
+    setState(prev => ({
+      ...prev,
+      selectedImageId: null,
+      isImageControlsVisible: false,
+    }));
+  }, [onDeleteItem]);
 
   // 배경 모달 토글
   const toggleBackgroundModal = useCallback(() => {
