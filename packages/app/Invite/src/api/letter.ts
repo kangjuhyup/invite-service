@@ -89,6 +89,16 @@ export interface PrepareResponse {
   textUrls: string[];
 }
 
+export interface ModifyLetterRequest {
+  category?: LetterCategoryCode;
+  title?: string;
+  body?: string;
+  inviteDate?: string;
+  commentYn?: boolean;
+  attendYn?: boolean;
+  publicYn?: boolean;
+}
+
 export interface AddLetterRequest {
   category: LetterCategoryCode;
   title: string;
@@ -245,4 +255,44 @@ export const getLetter = async (
   const url = token ? `/api/letter/${id}?token=${token}` : `/api/letter/${id}`;
   console.log(url);
   return await apiClient.get<Letter>(url);
+};
+
+/**
+ * 초대장을 삭제합니다.
+ * @param id 삭제할 초대장 ID
+ * @returns 삭제 결과
+ */
+export const deleteLetter = async (
+  id: string | number,
+): Promise<HttpResponse<void>> => {
+  return await apiClient.delete<void>(`/api/letter/${id}`);
+};
+
+/**
+ * 초대장 수정 전 처리를 수행합니다.
+ * @param id 수정할 초대장 ID
+ * @param data 수정할 초대장 데이터
+ * @returns 수정 준비 결과
+ */
+export const prepareModifyLetter = async (
+  id: string | number,
+  data: PrepareRequest,
+): Promise<HttpResponse<PrepareResponse>> => {
+  return await apiClient.post<PrepareResponse>(
+    `/api/letter/prepare-modify/${id}`,
+    data,
+  );
+};
+
+/**
+ * 초대장을 수정합니다.
+ * @param id 수정할 초대장 ID
+ * @param data 수정할 초대장 데이터
+ * @returns 수정 결과
+ */
+export const modifyLetter = async (
+  id: string | number,
+  data: ModifyLetterRequest,
+): Promise<HttpResponse<AddLetterResponse>> => {
+  return await apiClient.patch<AddLetterResponse>(`/api/letter/${id}`, data);
 };

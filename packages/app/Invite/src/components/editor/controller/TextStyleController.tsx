@@ -6,7 +6,13 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+const Icon = MaterialIcons as unknown as React.ComponentType<{
+  name: string;
+  size: number;
+  color: string;
+  style?: any;
+}>;
 
 interface TextStyleControllerProps {
   fontSize: number;

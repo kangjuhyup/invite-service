@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -6,41 +6,19 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
-  ScrollView,
-  Alert,
-  ActivityIndicator,
 } from 'react-native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../types/navigation';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import {fetchImage} from '../api/image';
-import {LetterCategoryCode} from '../api/letter';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {getCategoryDisplayName} from '../utils/category';
+const Icon = MaterialIcons as unknown as React.ComponentType<{
+  name: string;
+  size: number;
+  color: string;
+  style?: any;
+}>;
 
 type Props = NativeStackScreenProps<RootStackParamList, 'TemplateDetail'>;
-
-const getCategoryDisplayName = (category: LetterCategoryCode): string => {
-  const displayNames: Record<LetterCategoryCode, string> = {
-    [LetterCategoryCode.BUSINESS]: '업무',
-    [LetterCategoryCode.CONGRATULATION]: '축하',
-    [LetterCategoryCode.FRIENDSHIP]: '우정',
-    [LetterCategoryCode.LOVE]: '사랑',
-    [LetterCategoryCode.THANKS]: '감사',
-    [LetterCategoryCode.FAMILY]: '가족',
-  };
-  return displayNames[category] || category;
-};
-
-// interface TemplateDetailData {
-//   templateId: number;
-//   title: string;
-//   category: LetterCategoryCode;
-//   userId: string;
-//   thumbnailUrl: string;
-//   forkCount: number;
-//   viewCount: number;
-//   content: string;
-//   backgroundUrl?: string;
-// }
 
 const TemplateDetail: React.FC<Props> = ({route, navigation}) => {
   const {templateId, template, imageUrl: initialImageUrl} = route.params;

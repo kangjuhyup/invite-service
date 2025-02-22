@@ -9,7 +9,13 @@ import {
   Alert,
   SafeAreaView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Feather from 'react-native-vector-icons/Feather';
+const Icon = Feather as unknown as React.ComponentType<{
+  name: string;
+  size: number;
+  color: string;
+  style?: any;
+}>;
 import DateTimePicker from '@react-native-community/datetimepicker';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../types/navigation';
@@ -41,7 +47,7 @@ export const LetterMeta: React.FC<Props> = ({route, navigation}) => {
       Alert.alert('알림', '카테고리를 선택해주세요');
       return;
     }
-    if (!title.trim()) {
+    if (!title || !title.trim()) {
       Alert.alert('알림', '제목을 입력해주세요');
       return;
     }
@@ -64,7 +70,7 @@ export const LetterMeta: React.FC<Props> = ({route, navigation}) => {
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#666" />
+          <Icon name="arrow-left" size={24} color="#666" />
         </TouchableOpacity>
         <Text style={styles.title}>초대장 정보</Text>
         <TouchableOpacity onPress={handleNext}>
@@ -125,7 +131,7 @@ export const LetterMeta: React.FC<Props> = ({route, navigation}) => {
               day: 'numeric',
             })}
           </Text>
-          <Icon name="calendar-today" size={20} color="#666" />
+          <Icon name="calendar" size={20} color="#666" />
         </TouchableOpacity>
 
         {showDatePicker && (

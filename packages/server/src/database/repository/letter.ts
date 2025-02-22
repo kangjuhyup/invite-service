@@ -161,8 +161,10 @@ export class LetterRepository {
 
   async updateLetter({
     letterId,
+    category,
     title,
     body,
+    inviteDate,
     commentYn,
     attendYn,
     publicYn,
@@ -173,8 +175,10 @@ export class LetterRepository {
     const set = {
       updator,
     };
+    if (category) set['category'] = category;
     if (title) set['title'] = title;
     if (body) set['body'] = body;
+    if (inviteDate) set['inviteDate'] = inviteDate;
     if (commentYn) set['commentYn'] = commentYn;
     if (attendYn) set['attendYn'] = attendYn;
     if (publicYn) set['publicYn'] = publicYn;

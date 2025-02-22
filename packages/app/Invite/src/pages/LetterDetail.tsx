@@ -10,16 +10,23 @@ import {
 } from 'react-native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../types/navigation';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+const Icon = MaterialIcons as unknown as React.ComponentType<{
+  name: string;
+  size: number;
+  color: string;
+  style?: any;
+}>;
 import {AttendeeListModal} from '../components/modal/AttendeeListModal';
 import {CommentModal} from '../components/modal/CommentModal';
 import type {Letter} from '../api/letter';
 import {fetchImage} from '../api/image';
-import {getLetter} from '../api/letter';
+import {getLetter, deleteLetter} from '../api/letter';
 import {styles} from '../styles/LetterDetail.styles';
 import {useComments} from '../hooks/useComments';
 import Share from 'react-native-share';
 import {TemplateConfirmModal} from '../components/modal/TemplateConfirmModal';
+import {DeleteModal} from '../components/modal/DeleteModal';
 import {createTemplate} from '../api/template';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LetterDetail'>;
@@ -38,6 +45,7 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
   const [showComments, setShowComments] = useState(false);
   const [attendeeModalVisible, setAttendeeModalVisible] = useState(false);
   const [templateModalVisible, setTemplateModalVisible] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   // 임시 참여자 데이터
   const tempAttendees = [
@@ -147,8 +155,45 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
 
   const handleDelete = () => {
     if (!letterData) return;
-    // TODO: 삭제 확인 다이얼로그 표시
-    console.log('삭제하기');
+    Alert.alert(
+      '초대장 삭제',
+      '정말로 이 초대장을 삭제하시겠습니까?\n삭제한 초대장은 복구할 수 없습니다.',
+      [
+        {
+          text: '취소',
+          style: 'cancel',
+        },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setDeleteLoading(true);
+              const response = await deleteLetter(letterId);
+              if (response.result) {
+                Alert.alert('성공', '초대장이 삭제되었습니다.');
+                navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: 'MainTabs',
+                      params: {screen: 'My'},
+                    },
+                  ],
+                });
+              } else {
+                throw new Error('초대장 삭제 실패');
+              }
+            } catch (error) {
+              console.error('초대장 삭제 실패:', error);
+              Alert.alert('오류', '초대장 삭제에 실패했습니다.');
+            } finally {
+              setDeleteLoading(false);
+            }
+          },
+        },
+      ],
+    );
   };
 
   useEffect(() => {
@@ -157,6 +202,7 @@ const LetterDetail: React.FC<Props> = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <DeleteModal visible={deleteLoading} />
       <TemplateConfirmModal
         visible={templateModalVisible}
         onClose={() => setTemplateModalVisible(false)}

@@ -13,10 +13,16 @@ import {
 } from 'react-native';
 import {EditorItem} from '../components/editor/EditorItem';
 import {TextStyleController} from '../components/editor/controller/TextStyleController';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+const Icon = MaterialIcons as unknown as React.ComponentType<{
+  name: string;
+  size: number;
+  color: string;
+  style?: any;
+}>;
 import {BackgroundSettingModal} from '../components/modal/BackgroundSettingModal';
 import {useNavigation} from '@react-navigation/native';
-import {StackNavigationProp} from '@react-navigation/stack';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../types/navigation';
 import {useTextEditor} from '../hooks/useTextEditor';
 import {useImageEditor} from '../hooks/useImageEditor';
@@ -38,7 +44,8 @@ const LetterEditor: React.FC<Props> = ({route}) => {
   const meta = route.params?.meta;
   const letterId = route.params?.letterId;
   const templateId = route.params?.templateId;
-  const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
   const {editorRef, viewShotRef, handleSave, handleModify} = useImageSave();
 

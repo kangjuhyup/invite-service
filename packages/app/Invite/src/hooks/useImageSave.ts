@@ -95,7 +95,7 @@ export const useImageSave = (): UseImageSaveReturn => {
     },
   ) => {
     try {
-      if (!viewShotRef.current) {
+      if (!viewShotRef.current?.capture) {
         throw new Error('ViewShot ref is not initialized');
       }
       // 메타데이터 준비
@@ -140,6 +140,7 @@ export const useImageSave = (): UseImageSaveReturn => {
       // API 호출 및 URL 획득
       const response = await prepareLetter(prepareData);
       const urls = response.data;
+
       // 원본 이미지 캡쳐
       const uri = await viewShotRef.current.capture();
       console.log('초대장 이미지 캡쳐 완료');
@@ -155,14 +156,8 @@ export const useImageSave = (): UseImageSaveReturn => {
       });
       console.log('초대장 이미지 업로드 완료');
       // 썸네일 이미지 캡쳐
-      const thumbnailUri = await viewShotRef.current.capture({
-        width: parseInt(prepareData.thumbnailMeta.width),
-        height: parseInt(prepareData.thumbnailMeta.height),
-        quality: 0.7,
-        format: 'png',
-        result: 'data-uri',
-      });
-      console.log('썸네일 이미지 캡쳐');
+      const thumbnailUri = await viewShotRef.current.capture();
+      console.log('썸네일 이미지 캡쳐 완료');
       // 썸네일 업로드
       await uploadFile(urls.thumbnailUrl, thumbnailUri, {
         'x-amz-meta-width': prepareData.thumbnailMeta.width,
@@ -270,7 +265,7 @@ export const useImageSave = (): UseImageSaveReturn => {
     },
   ) => {
     try {
-      if (!viewShotRef.current) {
+      if (!viewShotRef.current?.capture) {
         throw new Error('ViewShot ref is not initialized');
       }
       // 메타데이터 준비
@@ -329,13 +324,7 @@ export const useImageSave = (): UseImageSaveReturn => {
       });
 
       // 썸네일 이미지 캡쳐
-      const thumbnailUri = await viewShotRef.current.capture({
-        width: parseInt(prepareData.thumbnailMeta.width),
-        height: parseInt(prepareData.thumbnailMeta.height),
-        quality: 0.7,
-        format: 'png',
-        result: 'data-uri',
-      });
+      const thumbnailUri = await viewShotRef.current.capture();
       // 썸네일 업로드
       await uploadFile(urls.thumbnailUrl, thumbnailUri, {
         'x-amz-meta-width': prepareData.thumbnailMeta.width,

@@ -3453,6 +3453,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-navigation/stack@npm:^7.1.1":
+  version: 7.1.1
+  resolution: "@react-navigation/stack@npm:7.1.1"
+  dependencies:
+    "@react-navigation/elements": "npm:^2.2.5"
+    color: "npm:^4.2.3"
+  peerDependencies:
+    "@react-navigation/native": ^7.0.14
+    react: ">= 18.2.0"
+    react-native: "*"
+    react-native-gesture-handler: ">= 2.0.0"
+    react-native-safe-area-context: ">= 4.0.0"
+    react-native-screens: ">= 4.0.0"
+  checksum: 10c0/69ed5a26f62d451847e50f02e803f11f153cf723ccb433cbaed55cc41a7d19d1656007c1b21ade393f929839f9c471ba90fb445743e8c783d48b59b15b19c337
+  languageName: node
+  linkType: hard
+
 "@rgba-image/common@npm:^0.1.0, @rgba-image/common@npm:^0.1.13":
   version: 0.1.13
   resolution: "@rgba-image/common@npm:0.1.13"
@@ -3987,6 +4004,7 @@ __metadata:
     "@react-navigation/elements": "npm:^2.2.5"
     "@react-navigation/native": "npm:^7.0.14"
     "@react-navigation/native-stack": "npm:^7.2.0"
+    "@react-navigation/stack": "npm:^7.1.1"
     "@types/jest": "npm:^29.5.13"
     "@types/react": "npm:^18.2.6"
     "@types/react-native-canvas": "npm:^0"

@@ -12,24 +12,19 @@ import {
   ActivityIndicator,
   ScrollView,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+const Icon = MaterialIcons as unknown as React.ComponentType<{
+  name: string;
+  size: number;
+  color: string;
+  style?: any;
+}>;
 import {getTemplates, TemplatePageItem} from '../api/template';
 import {fetchImage} from '../api/image';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../types/navigation';
 import {LetterCategoryCode} from '../api/letter';
-
-const getCategoryDisplayName = (category: LetterCategoryCode): string => {
-  const displayNames: Record<LetterCategoryCode, string> = {
-    [LetterCategoryCode.BUSINESS]: '업무',
-    [LetterCategoryCode.CONGRATULATION]: '축하',
-    [LetterCategoryCode.FRIENDSHIP]: '우정',
-    [LetterCategoryCode.LOVE]: '사랑',
-    [LetterCategoryCode.THANKS]: '감사',
-    [LetterCategoryCode.FAMILY]: '가족',
-  };
-  return displayNames[category] || category;
-};
+import {getCategoryDisplayName} from '../utils/category';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Template'>;
 
