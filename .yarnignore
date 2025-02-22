@@ -1,2 +1,2 @@
-packages/app/Consturction/**
-packages/app/Invite/**
+# React Native projects use node-modules instead of PnP
+packages/app/**/*
