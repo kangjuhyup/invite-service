@@ -16,6 +16,7 @@ interface LetterDetail {
   letterCategoryCode: LetterCategoryCode;
   title: string;
   body?: string;
+  inviteDate: string;
   comment?: boolean;
   attend?: boolean;
   public?: boolean;
@@ -108,6 +109,7 @@ export class InsertLetterTransaction extends LetterTransactionBase<
       letterCategoryCode: letter.letterCategoryCode,
       title: letter.title,
       body: letter.body,
+      inviteDate: letter.inviteDate,
       commentYn: booleanToYN(letter.comment),
       attendYn: booleanToYN(letter.attend),
       publicYn: booleanToYN(letter.public),

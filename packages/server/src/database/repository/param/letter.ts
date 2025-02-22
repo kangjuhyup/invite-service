@@ -24,9 +24,11 @@ export class InsertLetterTotal extends DefaultParameter {
 
 export class UpdateLetter extends DefaultParameter {
   letterId: number;
+  category?: LetterCategoryCode;
   updator: string;
   title?: string;
   body?: string;
+  inviteDate?: string;
   commentYn?: boolean;
   attendYn?: boolean;
   publicYn?: boolean;

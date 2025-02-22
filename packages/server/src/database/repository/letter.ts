@@ -140,6 +140,10 @@ export class LetterRepository {
         `user.${DefaultColumn.useYn} = :useYn`,
         { useYn: YN.Y },
       )
+      .innerJoinAndSelect(
+        'letter.letterTotal',
+        'letterTotal',
+      )
       .where({ letterId, useYn: YN.Y });
     this.logger.debug(`qb : ${JSON.stringify(qb.getSql())}`);
     return await qb.getOne();
@@ -157,8 +161,10 @@ export class LetterRepository {
 
   async updateLetter({
     letterId,
+    category,
     title,
     body,
+    inviteDate,
     commentYn,
     attendYn,
     publicYn,
@@ -169,8 +175,10 @@ export class LetterRepository {
     const set = {
       updator,
     };
+    if (category) set['letterCategoryCode'] = category;
     if (title) set['title'] = title;
     if (body) set['body'] = body;
+    if (inviteDate) set['inviteDate'] = inviteDate;
     if (commentYn) set['commentYn'] = commentYn;
     if (attendYn) set['attendYn'] = attendYn;
     if (publicYn) set['publicYn'] = publicYn;

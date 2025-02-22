@@ -28,6 +28,7 @@ export class LetterAttachmentService extends AttachmentBaseService {
     componentCount: number,
   ) {
     const metadata = await this.getMetadata(objectKey, componentCount);
+    this.logger.debug(`metadata : ${JSON.stringify(metadata)}`);
     if (
       metadata.thumbnailMeta.Metadata.session !== sessionKey ||
       metadata.letterMeta.Metadata.session !== sessionKey ||
@@ -125,10 +126,10 @@ export class LetterAttachmentService extends AttachmentBaseService {
       attachmentCode: code,
       width: Number(meta.Metadata.width),
       height: Number(meta.Metadata.height),
-      x: Number(meta.Metadata.x) || 0,
-      y: Number(meta.Metadata.y) || 0,
-      z: Number(meta.Metadata.z) || 0,
-      angle: Number(meta.Metadata.angle) || 0,
+      x: meta.Metadata.x || '0',
+      y: meta.Metadata.y || '0',
+      z: meta.Metadata.z || 0,
+      angle: meta.Metadata.angle || '0',
       font: meta.Metadata.font,
       color: meta.Metadata.color,
       bold: meta.Metadata.bold ? meta.Metadata.bold === 'true' : undefined,

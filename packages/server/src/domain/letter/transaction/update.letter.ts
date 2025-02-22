@@ -8,11 +8,14 @@ import {
   LetterTransactionBase,
   AttachmentDetail,
 } from './letter.transaction.base';
+import { LetterCategoryCode } from '@app/util/category';
 
 interface UpdateLetter {
   letterId: number;
+  category?: LetterCategoryCode;
   title?: string;
   content?: string;
+  inviteDate?: string;
   commentYn?: boolean;
   attendYn?: boolean;
   publicYn?: boolean;

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1026738940867",
+    "project_id": "invite-1e0ba",
+    "storage_bucket": "invite-1e0ba.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1026738940867:android:c2919d52b825cda0946b76",
+        "android_client_info": {
+          "package_name": "com.jhkang.invite"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCT43XxDjrpukbd8v3sbnHjfIxOQohW1j8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

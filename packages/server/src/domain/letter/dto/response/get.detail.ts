@@ -78,16 +78,16 @@ export class Component {
     example: 200,
   })
   @IsNotEmpty()
-  @IsNumber()
-  x: number;
+  @IsString()
+  x: string;
 
   @ApiProperty({
     description: '이미지의 Y 좌표',
     example: 800,
   })
   @IsNotEmpty()
-  @IsNumber()
-  y: number;
+  @IsString()
+  y: string;
 
   @ApiProperty({
     description: '이미지의 Z 레이어',
@@ -102,8 +102,8 @@ export class Component {
     example: 90,
   })
   @IsOptional()
-  @IsNumber()
-  ang: number;
+  @IsString()
+  ang: string;
 
   @ApiProperty({
     description: '텍스트 폰트 종류',

@@ -4,6 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -12,25 +13,9 @@ import {
 } from 'class-validator';
 import { LetterAttachmentCode } from '@app/util/attachment';
 import { booleanToYN, ynToBoolean } from '@app/util/yn';
+import { LetterCategoryCode } from '@app/util/category';
 
 export class Letter {
-  @ApiProperty({
-    description: '초대장 제목',
-    example: 'Sample Title',
-  })
-  @IsNotEmpty()
-  @IsString()
-  title: string;
-
-  @ApiProperty({
-    description: '초대장 내용',
-    example: 'Sample Body',
-    required: false,
-  })
-  @IsNotEmpty()
-  @IsString()
-  body?: string;
-
   @ApiProperty({
     description: '이미지 경로',
     example: 'https://example.com/img.png',
@@ -60,8 +45,6 @@ export class Letter {
     const attachment = letter.letterAttachment.find(
       (la) => la.attachmentCode === LetterAttachmentCode.LETTER,
     );
-    response.title = letter.title;
-    response.body = letter.body;
     response.path = attachment.attachment.attachmentPath;
     response.width = attachment.attachment.metadata.width;
     response.height = attachment.attachment.metadata.height;
@@ -93,6 +76,18 @@ export class GetLetterResponse {
   @IsNumber()
   letterId: number;
 
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
+  @IsOptional()
+  @IsString()
+  body?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  userId: string;
+
   @ApiProperty({
     description: '공개여부',
   })
@@ -117,6 +112,28 @@ export class GetLetterResponse {
   letter: Letter;
 
   @ApiProperty({
+    description : '일자'
+  })
+  @IsOptional()
+  @IsString()
+  inviteDate? : string;
+
+  @ApiProperty({
+    description : '조회수'
+  })
+  viewCount : number;
+
+  @ApiProperty({
+    description : '댓글 수'
+  })
+  commentCount : number;
+
+  @ApiProperty({
+    description : '총 참여자 수'
+  })
+  attendCount : number;
+
+  @ApiProperty({
     description: '댓글 목록',
     type: Array<Comment>,
   })
@@ -125,6 +142,13 @@ export class GetLetterResponse {
   @IsNotEmpty()
   comments: Array<Comment>;
 
+  @ApiProperty({
+    description : '카테고리'
+  })
+  @IsNotEmpty()
+  @IsIn(Object.values(LetterCategoryCode))
+  category: LetterCategoryCode;
+
   static of(letter: LetterEntity, isRequestedEditor: boolean) {
     const response = new GetLetterResponse();
     response.letterId = letter.letterId;
@@ -132,6 +156,14 @@ export class GetLetterResponse {
     response.comments = letter.letterComment?.map((lc) => Comment.of(lc)) || [];
     response.publicYn = ynToBoolean(letter.publicYn);
     response.password = isRequestedEditor ? letter.password : undefined;
+    response.inviteDate = letter.inviteDate;
+    response.viewCount = letter.letterTotal.viewCount;
+    response.commentCount = letter.letterTotal.commentCount;
+    response.attendCount = letter.letterTotal.attendantCount;
+    response.category = letter.letterCategoryCode;
+    response.userId = letter.userId;
+    response.title = letter.title;
+    response.body = letter.body;
     return response;
   }
 }

@@ -11,29 +11,35 @@ export class MetadataEntity extends DefaultEntity {
 
   @Column({
     name: MetadataColumn.angle,
-    type: 'int',
+    type: 'decimal',
+    precision: 40,
+    scale: 20,
     nullable: false,
     default: 0,
   })
-  angle: number;
+  angle: string;
   @Column({ name: MetadataColumn.width, type: 'int', nullable: false })
   width: number;
   @Column({ name: MetadataColumn.height, type: 'int', nullable: false })
   height: number;
   @Column({
     name: MetadataColumn.x,
-    type: 'int',
+    type: 'decimal',
+    precision: 40,
+    scale: 20,
     nullable: false,
     default: 0,
   })
-  x: number;
+  x: string;
   @Column({
     name: MetadataColumn.y,
-    type: 'int',
+    type: 'decimal',
+    precision: 40,
+    scale: 20,
     nullable: false,
     default: 0,
   })
-  y: number;
+  y: string;
 
   @Column({
     name: MetadataColumn.z,
@@ -72,11 +78,11 @@ export class MetadataEntity extends DefaultEntity {
   static of(
     creator: string,
     attachmentId: number,
-    angle: number,
+    angle: string,
     width: number,
     height: number,
-    x: number,
-    y: number,
+    x: string,
+    y: string,
     z: number,
     font?: string,
     color?: string,
