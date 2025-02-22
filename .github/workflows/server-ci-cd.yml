@@ -48,8 +48,21 @@ jobs:
       - name: build server
         run: yarn workspace server build
 
+      - name: prepare build files
+        run: |
+          mkdir -p build
+          cp -r .yarn build/
+          cp .yarnrc.yml build/
+          cp package.json yarn.lock build/
+          cp .pnp.cjs .pnp.loader.mjs build/
+          cp -r packages/server/dist build/
+          cp -r packages/server/public build/
+          cp packages/server/ecosystem.config.js build/
+          cp packages/server/package.json build/
+          cp packages/server/Dockerfile build/
+
       - name: docker build & push
-        working-directory: packages/server
+        working-directory: build
         run: |
           docker buildx build \
             -f Dockerfile \
