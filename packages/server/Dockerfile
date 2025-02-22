@@ -2,13 +2,10 @@ FROM ghcr.io/kangjuhyup/invite-service/release:latest
 
 WORKDIR /usr/src/app
 
-# Copy all yarn and config files
+# Copy yarn and package files
 COPY .yarn/ .yarn/
-COPY .pnp.cjs .pnp.loader.mjs ./
-COPY .yarnrc.yml .yarnrc ./
-COPY .yarnignore ./
-COPY package.json yarn.lock ./
-COPY tsconfig.json jest.config.js nest-cli.json ./
+COPY .pnp.cjs .pnp.loader.mjs yarn.lock .yarnrc.yml ./
+COPY package.json ./
 
 # Create workspace structure
 RUN mkdir -p packages/server
@@ -23,8 +20,6 @@ RUN npm install -g pm2
 
 # Create logs directory
 RUN mkdir -p /usr/src/app/logs
-
-RUN yarn workspaces focus server --production
 
 EXPOSE 3003
 
