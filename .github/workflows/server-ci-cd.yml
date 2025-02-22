@@ -29,37 +29,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: setup yarn
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cache: 'yarn'
-
-      - name: install packages
-        run: yarn workspaces focus server --all
-
-      - name: Install Doppler CLI
-        run: |
-          (curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh || wget -t 3 -qO- https://cli.doppler.com/install.sh) | sudo sh
-
-      - name: Setup Doppler
-        run: doppler setup --token ${{ secrets.DOPPLER_TOKEN }} --project ${{vars.DOPPLER_PROJECT}} --config prod --no-interactive
-
-      - name: build server
-        run: yarn workspace server build
-
       - name: docker build & push
-        env:
-          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+        working-directory: build
         run: |
-          echo "$DOPPLER_TOKEN" > doppler_token.txt
           docker buildx build \
-            -f ./packages/server/Dockerfile \
+            -f Dockerfile \
             --platform linux/amd64,linux/arm64 \
-            --secret id=DOPPLER_TOKEN,src=doppler_token.txt \
             -t ghcr.io/${{ github.repository }}/service:latest \
             --push .
-          rm doppler_token.txt
 
   deploy:
     runs-on: ubuntu-latest
