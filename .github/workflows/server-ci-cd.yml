@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - server
+
+env:
+  DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+  DOPPLER_PROJECT: ${{ vars.DOPPLER_PROJECT }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -34,37 +38,25 @@ jobs:
       - name: install packages
         run: yarn install --immutable
 
-      - name: create .env
+      - name: Install Doppler CLI
         run: |
-          echo "NODE_ENV=${{ vars.NODE_ENV }}" >> .env
-          echo "PORT=${{ vars.PORT }}" >> .env
-          echo "WASABI_ACCESS_KEY=${{ secrets.WASABI_ACCESS_KEY }}" >> .env
-          echo "WASABI_SECRET_KEY=${{ secrets.WASABI_SECRET_KEY }}" >> .env
-          echo "WASABI_REGION=${{ vars.WASABI_REGION }}" >> .env
-          echo "WASABI_ENDPOINT=${{ vars.WASABI_ENDPOINT }}" >> .env
-          echo "THUMB_BUCKET=${{ vars.THUMB_BUCKET }}" >> .env
-          echo "BACKGROUND_BUCKET=${{ vars.BACKGROUND_BUCKET }}" >> .env
-          echo "COMPONENT_BUCKET=${{ vars.COMPONENT_BUCKET }}" >> .env
-          echo "LETTER_BUCKET=${{ vars.LETTER_BUCKET }}" >> .env
-          echo "PROFILE_BUCKET=${{ vars.PROFILE_BUCKET }}" >> .env
-          echo "DB_TYPE=${{ vars.DB_TYPE }}" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "DB_PWD=${{ secrets.DB_PWD }}" >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "JWT_EXPIRES=${{ vars.JWT_EXPIRES }}" >> .env
-          echo "JWT_REFRESH_EXPIRES=${{ vars.JWT_REFRESH_EXPIRES }}" >> .env
-          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
-          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
-          echo "REDIS_PWD=${{ secrets.REDIS_PWD }}" >> .env
-          echo "GOOGLE_CLIENT_ID=${{ vars.GOOGLE_CLIENT_ID }}" >> .env
-          echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-          echo "GOOGLE_CALLBACK_URL=${{ vars.GOOGLE_CALLBACK_URL }}" >> .env
+          (curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh || wget -t 3 -qO- https://cli.doppler.com/install.sh) | sudo sh
+
+      - name: Setup Doppler
+        run: doppler setup --token ${{ secrets.DOPPLER_TOKEN }} --project ${{vars.DOPPLER_PROJECT}} --config prod --no-interactive
 
       - name: docker build & push
-        run: docker buildx build -f ./packages/server/Dockerfile --platform linux/amd64,linux/arm64 -t ghcr.io/${{ github.repository }}/service:latest --push .
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
+        run: |
+          echo "$DOPPLER_TOKEN" > doppler_token.txt
+          docker buildx build \
+            -f ./packages/server/Dockerfile \
+            --platform linux/amd64,linux/arm64 \
+            --secret id=DOPPLER_TOKEN,src=doppler_token.txt \
+            -t ghcr.io/${{ github.repository }}/service:latest \
+            --push .
+          rm doppler_token.txt
 
   deploy:
     runs-on: ubuntu-latest
@@ -94,5 +86,6 @@ jobs:
             --network my-network \
             --name invite-api \
             --mount type=bind,source=/home/ubuntu/projects/logs,target=/usr/src/app/logs \
+            $(doppler secrets download --no-file --format docker) \
             ghcr.io/${{ github.repository }}/service:latest
           EOF
