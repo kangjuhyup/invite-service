@@ -26,6 +26,4 @@ RUN mkdir -p /usr/src/app/logs
 
 EXPOSE 3003
 
-WORKDIR /usr/src/app/packages/server
-
-CMD ["pm2-runtime", "ecosystem.config.js"]
+CMD ["yarn", "workspace", "server", "pm2-runtime", "ecosystem.config.js"]
