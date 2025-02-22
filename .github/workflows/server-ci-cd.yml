@@ -29,19 +29,24 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: docker build & push
+      - name: Install Doppler CLI
+        run: |
+          (curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh || wget -t 3 -qO- https://cli.doppler.com/install.sh) | sudo sh
+
+      - name: Setup Doppler and download secrets
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
         run: |
-          echo "$DOPPLER_TOKEN" > doppler_token.txt
+          doppler setup --token $DOPPLER_TOKEN --project ${{ vars.DOPPLER_PROJECT }} --config prod --no-interactive
+          doppler secrets download --no-file --format env > .env
+
+      - name: docker build & push
+        run: |
           docker buildx build \
             -f packages/server/Dockerfile \
             --platform linux/amd64,linux/arm64 \
-            --build-arg DOPPLER_PROJECT=${{ vars.DOPPLER_PROJECT }} \
-            --secret id=DOPPLER_TOKEN,src=doppler_token.txt \
             -t ghcr.io/${{ github.repository }}/service:latest \
             --push .
-          rm doppler_token.txt
 
   deploy:
     runs-on: ubuntu-latest

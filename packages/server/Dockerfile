@@ -2,21 +2,12 @@ FROM ghcr.io/kangjuhyup/invite-service/builder:latest AS builder
 
 WORKDIR /usr/src/app
 
-# Install Doppler CLI
-RUN (curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh || wget -t 3 -qO- https://cli.doppler.com/install.sh) | sh
-
 COPY . .
+
+COPY .env packages/server/.env
 
 RUN yarn workspaces focus server --all
 RUN yarn workspace server build
-
-# Download environment variables from Doppler
-ARG DOPPLER_PROJECT
-ARG DOPPLER_CONFIG=prod
-
-RUN --mount=type=secret,id=DOPPLER_TOKEN \
-    doppler setup --token $(cat /run/secrets/DOPPLER_TOKEN) --project $DOPPLER_PROJECT --config $DOPPLER_CONFIG --no-interactive && \
-    doppler secrets download --no-file --format env > packages/server/.env
 
 FROM ghcr.io/kangjuhyup/invite-service/release:latest AS production
 
