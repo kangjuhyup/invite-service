@@ -57,6 +57,9 @@ jobs:
           mkdir -p build/server
           cp -r packages/server/dist build/server/
           cp packages/server/ecosystem.config.js build/server/
+          cp -r .yarn build/server/
+          cp .pnp.cjs .pnp.loader.mjs yarn.lock .yarnrc.yml build/server/
+          cp packages/server/package.json build/server/
           cp .env build/server/
           cp packages/server/Dockerfile build/server/
 
