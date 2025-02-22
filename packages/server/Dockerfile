@@ -11,10 +11,10 @@ COPY package.json ./
 RUN mkdir -p packages/server
 
 # Copy server files
+COPY ecosystem.config.js packages/server/
 COPY dist/ packages/server/dist/
-COPY ecosystem.config.js .
-COPY package.json packages/server/
 COPY .env packages/server/
+COPY package.json packages/server/
 
 # Install PM2
 RUN npm install -g pm2
