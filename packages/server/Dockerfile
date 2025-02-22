@@ -11,8 +11,11 @@ RUN yarn workspaces focus server --all
 RUN yarn workspace server build
 
 # Download environment variables from Doppler
+ARG DOPPLER_PROJECT
+ARG DOPPLER_CONFIG=prod
+
 RUN --mount=type=secret,id=DOPPLER_TOKEN \
-    doppler setup --token $(cat /run/secrets/DOPPLER_TOKEN) --project invite-service --config prod --no-interactive && \
+    doppler setup --token $(cat /run/secrets/DOPPLER_TOKEN) --project $DOPPLER_PROJECT --config $DOPPLER_CONFIG --no-interactive && \
     doppler secrets download --no-file --format env > packages/server/.env
 
 FROM ghcr.io/kangjuhyup/invite-service/release:latest AS production

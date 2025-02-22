@@ -37,6 +37,7 @@ jobs:
           docker buildx build \
             -f packages/server/Dockerfile \
             --platform linux/amd64,linux/arm64 \
+            --build-arg DOPPLER_PROJECT=${{ vars.DOPPLER_PROJECT }} \
             --secret id=DOPPLER_TOKEN,src=doppler_token.txt \
             -t ghcr.io/${{ github.repository }}/service:latest \
             --push .
