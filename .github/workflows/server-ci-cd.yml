@@ -100,6 +100,5 @@ jobs:
             -p 3003:3003 \
             --name invite-api \
             --mount type=bind,source=/home/ubuntu/projects/logs,target=/usr/src/app/logs \
-            $(doppler secrets download --no-file --format docker) \
             ghcr.io/${{ github.repository }}/service:latest
           EOF
