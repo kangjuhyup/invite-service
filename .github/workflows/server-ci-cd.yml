@@ -37,7 +37,7 @@ jobs:
         env:
           DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
         run: |
-          doppler setup --token $DOPPLER_TOKEN --project ${{ vars.DOPPLER_PROJECT }} --config prod --no-interactive
+          doppler setup --token $DOPPLER_TOKEN --project ${{ vars.DOPPLER_PROJECT }} --config prd --no-interactive
           doppler secrets download --no-file --format env > .env
 
       - name: docker build & push
