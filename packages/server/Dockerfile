@@ -12,7 +12,8 @@ RUN mkdir -p packages/server
 
 # Copy server files
 COPY dist/ packages/server/dist/
-COPY ecosystem.config.js package.json packages/server/
+COPY ecosystem.config.js .
+COPY package.json packages/server/
 COPY .env packages/server/
 
 # Install PM2
@@ -25,4 +26,6 @@ RUN mkdir -p /usr/src/app/logs
 
 EXPOSE 3003
 
-CMD ["yarn", "workspace", "server", "pm2-runtime", "ecosystem.config.js"]
+WORKDIR /usr/src/app/packages/server
+
+CMD ["pm2-runtime", "ecosystem.config.js"]
