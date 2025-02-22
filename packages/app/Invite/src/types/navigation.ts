@@ -19,7 +19,7 @@ export type RootStackParamList = {
   };
   LetterMeta: {
     letterId?: number;
-    meta: {
+    meta?: {
       category: LetterCategoryCode;
       title: string;
       body?: string;

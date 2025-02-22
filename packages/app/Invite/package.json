@@ -3,10 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
+    "android": "doppler run --config dev react-native run-android",
+    "ios": "doppler run --config dev react-native run-ios",
+    "ios:beta": "cd ios && doppler run --config prod -- fastlane beta",
+    "android:beta": "cd android && doppler run --config prod -- fastlane beta",
     "lint": "eslint .",
-    "start": "react-native start",
+    "start": "doppler run -- react-native start",
+    "debug": "open -a 'React Native Debugger'",
     "test": "jest"
   },
   "dependencies": {
@@ -26,6 +29,7 @@
     "react": "18.3.1",
     "react-native": "0.77.0",
     "react-native-canvas": "^0.1.40",
+    "react-native-dotenv": "^3.4.11",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.23.1",
     "react-native-image-crop-picker": "^0.42.0",

@@ -7,17 +7,22 @@ import {
   SafeAreaView,
   Image,
   Dimensions,
-  ScrollView,
   Animated,
-  ActivityIndicator,
 } from 'react-native';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 import type {RootStackParamList} from '../types/navigation';
 import {getProfile} from '../api/profile';
 import type {ProfileResponse} from '../api/profile';
-import {getLetters, Letter, LetterPageItem} from '../api/letter';
-import {fetchImage, getImageUrl} from '../api/image';
-import Icon from 'react-native-vector-icons/Feather';
+import {getLetters, LetterPageItem} from '../api/letter';
+import {fetchImage} from '../api/image';
+import Feather from 'react-native-vector-icons/Feather';
+const Icon = Feather as unknown as React.ComponentType<{
+  name: string;
+  size: number;
+  color: string;
+  style?: any;
+}>;
+
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const {width: SCREEN_WIDTH, height: SCREEN_HEIGHT} = Dimensions.get('window');
@@ -31,6 +36,7 @@ const CARD_COLORS = ['#FF9EAA', '#90CAF9', '#A5D6A7', '#FFD54F', '#B39DDB'];
 
 const My: React.FC<Props> = ({navigation}) => {
   const scrollX = React.useRef(new Animated.Value(0)).current;
+  const rotateAnim = React.useRef(new Animated.Value(0)).current;
   const [profile, setProfile] = useState<ProfileResponse>();
   const [letters, setLetters] = useState<LetterPageItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -203,7 +209,7 @@ const My: React.FC<Props> = ({navigation}) => {
         <Text style={styles.headerTitle}>나의 초대장</Text>
         <TouchableOpacity
           style={styles.createButton}
-          onPress={() => navigation.navigate('LetterMeta')}>
+          onPress={() => navigation.navigate('LetterMeta', {})}>
           <Text style={styles.createButtonText}>+ 새 초대장</Text>
         </TouchableOpacity>
       </View>

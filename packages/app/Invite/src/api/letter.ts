@@ -217,6 +217,9 @@ export const prepareLetter = async (
 export const getLetters = async (
   params: GetLetterPageRequest = {limit: 5, skip: 0},
 ): Promise<HttpResponse<GetLetterPageResponse>> => {
+  console.info(
+    `REQUEST TO /api/letter?skip=${params.skip}&limit=${params.limit}`,
+  );
   const queryParams = new URLSearchParams({
     skip: params.skip?.toString() || '0',
     limit: params.limit?.toString() || '5',

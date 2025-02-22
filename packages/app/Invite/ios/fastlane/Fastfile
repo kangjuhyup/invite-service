@@ -1,6 +1,16 @@
+require 'json'
+
 default_platform(:ios)
 
 platform :ios do
+  before_all do
+    # Doppler에서 환경 변수 가져오기
+    doppler_output = sh('doppler secrets download --no-file --format=json', log: false)
+    ENV.update(JSON.parse(doppler_output))
+    
+    # xcconfig 파일 생성
+    sh('cd .. && ./exportEnv.sh')
+  end
   def updateVersion(options)
     if options[:version]
       version = options[:version]
@@ -30,8 +40,33 @@ platform :ios do
     sigh(force: true)
     updateVersion(options)
 
+    # 환경 변수 사용 예시
+    UI.message("Using API ENDPOINT: #{ENV['API_ENDPOINT']}")
+
     increment_build_number(xcodeproj: "Invite.xcodeproj")
-    build_app(workspace: "Invite.xcworkspace", scheme: "Invite")
+    build_app(
+      workspace: "Invite.xcworkspace", 
+      scheme: "Invite",
+      clean: true,
+      export_method: "app-store",
+      configuration: "Release",
+      build_path: "./build",
+      output_directory: "./build",
+      include_symbols: true,
+      include_bitcode: false,
+      xcargs: {
+        "BUNDLE_IDENTIFIER" => "kr.jhkang.app.Invite",
+        "API_ENDPOINT" => ENV['API_ENDPOINT'],
+        "DEPLOYMENT_TARGET" => "12.0"
+      },
+      export_options: {
+        method: "app-store",
+        provisioningProfiles: { 
+          "kr.jhkang.app.Invite" => "kr.jhkang.app.Invite AppStore"
+        }
+      },
+      skip_profile_detection: true
+    )
     upload_to_testflight
   end
 

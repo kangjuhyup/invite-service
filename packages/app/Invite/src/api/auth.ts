@@ -1,5 +1,6 @@
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {Platform} from 'react-native';
+import {GOOGLE_WEB_CLIENT_ID, GOOGLE_IOS_CLIENT_ID} from '@env';
 
 // 서버 응답 타입 정의
 interface LoginResponse {
@@ -10,7 +11,7 @@ interface LoginResponse {
 // 토큰 갱신 함수
 export const resignToken = async (
   refreshToken: string,
-): Promise<LoginResponse> => {
+): Promise<HttpResponse<LoginResponse>> => {
   return await fetch(`${BASE_URL}/api/auth/resign`, {
     method: 'POST',
     headers: {
@@ -27,10 +28,8 @@ export const resignToken = async (
 
 // 구글 로그인 설정
 GoogleSignin.configure({
-  webClientId:
-    '128433882817-n8iv6m4is2hon4u076lhkkv7b1d1g14k.apps.googleusercontent.com',
-  iosClientId:
-    '128433882817-n8iv6m4is2hon4u076lhkkv7b1d1g14k.apps.googleusercontent.com',
+  webClientId: GOOGLE_WEB_CLIENT_ID,
+  iosClientId: GOOGLE_IOS_CLIENT_ID,
   offlineAccess: true, // serverAuthCode를 받기 위해 필요
 });
 

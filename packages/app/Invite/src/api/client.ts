@@ -7,10 +7,11 @@ import {
 } from '../utils/token';
 import {resignToken} from './auth';
 
+import {API_ENDPOINT} from '@env';
+
 export const BASE_URL = Platform.select({
-  ios: 'http://192.168.0.18:3003',
-  // ios: 'http://172.30.1.60:3003',
-  android: 'http://10.0.2.2:3000',
+  ios: API_ENDPOINT,
+  android: API_ENDPOINT,
 });
 
 interface ApiResponse<T> {
@@ -40,11 +41,24 @@ export const apiClient = {
         ...(accessToken ? {Authorization: `Bearer ${accessToken}`} : {}),
         ...options.headers,
       };
-
       // API 요청
-      const response = await fetch(`${BASE_URL}${endpoint}`, {
+      const url = `${BASE_URL}${endpoint}`;
+      console.info('Request:', {
+        url,
+        method: options.method || 'GET',
+        headers,
+        body: options.body,
+      });
+      const response = await fetch(url, {
         ...options,
         headers,
+      });
+
+      const responseData = await response.clone().json();
+      console.info('Response:', {
+        status: response.status,
+        headers: response.headers,
+        data: responseData,
       });
 
       // 401 에러 (Unauthorized) 처리

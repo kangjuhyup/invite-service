@@ -13,5 +13,6 @@
 13. nvm use 20
 14. My yarn workspaces are page and server
 15. The `packages/app/*` directory contains multiple application folders created with React Native.
-17. React Native projects under packages/app/* must use node-modules as nodeLinker.
-18. All other projects must use Yarn PnP (Plug'n'Play) for dependency management.
+16. React Native projects under packages/app/* must use node-modules as nodeLinker.
+17. All other projects must use Yarn PnP (Plug'n'Play) for dependency management.
+18. React Native project build and deploy use fastlane

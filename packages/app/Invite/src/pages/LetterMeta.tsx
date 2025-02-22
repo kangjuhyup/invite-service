@@ -28,10 +28,12 @@ type Props = NativeStackScreenProps<RootStackParamList, 'LetterMeta'>;
 export const LetterMeta: React.FC<Props> = ({route, navigation}) => {
   const {meta, letterId, templateId} = route.params;
 
-  const [category, setCategory] = useState(meta.category);
-  const [title, setTitle] = useState(meta.title);
-  const [body, setBody] = useState(meta.body || '');
-  const [date, setDate] = useState(meta.inviteDate ? new Date(meta.inviteDate) : new Date());
+  const [category, setCategory] = useState(meta?.category);
+  const [title, setTitle] = useState(meta?.title);
+  const [body, setBody] = useState(meta?.body || '');
+  const [date, setDate] = useState(
+    meta?.inviteDate ? new Date(meta.inviteDate) : new Date(),
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleNext = () => {

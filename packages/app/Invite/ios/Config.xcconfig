@@ -1,0 +1,3 @@
+#include? "tmp.xcconfig"
+API_ENDPOINT = $(API_ENDPOINT)
+IOSPHONEOS_DEPLOYMENT_TARGET = 12.0

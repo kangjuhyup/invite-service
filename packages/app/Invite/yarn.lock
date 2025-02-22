@@ -3999,6 +3999,7 @@ __metadata:
     react: "npm:18.3.1"
     react-native: "npm:0.77.0"
     react-native-canvas: "npm:^0.1.40"
+    react-native-dotenv: "npm:^3.4.11"
     react-native-fs: "npm:^2.20.0"
     react-native-gesture-handler: "npm:^2.23.1"
     react-native-image-crop-picker: "npm:^0.42.0"
@@ -5295,6 +5296,13 @@ __metadata:
   dependencies:
     esutils: "npm:^2.0.2"
   checksum: 10c0/c96bdccabe9d62ab6fea9399fdff04a66e6563c1d6fb3a3a063e8d53c3bb136ba63e84250bbf63d00086a769ad53aef92d2bd483f03f837fc97b71cbee6b2520
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.4.5":
+  version: 16.4.7
+  resolution: "dotenv@npm:16.4.7"
+  checksum: 10c0/be9f597e36a8daf834452daa1f4cc30e5375a5968f98f46d89b16b983c567398a330580c88395069a77473943c06b877d1ca25b4afafcdd6d4adb549e8293462
   languageName: node
   linkType: hard
 
@@ -9220,6 +9228,17 @@ __metadata:
   peerDependencies:
     react-native-webview: ">=5.10.0 || >=6.1.0"
   checksum: 10c0/bec741dfa7f421457a1131dc78c2fbc2d7c41e779352e1d1779b02480a8ae7a140ce1ef1c17fcc2edd4f0548182ea0f7132fa2ee9920e36db828ffd6427ee742
+  languageName: node
+  linkType: hard
+
+"react-native-dotenv@npm:^3.4.11":
+  version: 3.4.11
+  resolution: "react-native-dotenv@npm:3.4.11"
+  dependencies:
+    dotenv: "npm:^16.4.5"
+  peerDependencies:
+    "@babel/runtime": ^7.20.6
+  checksum: 10c0/9ed4a37fb59030706d17a1cc49d05af9d8fc57dcb2ef97e122b844f3ab6f6331ebc089afac559fe5bddf37806aa282b4118005f1b27aae5e37fdc3fc8bd7625c
   languageName: node
   linkType: hard
 
