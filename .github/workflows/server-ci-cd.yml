@@ -51,10 +51,6 @@ jobs:
       - name: prepare build files
         run: |
           mkdir -p build
-          cp -r .yarn build/
-          cp .yarnrc.yml build/
-          cp package.json yarn.lock build/
-          cp .pnp.cjs .pnp.loader.mjs build/
           cp -r packages/server/dist build/
           cp -r packages/server/public build/
           cp packages/server/ecosystem.config.js build/
