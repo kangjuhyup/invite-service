@@ -30,13 +30,17 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: docker build & push
-        working-directory: build
+        env:
+          DOPPLER_TOKEN: ${{ secrets.DOPPLER_TOKEN }}
         run: |
+          echo "$DOPPLER_TOKEN" > doppler_token.txt
           docker buildx build \
-            -f Dockerfile \
+            -f packages/server/Dockerfile \
             --platform linux/amd64,linux/arm64 \
+            --secret id=DOPPLER_TOKEN,src=doppler_token.txt \
             -t ghcr.io/${{ github.repository }}/service:latest \
             --push .
+          rm doppler_token.txt
 
   deploy:
     runs-on: ubuntu-latest
