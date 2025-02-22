@@ -18,6 +18,8 @@ COPY .env packages/server/
 # Install PM2
 RUN npm install -g pm2
 
+RUN yarn workspaces focus server --production
+
 # Create logs directory
 RUN mkdir -p /usr/src/app/logs
 
