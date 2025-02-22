@@ -55,20 +55,13 @@ jobs:
       - name: prepare build files
         run: |
           mkdir -p build/server
-          # Copy server files
           cp -r packages/server/dist build/server/
           cp packages/server/ecosystem.config.js build/server/
+          cp -r .yarn build/server/
+          cp .pnp.cjs .pnp.loader.mjs yarn.lock .yarnrc.yml build/server/
+          cp package.json build/server/
           cp packages/server/package.json build/server/
           cp .env build/server/
-          # Copy yarn files
-          cp -r .yarn build/server/
-          cp .pnp.cjs .pnp.loader.mjs build/server/
-          cp .yarnrc.yml .yarnrc build/server/
-          cp .yarnignore build/server/
-          cp package.json yarn.lock build/server/
-          # Copy config files
-          cp tsconfig.json jest.config.js nest-cli.json build/server/
-          # Copy Dockerfile
           cp packages/server/Dockerfile build/server/
 
       - name: docker build & push
