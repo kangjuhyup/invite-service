@@ -175,7 +175,7 @@ export class LetterRepository {
     const set = {
       updator,
     };
-    if (category) set['category'] = category;
+    if (category) set['letterCategoryCode'] = category;
     if (title) set['title'] = title;
     if (body) set['body'] = body;
     if (inviteDate) set['inviteDate'] = inviteDate;
