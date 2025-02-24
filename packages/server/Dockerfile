@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 # Copy yarn and package files
 COPY .yarn/ .yarn/
 COPY .pnp.cjs .pnp.loader.mjs yarn.lock .yarnrc.yml ./
-COPY package.json ./
+COPY root-package.json ./package.json
 
 # Create workspace structure
 RUN mkdir -p packages/server
@@ -14,7 +14,7 @@ RUN mkdir -p packages/server
 COPY ecosystem.config.js packages/server/
 COPY dist/ packages/server/dist/
 COPY .env packages/server/
-COPY package.json packages/server/
+COPY server-package.json packages/server/package.json
 
 # Install PM2
 RUN npm install -g pm2
