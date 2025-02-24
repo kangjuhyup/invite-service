@@ -19,7 +19,16 @@ export class RedisClientModule {
       provide: REDIS_CLIENT,
       useFactory: async (...args: any[]) => {
         const redisOptions = await options.useFactory(...args);
-        return new Redis(redisOptions.port,redisOptions.host)
+        return new Redis({
+          host : redisOptions.host,
+          port : redisOptions.port,
+          password : redisOptions.password?.trim() || undefined,
+          retryStrategy(times) {
+            const delay = Math.min(times * 50, 2000);
+            return delay;
+          },
+          maxRetriesPerRequest: 1,
+        })
       },
       inject: options.inject || [], // 의존성 주입 설정
     };
