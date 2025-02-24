@@ -99,6 +99,7 @@ jobs:
             docker run -d \
             -p 3003:3003 \
             --name invite-api \
+            --network my-network \
             --mount type=bind,source=/home/ubuntu/projects/logs,target=/usr/src/app/logs \
             ghcr.io/${{ github.repository }}/service:latest
           EOF
