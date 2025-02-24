@@ -18,16 +18,8 @@ export class RedisClientModule {
     const redisProvider: Provider = {
       provide: REDIS_CLIENT,
       useFactory: async (...args: any[]) => {
-        console.log('RedisClientModule Set RedisProvider');
         const redisOptions = await options.useFactory(...args);
-        console.log('redisOptions : ' ,redisOptions);
-        return new Redis({
-          socket : {
-            port : redisOptions.port,
-            host : redisOptions.host,
-          },
-          password : redisOptions.password?.trim() ? redisOptions.password : undefined,
-        }); // Redis 인스턴스 생성
+        return new Redis(redisOptions.port,redisOptions.host)
       },
       inject: options.inject || [], // 의존성 주입 설정
     };
