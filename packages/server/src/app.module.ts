@@ -62,8 +62,8 @@ export const modules = [
     isGlobal: true,
     imports: [ConfigModule],
     useFactory: (config: ConfigService) => {
-      console.log(config.get<string>('REDIS_HOST');
-      console.log(config.get<number>('REDIS_PORT');
+      console.log(config.get<string>('REDIS_HOST'));
+      console.log(config.get<number>('REDIS_PORT'));
       return {
         host: config.get<string>('REDIS_HOST'),
         port: config.get<number>('REDIS_PORT'),
