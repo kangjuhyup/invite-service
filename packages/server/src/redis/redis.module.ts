@@ -30,23 +30,18 @@ export class RedisClientModule {
           host: redisOptions.host,
           port: redisOptions.port,
           password: redisOptions.password?.trim(),
-          // 클러스터 환경 설정
-          maxRetriesPerRequest: 3,
-          retryStrategy: (times) => {
-            const delay = Math.min(times * 100, 3000);
-            return delay;
-          },
-          // 연결 풀 관리
-          enableOfflineQueue: true,
-          enableReadyCheck: true,
-          // 성능 최적화
-          enableAutoPipelining: true,
-          autoResendUnfulfilledCommands: true,
+          db: 0,
+          // 재시도 설정
+          maxRetriesPerRequest: 1,
+          retryStrategy: null,
+          // 기본 옵션
+          lazyConnect: false,
+          enableOfflineQueue: false,
+          enableReadyCheck: false,
+          autoResendUnfulfilledCommands: false,
           // 디버깅
           showFriendlyErrorStack: true,
-          // 연결 유지
-          keepAlive: 10000,
-          noDelay: true,
+          // 연결 정보
           connectionName: `invite-api-${process.pid}`
         };
 
@@ -65,11 +60,6 @@ export class RedisClientModule {
 
         redisClient.on('connect', () => {
           console.log('Redis Client Connected to:', redisOptions.host);
-        });
-
-        // 명시적 연결 시도
-        redisClient.connect().catch(err => {
-          console.error('Redis Connection Error:', err);
         });
 
         return redisClient
