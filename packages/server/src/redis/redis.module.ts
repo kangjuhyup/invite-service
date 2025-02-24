@@ -25,16 +25,24 @@ export class RedisClientModule {
           envHost: process.env.REDIS_HOST,
           envPort: process.env.REDIS_PORT
         });
-        const redisClient = new Redis(redisOptions.port, redisOptions.host, {
-          password: redisOptions.password?.trim() || undefined,
-          retryStrategy(times) {
-            const delay = Math.min(times * 50, 2000);
-            return delay;
-          },
+        // Redis 연결 옵션 설정
+        const connectionOptions = {
+          host: redisOptions.host,
+          port: redisOptions.port,
+          password: redisOptions.password?.trim(),
+          // 기본 연결 설정
+          retryStrategy: null,  // 재시도 비활성화
           maxRetriesPerRequest: 1,
-          enableReadyCheck: true,
-          lazyConnect: false
-        });
+          connectTimeout: 5000,
+          // 클러스터/센티널 모드 비활성화
+          enableOfflineQueue: false,
+          lazyConnect: false,
+          // 디버깅 설정
+          showFriendlyErrorStack: true
+        };
+
+        console.log('Redis 연결 시도:', connectionOptions);
+        const redisClient = new Redis(connectionOptions);
 
         // 연결 이벤트 핸들링
         redisClient.on('error', (err) => {
