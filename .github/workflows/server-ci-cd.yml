@@ -59,8 +59,8 @@ jobs:
           cp packages/server/ecosystem.config.js build/server/
           cp -r .yarn build/server/
           cp .pnp.cjs .pnp.loader.mjs yarn.lock .yarnrc.yml build/server/
-          cp package.json build/server/
-          cp packages/server/package.json build/server/
+          cp package.json build/server/root-package.json
+          cp packages/server/package.json build/server/server-package.json
           cp .env build/server/
           cp packages/server/Dockerfile build/server/
 
