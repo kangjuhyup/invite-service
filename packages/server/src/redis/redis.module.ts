@@ -37,8 +37,10 @@ export class RedisClientModule {
         redisProvider, // REDIS_CLIENT 토큰을 제공하는 프로바이더
         {
           provide: RedisClientService,
-          useFactory: (redis: Redis) =>
-            new RedisClientService(redis, options.project), // Redis 인스턴스를 주입받는 RedisClientService 생성
+          useFactory: (redis: Redis) => {
+            console.log('✅ RedisClientService received Redis instance:', redis.options);
+            return new RedisClientService(redis, options.project);
+          }, // Redis 인스턴스를 주입받는 RedisClientService 생성
           inject: [REDIS_CLIENT], // REDIS_CLIENT로부터 Redis 인스턴스 주입
         },
       ],
