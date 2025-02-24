@@ -30,18 +30,32 @@ export class RedisClientModule {
           host: redisOptions.host,
           port: redisOptions.port,
           password: redisOptions.password?.trim(),
-          // 기본 연결 설정
-          retryStrategy: null,  // 재시도 비활성화
-          maxRetriesPerRequest: 1,
-          connectTimeout: 5000,
-          // 클러스터/센티널 모드 비활성화
-          enableOfflineQueue: false,
-          lazyConnect: false,
-          // 디버깅 설정
-          showFriendlyErrorStack: true
+          // 클러스터 환경 설정
+          maxRetriesPerRequest: 3,
+          retryStrategy: (times) => {
+            const delay = Math.min(times * 100, 3000);
+            return delay;
+          },
+          // 연결 풀 관리
+          enableOfflineQueue: true,
+          enableReadyCheck: true,
+          // 성능 최적화
+          enableAutoPipelining: true,
+          autoResendUnfulfilledCommands: true,
+          // 디버깅
+          showFriendlyErrorStack: true,
+          // 연결 유지
+          keepAlive: 10000,
+          noDelay: true,
+          connectionName: `invite-api-${process.pid}`
         };
 
-        console.log('Redis 연결 시도:', connectionOptions);
+        console.log(`Redis 연결 시도 (PID ${process.pid}):`, {
+          host: connectionOptions.host,
+          port: connectionOptions.port,
+          connectionName: connectionOptions.connectionName
+        });
+        
         const redisClient = new Redis(connectionOptions);
 
         // 연결 이벤트 핸들링
@@ -51,6 +65,11 @@ export class RedisClientModule {
 
         redisClient.on('connect', () => {
           console.log('Redis Client Connected to:', redisOptions.host);
+        });
+
+        // 명시적 연결 시도
+        redisClient.connect().catch(err => {
+          console.error('Redis Connection Error:', err);
         });
 
         return redisClient
@@ -66,7 +85,6 @@ export class RedisClientModule {
         {
           provide: RedisClientService,
           useFactory: (redis: Redis) => {
-            console.log('✅ RedisClientService received Redis instance:', redis.options);
             return new RedisClientService(redis, options.project);
           }, // Redis 인스턴스를 주입받는 RedisClientService 생성
           inject: [REDIS_CLIENT], // REDIS_CLIENT로부터 Redis 인스턴스 주입
