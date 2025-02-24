@@ -19,16 +19,33 @@ export class RedisClientModule {
       provide: REDIS_CLIENT,
       useFactory: async (...args: any[]) => {
         const redisOptions = await options.useFactory(...args);
-        return new Redis({
-          host : redisOptions.host,
-          port : redisOptions.port,
-          password : redisOptions.password?.trim() || undefined,
+        console.log('Redis Connection Options:', {
+          host: redisOptions.host,
+          port: redisOptions.port,
+          envHost: process.env.REDIS_HOST,
+          envPort: process.env.REDIS_PORT
+        });
+        const redisClient = new Redis(redisOptions.port, redisOptions.host, {
+          password: redisOptions.password?.trim() || undefined,
           retryStrategy(times) {
             const delay = Math.min(times * 50, 2000);
             return delay;
           },
           maxRetriesPerRequest: 1,
-        })
+          enableReadyCheck: true,
+          lazyConnect: false
+        });
+
+        // 연결 이벤트 핸들링
+        redisClient.on('error', (err) => {
+          console.error('Redis Client Error:', err);
+        });
+
+        redisClient.on('connect', () => {
+          console.log('Redis Client Connected to:', redisOptions.host);
+        });
+
+        return redisClient
       },
       inject: options.inject || [], // 의존성 주입 설정
     };
