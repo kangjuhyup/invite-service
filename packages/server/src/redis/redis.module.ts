@@ -26,9 +26,7 @@ export class RedisClientModule {
           envPort: process.env.REDIS_PORT
         });
         // Redis standalone 모드 연결
-        const redisClient = new Redis({
-          host: redisOptions.host,
-          port: redisOptions.port,
+        const redisClient = new Redis(`redis://${redisOptions.host}:${redisOptions.port}`, {
           password: redisOptions.password?.trim() || undefined,
           // 기본 설정
           db: 0,
