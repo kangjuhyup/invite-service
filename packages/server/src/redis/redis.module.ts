@@ -25,33 +25,21 @@ export class RedisClientModule {
           envHost: process.env.REDIS_HOST,
           envPort: process.env.REDIS_PORT
         });
-        // Redis 연결 옵션 설정
-        const connectionOptions = {
+        // Redis standalone 모드 연결
+        const redisClient = new Redis({
           host: redisOptions.host,
           port: redisOptions.port,
-          password: redisOptions.password?.trim(),
+          password: redisOptions.password?.trim() || undefined,
+          // 기본 설정
           db: 0,
-          // 재시도 설정
           maxRetriesPerRequest: 1,
-          retryStrategy: null,
-          // 기본 옵션
-          lazyConnect: false,
-          enableOfflineQueue: false,
-          enableReadyCheck: false,
-          autoResendUnfulfilledCommands: false,
-          // 디버깅
-          showFriendlyErrorStack: true,
-          // 연결 정보
-          connectionName: `invite-api-${process.pid}`
-        };
-
-        console.log(`Redis 연결 시도 (PID ${process.pid}):`, {
-          host: connectionOptions.host,
-          port: connectionOptions.port,
-          connectionName: connectionOptions.connectionName
+          showFriendlyErrorStack: true
         });
-        
-        const redisClient = new Redis(connectionOptions);
+
+        console.log('Redis 연결 정보:', {
+          host: redisOptions.host,
+          port: redisOptions.port
+        });
 
         // 연결 이벤트 핸들링
         redisClient.on('error', (err) => {
