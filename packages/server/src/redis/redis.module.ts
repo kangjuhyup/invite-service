@@ -22,15 +22,11 @@ export class RedisClientModule {
         const redisOptions = await options.useFactory(...args);
         console.log('redisOptions : ' ,redisOptions);
         return new Redis({
-          port : redisOptions.port,
-          host : redisOptions.host,
-          password : redisOptions.password?.trim() ? redisOptions.password : undefined,
-          lookup: (hostname, options, callback) => {
-            dns.lookup(hostname, { family: 4, all: false }, (err, address, family) => {
-              console.log(`🔍 Custom DNS Lookup: ${hostname} -> ${address} (IPv${family})`);
-              callback(err, address, family);
-            });
+          socket : {
+            port : redisOptions.port,
+            host : redisOptions.host,
           },
+          password : redisOptions.password?.trim() ? redisOptions.password : undefined,
         }); // Redis 인스턴스 생성
       },
       inject: options.inject || [], // 의존성 주입 설정
