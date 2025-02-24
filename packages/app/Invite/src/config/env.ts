@@ -1,0 +1,7 @@
+import {API_ENDPOINT, GOOGLE_IOS_CLIENT_ID, GOOGLE_WEB_CLIENT_ID} from '@env';
+
+export const ENV = {
+  API_ENDPOINT,
+  GOOGLE_WEB_CLIENT_ID,
+  GOOGLE_IOS_CLIENT_ID,
+} as const;
