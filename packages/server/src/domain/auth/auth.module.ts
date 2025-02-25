@@ -50,10 +50,6 @@ export class AuthModule {
       controllers: [AuthController],
       providers: [
         {
-          provide: RedisClientService,
-          useFactory: () => new RedisClientService(new Redis(), 'invite'),
-        },
-        {
           provide: UserAccessStrategy,
           useFactory: (userService: UserService, ...args: any[]) => {
             const { secret } = options.useFactory(...args);
