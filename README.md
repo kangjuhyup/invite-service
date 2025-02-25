@@ -66,7 +66,7 @@ yarn install
 | 📊 **Monitoring** | Prometheus & Grafana |
 | 📜 **Logging**   | Elasticsearch + Filebeat + Kibana |
 | 🐳 **Docker 관리** | Portainer |
-| 📂 **파일 저장소** | Wasabi Storage |
+| 📂 **파일 저장소** | Wasabi Storage | 
 
 
 
