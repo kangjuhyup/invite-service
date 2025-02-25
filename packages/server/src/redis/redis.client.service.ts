@@ -1,12 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import Redis from 'ioredis';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
+import { RedisClientType } from '@redis/client';
 
 @Injectable()
-export class RedisClientService {
+export class RedisClientService implements OnModuleDestroy {
   constructor(
-    private readonly redisClient: Redis,
+    private readonly redisClient: RedisClientType,
     private readonly project: string,
-  ) {}
+  ) {
+    console.log('✅ RedisClientService received Redis instance');
+  }
+
+  async onModuleDestroy() {
+    await this.redisClient.quit();
+  }
 
   async set(
     key: string,
@@ -16,7 +22,9 @@ export class RedisClientService {
     const serializedValue =
       typeof value === 'string' ? value : JSON.stringify(value);
     if (expireInSeconds) {
-      await this.redisClient.set(key, serializedValue, 'EX', expireInSeconds);
+      await this.redisClient.set(key, serializedValue, {
+        EX: expireInSeconds
+      });
     } else {
       await this.redisClient.set(key, serializedValue);
     }
