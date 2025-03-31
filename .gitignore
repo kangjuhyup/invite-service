@@ -22,3 +22,5 @@ db
 out
 .vite_cache
 .codegpt
+
+google-services.json

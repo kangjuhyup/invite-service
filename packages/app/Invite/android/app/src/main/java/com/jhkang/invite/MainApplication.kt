@@ -1,4 +1,4 @@
-package com.invite
+package com.jhkang.invite
 
 import android.app.Application
 import com.facebook.react.PackageList

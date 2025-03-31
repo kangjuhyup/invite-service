@@ -1,0 +1,11 @@
+API_ENDPOINT = http://172.30.1.65:3003
+DOPPLER_CONFIG = dev
+DOPPLER_ENVIRONMENT = dev
+DOPPLER_PROJECT = invite-app
+FIREBASE_TOKEN = 1//0eLUjFuKHgt5zCgYIARAAGA4SNwF-L9Irf-GOxM154LUfZDjtpJzo7dBCQxhE94mFlEj9aAikPWdqu20Dl0K8iCTwnX0GTIulQaU
+GOOGLE_IOS_CLIENT_ID = 128433882817-n8iv6m4is2hon4u076lhkkv7b1d1g14k.apps.googleusercontent.com
+GOOGLE_WEB_CLIENT_ID = 128433882817-n8iv6m4is2hon4u076lhkkv7b1d1g14k.apps.googleusercontent.com
+KEYSTORE_PATH = app/invite-release-key.keystore
+KEY_ALIAS = invite-key-alias
+KEY_PASSWORD = wnguqdl67!
+STORE_PASSWORD = wnguqdl67!

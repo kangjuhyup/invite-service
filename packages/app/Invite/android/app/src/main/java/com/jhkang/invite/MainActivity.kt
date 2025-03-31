@@ -1,4 +1,4 @@
-package com.invite
+package com.jhkang.invite
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

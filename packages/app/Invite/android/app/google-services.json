@@ -12,7 +12,20 @@
           "package_name": "com.jhkang.invite"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1026738940867-bt1dk41ld8b981huhgfk4ckm8jlhigmt.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "1026738940867-bt1dk41ld8b981huhgfk4ckm8jlhigmt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jhkang.invite",
+            "certificate_hash": "5E8F16062EA3CD2C4A0D547876BAA6F38CABF625"
+          }
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCT43XxDjrpukbd8v3sbnHjfIxOQohW1j8"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1026738940867-bt1dk41ld8b981huhgfk4ckm8jlhigmt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1026738940867-iuqpd96vr6l6nrs0igfsvc936m58tkmf.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "kr.jhkang.app.invite"
+              }
+            }
+          ]
         }
       }
     }

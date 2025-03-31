@@ -12,6 +12,7 @@ export class GoogleService {
   private GOOGLE_KEYS_URL = 'https://www.googleapis.com/oauth2/v3/certs';
   private GOOGLE_WEB_CLIENT_ID: string;
   private GOOGLE_IOS_CLIENT_ID: string;
+  private GOOGLE_ANDROID_CLIENT_ID: string;
   private GOOGLE_CLIENT_SECRET: string;
   private GOOGLE_CALLBACK_URL: string;
 
@@ -21,6 +22,9 @@ export class GoogleService {
   ) {
     this.GOOGLE_WEB_CLIENT_ID = config.get<string>('GOOGLE_WEB_CLIENT_ID');
     this.GOOGLE_IOS_CLIENT_ID = config.get<string>('GOOGLE_IOS_CLIENT_ID');
+    this.GOOGLE_ANDROID_CLIENT_ID = config.get<string>(
+      'GOOGLE_ANDROID_CLIENT_ID',
+    );
     this.GOOGLE_CLIENT_SECRET = config.get<string>('GOOGLE_CLIENT_SECRET');
     this.GOOGLE_CALLBACK_URL = config.get<string>('GOOGLE_CALLBACK_URL');
   }
@@ -41,8 +45,10 @@ export class GoogleService {
     );
     if (!code) throw new UnauthorizedException('AuhorizationCode required');
     // iOS 앱에서 요청인 경우 iOS 클라이언트 ID 사용
-    const clientId = code.startsWith('4/') ? this.GOOGLE_IOS_CLIENT_ID : this.GOOGLE_WEB_CLIENT_ID;
-    
+    const clientId = code.startsWith('4/')
+      ? this.GOOGLE_IOS_CLIENT_ID
+      : this.GOOGLE_WEB_CLIENT_ID;
+
     // iOS 앱인 경우 client secret 생략
     const requestBody: any = {
       code,
