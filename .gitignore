@@ -24,3 +24,5 @@ out
 .codegpt
 
 google-services.json
+GoogleService-Info.plist
+tmp.xcconfig
