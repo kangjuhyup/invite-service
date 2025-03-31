@@ -2,10 +2,7 @@
   "name": "invite-monorepo",
   "private": true,
   "workspaces": [
-    "packages/server",
-    "packages/server/*",
-    "packages/page",
-    "packages/page/*"
+    "packages/**/*"
   ],
   "devDependencies": {
     "@types/node": "^22.10.2",
