@@ -36,7 +36,7 @@ jobs:
           cache: 'yarn'
 
       - name: install packages
-        run: yarn workspaces focus server --all
+        run: yarn workspaces server install
 
       - name: Install Doppler CLI
         run: |
